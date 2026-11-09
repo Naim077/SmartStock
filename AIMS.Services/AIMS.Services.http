@@ -1,0 +1,6 @@
+@AIMS.Services_HostAddress = http://localhost:5049
+
+GET {{AIMS.Services_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

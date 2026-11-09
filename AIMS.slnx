@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Business/">
+    <Project Path="AIMS.Facade/AIMS.Facade.csproj" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="AIMS.DataAccess/AIMS.DataAccess.csproj" />
+    <Project Path="AIMS.Entities/AIMS.Entities.csproj" />
+    <Project Path="AIMS.Framework/AIMS.Framework.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="AIMS.Web.Ui/AIMS.Web.Ui.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="AIMS.Services/AIMS.Services.csproj" />
+  </Folder>
+</Solution>

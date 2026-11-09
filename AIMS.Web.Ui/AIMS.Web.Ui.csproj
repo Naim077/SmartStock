@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AIMS.Entities\AIMS.Entities.csproj" />
+    <ProjectReference Include="..\AIMS.Facade\AIMS.Facade.csproj" />
+    <ProjectReference Include="..\AIMS.Framework\AIMS.Framework.csproj" />
+  </ItemGroup>
+
+</Project>
