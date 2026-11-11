@@ -1,0 +1,342 @@
+﻿
+<link rel="stylesheet" href="~/css/product.css" />
+<!-- ===== MAIN CONTENT: this is the actual Products page ===== -->
+<main class="main-content" id="main-content" tabindex="-1">
+    <!-- Warning that app.js un-hides if the browser blocks localStorage. -->
+    <div class="notice notice-warning" id="storage-warning" hidden>Browser storage is unavailable. Changes on this page will not persist.</div>
+    <!-- 1. Page heading: title + primary actions -->
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Inventory / Catalog</p>
+            <h1>Products</h1>
+            <p class="page-description">A little order for everything you sell. Manage your catalog, pricing, and stock health.</p>
+        </div>
+        <div class="page-actions">
+            <!-- data-action values are handled in operations.js (event delegation). -->
+            <button type="button" class="button button-secondary" data-action="product-export">
+                <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>Export catalog
+            </button>
+            <button type="button" class="button button-primary" data-action="product-add">
+                <svg class="icon" aria-hidden="true"><use href="#i-plus"></use></svg>Add product
+            </button>
+        </div>
+    </section>
+    <!-- 2. KPI cards. Numbers are placeholders; operations.js recalculates them from the product data (ids: products-total, products-active, products-low, products-value). -->
+    <section class="stats-grid" aria-label="Product overview">
+        <article class="stat-card">
+            <div class="stat-label">
+                Catalog products<span class="stat-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-box"></use></svg>
+            </span>
+        </div>
+        <div class="stat-value" id="products-total">12</div>
+        <div class="stat-meta" id="products-categories">Across 5 categories</div>
+    </article>
+    <article class="stat-card">
+        <div class="stat-label">
+            Active products<span class="stat-icon">
+            <svg class="icon" aria-hidden="true"><use href="#i-check-circle"></use></svg>
+        </span>
+    </div>
+    <div class="stat-value" id="products-active">12</div>
+    <div class="stat-meta">Available to your local workflows</div>
+</article>
+<article class="stat-card">
+    <div class="stat-label">
+        Need replenishment<span class="stat-icon">
+        <svg class="icon" aria-hidden="true"><use href="#i-alert"></use></svg>
+    </span>
+</div>
+<div class="stat-value" id="products-low">5</div>
+<div class="stat-meta">At or below the reorder level</div>
+</article>
+<article class="stat-card">
+    <div class="stat-label">
+        Inventory value<span class="stat-icon">
+        <svg class="icon" aria-hidden="true"><use href="#i-layers"></use></svg>
+    </span>
+</div>
+<div class="stat-value" id="products-value">
+    <span class="currency">BDT </span>171,565
+</div>
+<div class="stat-meta">All on-hand stock at weighted cost</div>
+</article>
+</section>
+<!-- 3. Product library: toolbar (search + filters), table, pagination -->
+<div class="stack">
+    <section class="card" aria-labelledby="catalog-title">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" id="catalog-title">Your product library</h2>
+                <p class="card-subtitle">The right details, all in one place.</p>
+            </div>
+            <span class="status status-neutral" id="products-count">12 products</span>
+        </div>
+        <!-- Toolbar: search by name/SKU/barcode, filter by category and status -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <label class="search-field" for="products-search">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                    <input id="products-search" type="search" placeholder="Name, SKU, or barcode" aria-label="Search products">
+                </label>
+            </div>
+            <div class="toolbar-right">
+                <label for="products-category" class="text-muted">Category</label>
+                <select class="select" id="products-category">
+                    <option value="">All categories</option>
+                    <option>Electronics</option>
+                    <option>Groceries</option>
+                    <option>Household</option>
+                    <option>Lifestyle</option>
+                    <option>Stationery</option>
+                </select>
+                <label for="products-status" class="text-muted">Status</label>
+                <select class="select" id="products-status">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="healthy">In stock</option>
+                    <option value="low">Low stock</option>
+                    <option value="out">Out of stock</option>
+                    <option value="archived">Archived</option>
+                </select>
+            </div>
+        </div>
+        <!-- Table. table-wrap makes it scroll sideways on narrow screens. -->
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">On hand</th>
+                        <th scope="col">Selling price</th>
+                        <th scope="col">
+                            <abbr title="Weighted-average cost per unit">WAC</abbr>
+                        </th>
+                        <th scope="col">Stock status</th>
+                        <th scope="col" class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <!-- Rows are re-rendered by operations.js from the product list (12 products, paginated).
+                  The rows below are the static first page, so the page is not empty before JavaScript runs.
+                  Row pattern: product (icon + name + SKU) | category | on hand | selling price | WAC | status pill | actions -->
+                <tbody id="products-rows">
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <!-- tone-* picks the icon colour by category: blue=Electronics, amber=Stationery, purple=Lifestyle, green=Groceries, rose=Household -->
+                                <span class="item-icon tone-blue">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-box"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">Wireless Keyboard</span>
+                                    <span class="cell-subtitle">EL-001</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Electronics</td>
+                        <td>
+                            42 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 1,850</td>
+                        <td>BDT 1,250</td>
+                        <td>
+                            <!-- status-success = In stock, status-warning = Low stock (at or below reorder level), status-danger = Out of stock -->
+                            <span class="status status-success">In stock</span>
+                        </td>
+                        <td>
+                            <!-- data-id = product id; aria-label tells screen readers which product the icon button is for -->
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1001" aria-label="View Wireless Keyboard">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1001" aria-label="Edit Wireless Keyboard">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-blue">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-box"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">USB-C Fast Charger</span>
+                                    <span class="cell-subtitle">EL-002</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Electronics</td>
+                        <td>
+                            8 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 990</td>
+                        <td>BDT 680</td>
+                        <td>
+                            <span class="status status-warning">Low stock</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1002" aria-label="View USB-C Fast Charger">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1002" aria-label="Edit USB-C Fast Charger">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-amber">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">A5 Hardcover Notebook</span>
+                                    <span class="cell-subtitle">ST-001</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Stationery</td>
+                        <td>
+                            120 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 249</td>
+                        <td>BDT 145</td>
+                        <td>
+                            <span class="status status-success">In stock</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1003" aria-label="View A5 Hardcover Notebook">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1003" aria-label="Edit A5 Hardcover Notebook">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-purple">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-box"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">Stainless Steel Bottle</span>
+                                    <span class="cell-subtitle">LS-001</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Lifestyle</td>
+                        <td>
+                            34 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 850</td>
+                        <td>BDT 520</td>
+                        <td>
+                            <span class="status status-success">In stock</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1004" aria-label="View Stainless Steel Bottle">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1004" aria-label="Edit Stainless Steel Bottle">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-green">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">Organic Arabica Coffee</span>
+                                    <span class="cell-subtitle">GR-001</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Groceries</td>
+                        <td>
+                            12 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 890</td>
+                        <td>BDT 580</td>
+                        <td>
+                            <span class="status status-warning">Low stock</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1005" aria-label="View Organic Arabica Coffee">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1005" aria-label="Edit Organic Arabica Coffee">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-green">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-leaf"></use></svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">Premium Jasmine Rice 5kg</span>
+                                    <span class="cell-subtitle">GR-002</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>Groceries</td>
+                        <td>
+                            65 <span class="text-muted">piece</span>
+                        </td>
+                        <td>BDT 680</td>
+                        <td>BDT 520</td>
+                        <td>
+                            <span class="status status-success">In stock</span>
+                        </td>
+                        <td>
+                            <div class="row-actions">
+                                <button type="button" class="icon-button" data-action="product-detail" data-id="P1006" aria-label="View Premium Jasmine Rice">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-eye"></use></svg>
+                                </button>
+                                <button type="button" class="icon-button" data-action="product-edit" data-id="P1006" aria-label="Edit Premium Jasmine Rice">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-edit"></use></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Table footer: result count + pagination (aria-live announces changes to screen readers) -->
+        <div class="table-footer">
+            <span class="text-muted" id="products-range" aria-live="polite">12 catalog products</span>
+            <div class="pagination">
+                <button type="button" class="icon-button" data-action="products-prev" aria-label="Previous product page" disabled>
+                    <svg class="icon" aria-hidden="true"><use href="#i-chevron-left"></use></svg>
+                </button>
+                <span id="products-page">Page 1 of 2</span>
+                <button type="button" class="icon-button" data-action="products-next" aria-label="Next product page">
+                    <svg class="icon" aria-hidden="true"><use href="#i-chevron-right"></use></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- 4. Business-rule reminder: stock changes only through purchase receipts or reviewed adjustments, never by editing the product. -->
+    <div class="notice notice-info">
+        <strong>Catalog changes, not stock shortcuts.</strong>
+        <p>New products start with zero stock. Record a <a href="purchases.html">purchase receipt</a> or a reviewed <a href="stock.html">stock adjustment</a> to change inventory. Weighted-average cost is calculated from stock transactions.</p>
+    </div>
+</div>
+</main>

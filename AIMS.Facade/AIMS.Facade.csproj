@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AIMS.DataAccess\AIMS.DataAccess.csproj" />
     <ProjectReference Include="..\AIMS.Entities\AIMS.Entities.csproj" />
     <ProjectReference Include="..\AIMS.Framework\AIMS.Framework.csproj" />

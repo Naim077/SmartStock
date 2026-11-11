@@ -1,0 +1,1699 @@
+﻿@charset "UTF-8";
+
+/*
+ * products.css : styles for products.html (SmartStock)
+ *
+ * Extracted from the shared styles.css: only the rules this page (and the dialogs,
+ * toasts and table rows that app.js / operations.js build for it) actually use.
+ * Load order in products.html: products.css first, then app.js and operations.js.
+ * Class names match the markup 1:1, so search the class in products.html to see where it is used.
+ */
+
+/* ==========================================================================
+   DESIGN TOKENS, RESET AND BASE ELEMENTS
+   ========================================================================== */
+
+/* Design tokens (light theme). Change colours/radius/font here and every component follows. */
+:root {
+    color-scheme: light;
+    --bg: #f5f6f2;
+    --surface: #fff;
+    --surface-soft: #f8f9f6;
+    --text: #25332b;
+    --muted: #68746b;
+    --border: #e5e9e2;
+    --primary: #2c6848;
+    --primary-hover: #205238;
+    --primary-soft: #eaf3e9;
+    --danger: #ba4a45;
+    --warning: #aa782d;
+    --radius: 10px;
+    --sidebar: #182b22;
+    --sidebar-text: #b3c4b7;
+    --shadow: 0 8px 28px #182b220b;
+    --font: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+    /* Dark theme: same token names, different values. Toggled via <html data-theme="dark">. */
+    :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #17221c;
+        --surface: #202f26;
+        --surface-soft: #26372d;
+        --text: #e5ede6;
+        --muted: #a2b1a5;
+        --border: #35463a;
+        --primary: #99d5a9;
+        --primary-hover: #b6e5c1;
+        --primary-soft: #2b4834;
+        --danger: #efaaa0;
+        --warning: #eac789;
+        --shadow: none;
+    }
+/* Border-box sizing everywhere so padding never widens an element. */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+/* Smooth in-page scrolling (e.g. the skip link). */
+html {
+    scroll-behavior: smooth;
+}
+/* Page background, text colour and the base 14px font. */
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.5 var(--font);
+    -webkit-font-smoothing: antialiased;
+}
+/* Form controls inherit the page font instead of the browser default. */
+button, input, select, textarea {
+    font: inherit;
+}
+/* Pointer cursor on clickable controls. */
+button, select {
+    cursor: pointer;
+}
+/* Form controls inherit the page font instead of the browser default. */
+button, input, select, textarea {
+    color: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+    /* Disabled buttons (e.g. "Previous page" on page 1) look faded. */
+    button:disabled {
+        opacity: .45;
+        cursor: not-allowed;
+    }
+/* Links inherit colour and have no underline; components style their own hover. */
+a {
+    color: inherit;
+    text-decoration: none;
+}
+/* Media never overflows its container. */
+img, svg {
+    vertical-align: middle;
+    max-width: 100%;
+}
+
+input, select, textarea {
+    min-width: 0;
+}
+    /* Checkbox/radio use the brand colour. */
+    input[type="checkbox"], input[type="radio"] {
+        accent-color: var(--primary);
+        width: 16px;
+        height: 16px;
+    }
+
+    input[type="search"]::-webkit-search-cancel-button {
+        cursor: pointer;
+    }
+/* Make the hidden attribute always win (used by notices, modal errors). */
+[hidden] {
+    display: none !important;
+}
+/* Keyboard focus ring (accessibility). */
+:focus-visible {
+    outline: 3px solid #7db693;
+    outline-offset: 3px;
+}
+
+::selection {
+    background: #d4e8d5;
+    color: #193527;
+}
+/* Page title size. */
+h1, h2, h3, p {
+    margin-top: 0;
+}
+/* Page title size. */
+h1 {
+    margin-bottom: 6px;
+    font-size: 29px;
+    line-height: 1.2;
+    font-weight: 650;
+    letter-spacing: -.9px;
+}
+/* Card / modal title size. */
+h2 {
+    font-size: 17px;
+    line-height: 1.35;
+    letter-spacing: -.35px;
+}
+
+h3 {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+p {
+    margin-bottom: 12px;
+}
+
+small {
+    font-size: 12px;
+}
+
+strong {
+    font-weight: 600;
+}
+/* Base SVG icon: stroke icons that take the current text colour. Used with <svg class="icon"><use href="#i-..."/></svg>. */
+.icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+/* Hidden SVG sprite that holds all <symbol> icons. */
+.svg-definitions {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+/* "Skip to main content" link, hidden off-screen until focused. */
+.skip-link {
+    position: fixed;
+    top: -100px;
+    left: 16px;
+    padding: 10px 16px;
+    z-index: 1000;
+    color: white;
+    background: #244d34;
+    border-radius: 6px;
+}
+
+    .skip-link:focus {
+        top: 12px;
+    }
+/* Visually hidden text that screen readers still read. */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+/* ==========================================================================
+   APP SHELL: SIDEBAR, TOP BAR, FOOTER
+   ========================================================================== */
+
+/* Fixed dark-green left sidebar (234px wide). */
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    width: 234px;
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar);
+    color: var(--sidebar-text);
+}
+/* Logo row at the top of the sidebar. */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 28px 25px 25px;
+    color: #f2f6ef;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 36px;
+    color: #bdd9ac;
+    display: grid;
+    place-items: center;
+}
+
+    .brand-mark svg {
+        width: 33px;
+        height: 36px;
+    }
+
+.brand-word {
+    font-size: 23px;
+    letter-spacing: -1.2px;
+    font-weight: 650;
+}
+
+    .brand-word span {
+        color: #afd19d;
+    }
+/* Small uppercase group labels: Workspace / Intelligence / Administration. */
+.sidebar-caption {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.45px;
+    color: #81988a;
+    margin: 11px 13px 10px;
+    font-weight: 600;
+}
+/* Scrollable navigation area inside the sidebar. */
+.sidebar-nav {
+    padding: 0 13px 12px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #385345 transparent;
+}
+
+.nav-group {
+    margin-bottom: 22px;
+}
+/* One sidebar menu item (icon + label). */
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 41px;
+    padding: 10px 13px;
+    margin: 3px 0;
+    border-radius: 7px;
+    font-size: 13px;
+    transition: color .15s, background .15s;
+}
+    /* Menu item hover. */
+    .nav-link:hover {
+        background: #ffffff0c;
+        color: white;
+    }
+    /* Current page highlight (Products on this page). */
+    .nav-link.is-active {
+        background: #d3e5c5;
+        color: #234431;
+        font-weight: 650;
+    }
+
+    .nav-link .icon {
+        width: 17px;
+        height: 17px;
+        flex-basis: 17px;
+    }
+/* Red/amber count bubble, e.g. low-stock count next to "Stock overview". */
+.nav-badge {
+    margin-left: auto;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 650;
+    border-radius: 4px;
+    color: #d9e8d5;
+    background: #ffffff12;
+}
+
+.is-active .nav-badge {
+    color: #345a3d;
+    background: #fff9;
+}
+/* Small "DEMO" tag next to AI Assistant. */
+.nav-new {
+    margin-left: auto;
+    color: #b8d79f;
+    font-size: 8px;
+    letter-spacing: .6px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border: 1px solid #567a48;
+    border-radius: 4px;
+}
+
+.nav-link.is-active .nav-new {
+    color: #335439;
+    border-color: #83a774;
+    background: #eaf2e3;
+}
+/* Pinned bottom block of the sidebar (workspace guide, leave preview). */
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 14px 18px 18px;
+    border-top: 1px solid #ffffff10;
+}
+/* Pill that says "Local demo workspace". */
+.demo-indicator {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: #b5c8b6;
+    margin: 4px 8px 13px;
+}
+
+    .demo-indicator::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: #b8d59c;
+        border-radius: 50%;
+    }
+
+.sidebar-bottom .nav-link {
+    padding-left: 8px;
+    min-height: 32px;
+    font-size: 12px;
+}
+/* Right-hand area; left margin equals the sidebar width. */
+.workspace {
+    margin-left: 234px;
+    min-height: 100vh;
+}
+/* Sticky top bar: breadcrumb, search, notifications, profile. */
+.topbar {
+    height: 77px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+/* Business name > current page. */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+    .breadcrumb > span {
+        color: var(--muted);
+    }
+
+        .breadcrumb > span:first-child {
+            max-width: 155px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    .breadcrumb .icon {
+        width: 12px;
+        flex-basis: 12px;
+        color: #aeb7ac;
+    }
+
+    .breadcrumb strong {
+        font-weight: 500;
+    }
+/* Top-bar search box (press "/" to focus). */
+.global-search {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 270px;
+    margin-left: auto;
+    padding: 8px 11px;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--muted);
+}
+
+    .global-search input {
+        width: 100%;
+        outline: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        font-size: 12px;
+        color: var(--text);
+    }
+
+    .global-search:focus-within {
+        border-color: #7eac85;
+        box-shadow: 0 0 0 3px #7eac851a;
+    }
+/* The little "/" keyboard hint in the search box. */
+kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font: 11px var(--font);
+    color: var(--muted);
+}
+/* Right side of the top bar. */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+/* Bell button; positioned so the count badge can sit on it. */
+.notification-button {
+    position: relative;
+}
+/* Red unread-count bubble on the bell. */
+.notification-count {
+    position: absolute;
+    right: 0;
+    top: 0;
+    min-width: 14px;
+    height: 14px;
+    border-radius: 9px;
+    border: 2px solid var(--surface);
+    background: #ce795c;
+    color: white;
+    font-size: 8px;
+    line-height: 10px;
+    text-align: center;
+}
+
+.topbar-divider {
+    width: 1px;
+    height: 27px;
+    background: var(--border);
+}
+/* Avatar + name button that opens the profile menu. */
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.profile-name {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-role {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.profile-link > .icon {
+    width: 12px;
+    height: 12px;
+    flex-basis: 12px;
+    margin-left: 5px;
+    color: var(--muted);
+}
+/* Native <details> dropdown wrapper. */
+.profile-menu {
+    position: relative;
+}
+
+    .profile-menu summary {
+        list-style: none;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+        .profile-menu summary::-webkit-details-marker {
+            display: none;
+        }
+/* The dropdown panel itself. */
+.profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 16px);
+    z-index: 65;
+    width: 195px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    box-shadow: 0 10px 30px #15281a18;
+}
+
+    .profile-dropdown a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        font-size: 12px;
+        border-radius: 5px;
+    }
+
+        .profile-dropdown a:hover {
+            background: var(--surface-soft);
+        }
+
+    .profile-dropdown .icon {
+        width: 15px;
+        height: 15px;
+        color: var(--muted);
+    }
+/* Round initials avatar. */
+.avatar {
+    width: 34px;
+    height: 34px;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 50%;
+    background: #e5eddd;
+    color: #50734a;
+    font-size: 11px;
+    font-weight: 600;
+}
+/* Centred page body with max width and padding. */
+.main-content {
+    padding: 30px 32px;
+    max-width: 1680px;
+    margin: auto;
+    min-width: 0;
+}
+/* Footer line at the bottom of the page. */
+.workspace-footer {
+    max-width: 1680px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 5px 32px 23px;
+    font-size: 10px;
+    color: var(--muted);
+}
+
+    .workspace-footer a {
+        color: var(--primary);
+    }
+/* Fallback navigation shown only when JavaScript is off. */
+.noscript-notice {
+    padding: 12px 20px;
+    background: #fff2d4;
+    color: #78561a;
+}
+/* Fallback navigation shown only when JavaScript is off. */
+.noscript-notice {
+    position: relative;
+    z-index: 95;
+    font-size: 12px;
+}
+
+    .noscript-notice summary {
+        cursor: pointer;
+        font-weight: 600;
+        margin: 5px 0;
+    }
+
+.nojs-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 9px 0;
+}
+
+    .nojs-links a {
+        padding: 5px 9px;
+        background: white;
+        border: 1px solid #decba1;
+        border-radius: 5px;
+    }
+/* ==========================================================================
+   PAGE COMPONENTS: HEADING, BUTTONS, KPI CARDS, CARD, TOOLBAR, TABLE, BADGES, NOTICES
+   ========================================================================== */
+
+/* Title block: heading on the left, action buttons on the right. */
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 26px;
+}
+/* Small uppercase label above the title ("Inventory / Catalog"). */
+.eyebrow {
+    display: block;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 600;
+    font-size: 9px;
+    margin-bottom: 9px;
+}
+/* Muted sentence under the title. */
+.page-description {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 7px 0 0;
+    max-width: 640px;
+}
+/* Group for the Export / Add product buttons. */
+.page-actions {
+    display: flex;
+    gap: 9px;
+    flex-shrink: 0;
+    align-items: center;
+    flex-wrap: wrap;
+}
+/* Base button: size, radius, spacing. Always combine with a variant below. */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 15px;
+    min-height: 38px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    font-size: 12px;
+    line-height: 1.25;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background .15s, border-color .15s;
+}
+
+    .button .icon {
+        width: 15px;
+        height: 15px;
+        flex-basis: 15px;
+    }
+/* Solid green call-to-action ("Add product"). */
+.button-primary {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+    .button-primary:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+/* Outlined neutral button ("Export catalog"). */
+.button-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+    .button-secondary:hover {
+        border-color: #b8c7b6;
+        background: var(--surface-soft);
+    }
+/* Borderless low-emphasis button. */
+.button-ghost {
+    color: var(--primary);
+    background: transparent;
+    padding-inline: 8px;
+}
+
+    .button-ghost:hover {
+        background: var(--primary-soft);
+    }
+/* Destructive action button (archive/delete in dialogs). */
+.button-danger {
+    background: #b84b45;
+    color: white;
+    border-color: #b84b45;
+}
+
+    .button-danger:hover {
+        background: #9e3935;
+    }
+/* Smaller button size. */
+.button-sm {
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 11px;
+}
+/* Square icon-only button (view/edit row actions, close dialog). */
+.icon-button {
+    border: 0;
+    background: transparent;
+    display: inline-grid;
+    place-items: center;
+    padding: 7px;
+    width: 33px;
+    height: 33px;
+    border-radius: 6px;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+    .icon-button:hover {
+        background: var(--surface-soft);
+        color: var(--text);
+    }
+/* Responsive grid of the four KPI cards. */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 17px;
+    margin-bottom: 23px;
+}
+/* One KPI card (Catalog products, Active, Need replenishment, Inventory value). */
+.stat-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 19px 20px 17px;
+    background: var(--surface);
+    position: relative;
+}
+/* KPI title row with its icon. */
+.stat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 500;
+    margin: 0 0 12px;
+}
+/* Rounded icon chip inside a KPI card. */
+.stat-icon {
+    margin-left: auto;
+    width: 29px;
+    height: 29px;
+    display: grid;
+    place-items: center;
+    color: var(--primary);
+    background: var(--surface-soft);
+    border-radius: 7px;
+}
+
+    .stat-icon .icon {
+        width: 15px;
+        height: 15px;
+    }
+/* Big KPI number. */
+.stat-value {
+    font-size: clamp(24px, 2.1vw, 31px);
+    letter-spacing: -1px;
+    line-height: 1.2;
+    font-weight: 650;
+    margin-bottom: 10px;
+    overflow-wrap: anywhere;
+}
+
+    .stat-value .currency {
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--muted);
+        padding-right: 6px;
+    }
+/* Small explanatory line under the KPI number. */
+.stat-meta {
+    color: var(--muted);
+    font-size: 10px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+    .stat-meta .icon {
+        width: 12px;
+        height: 12px;
+        flex-basis: 12px;
+    }
+/* White rounded surface used for the product library. */
+.card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    min-width: 0;
+    overflow: hidden;
+}
+/* Card title row (title left, status pill right). */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 21px 17px;
+}
+
+    .card-header > div:first-child {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .card-header .select {
+        flex: 0 0 auto;
+        min-width: 118px;
+    }
+/* Card heading text. */
+.card-title {
+    font-size: 14px;
+    font-weight: 650;
+    margin: 0;
+    letter-spacing: -.25px;
+}
+/* Muted line under the card heading. */
+.card-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 5px 0 0;
+}
+/* Padded card content area. */
+.card-body {
+    padding: 20px 21px;
+}
+
+.card-header + .card-body {
+    padding-top: 0;
+}
+/* Vertical stack with consistent gap between sections. */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+/* Horizontal inline group with gap. */
+.inline {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+/* Row above the table: search on the left, filters on the right. */
+.toolbar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 17px 20px;
+    border-bottom: 1px solid var(--border);
+}
+/* Left and right halves of the toolbar. */
+.toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.toolbar-right {
+    margin-left: auto;
+}
+/* Search input with an icon inside the product toolbar. */
+.search-field {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 200px;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--muted);
+}
+
+    .search-field input {
+        width: 100%;
+        outline: 0;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--text);
+        font-size: 12px;
+    }
+
+    .search-field .icon {
+        width: 15px;
+        height: 15px;
+        flex-basis: 15px;
+    }
+
+    .search-field:focus-within {
+        border-color: #77a282;
+        box-shadow: 0 0 0 3px #7eac8517;
+    }
+/* Styled dropdown (Category / Status filters). */
+.select, select.select {
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--surface);
+    padding: 9px 30px 9px 11px;
+    font-size: 12px;
+    min-height: 36px;
+    max-width: 100%;
+}
+/* Tab strip container (shared with other modules). */
+.tabs {
+    display: flex;
+    gap: 22px;
+    padding: 0 21px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+/* Single tab button. */
+.tab {
+    padding: 15px 1px 13px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+    .tab:hover, .tab.is-active, .tab[aria-selected="true"] {
+        color: var(--primary);
+    }
+
+    .tab.is-active, .tab[aria-selected="true"] {
+        border-bottom-color: var(--primary);
+        font-weight: 650;
+    }
+/* Horizontal-scroll wrapper so the table never breaks the layout on small screens. */
+.table-wrap {
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: thin;
+}
+/* The product table: full width, collapsed borders. */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 12px;
+}
+    /* Header cells: small uppercase muted text. */
+    .data-table th {
+        padding: 11px 17px;
+        color: var(--muted);
+        background: var(--surface-soft);
+        font-weight: 500;
+        font-size: 10px;
+        white-space: nowrap;
+        border-bottom: 1px solid var(--border);
+    }
+    /* Body cells. */
+    .data-table td {
+        padding: 14px 17px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+
+        .data-table td:first-child, .data-table th:first-child {
+            padding-left: 21px;
+        }
+
+        .data-table td:last-child, .data-table th:last-child {
+            padding-right: 21px;
+        }
+
+    .data-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+    /* Row hover highlight. */
+    .data-table tbody tr:hover {
+        background: var(--surface-soft);
+    }
+
+    .data-table td:not(:first-child) {
+        white-space: nowrap;
+    }
+
+    .data-table td .cell-subtitle {
+        white-space: normal;
+    }
+
+    .data-table input[type="number"] {
+        width: 80px;
+        padding: 6px 8px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+    }
+/* Row under the table: "12 catalog products" + pagination. */
+.table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+}
+/* Prev / "Page 1 of 2" / Next group. */
+.pagination {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+    .pagination button {
+        min-width: 29px;
+        min-height: 29px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+        .pagination button.is-active, .pagination [aria-current="page"] {
+            color: var(--primary);
+            border-color: #c4d9c0;
+            background: var(--primary-soft);
+        }
+
+    .pagination .icon {
+        width: 13px;
+        height: 13px;
+    }
+/* Product cell: icon chip + name + SKU. */
+.item-cell {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 160px;
+}
+
+    .item-cell > span:last-child {
+        min-width: 0;
+    }
+/* Coloured square icon for a product category. */
+.item-icon {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 38px;
+    border: 1px solid #00000003;
+    border-radius: 8px;
+    background: #edf2e7;
+    color: #658453;
+}
+
+    .item-icon .icon {
+        width: 19px;
+        height: 19px;
+    }
+/* Product name (bold line). */
+.cell-title {
+    display: block;
+    font-size: 12px;
+    font-weight: 550;
+    color: var(--text);
+}
+/* SKU under the product name (muted line). */
+.cell-subtitle {
+    display: block;
+    margin-top: 3px;
+    font-size: 10px;
+    color: var(--muted);
+}
+/* Icon tone: Groceries. */
+.tone-green {
+    background: #edf3e6;
+    color: #658453;
+}
+/* Icon tone: Electronics. */
+.tone-blue {
+    background: #ecf1f8;
+    color: #607d9f;
+}
+/* Icon tone: Stationery. */
+.tone-amber {
+    background: #faf2e3;
+    color: #a1854b;
+}
+/* Icon tone: Lifestyle. */
+.tone-purple {
+    background: #f0ecf5;
+    color: #8b739e;
+}
+/* Icon tone: Household. */
+.tone-rose {
+    background: #f8eeee;
+    color: #b07a7a;
+}
+/* Pill badge base (used for stock status). */
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 550;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
+    .status::before {
+        content: "";
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+/* Green pill: In stock. */
+.status-success {
+    color: #3c7850;
+    background: #edf5ea;
+}
+/* Amber pill: Low stock. */
+.status-warning {
+    color: #865f19;
+    background: #fcf4e3;
+}
+/* Red pill: Out of stock. */
+.status-danger {
+    color: #9b443f;
+    background: #fbefec;
+}
+/* Grey pill: neutral info, e.g. "12 products". */
+.status-neutral {
+    color: #626b5d;
+    background: #f0f2ee;
+}
+/* Blue pill: informational status (used by other modules). */
+.status-info {
+    color: #3f6686;
+    background: #ecf3f8;
+}
+/* Purple pill: special status (used by other modules). */
+.status-purple {
+    color: #76527f;
+    background: #f1edf7;
+}
+/* View / Edit buttons at the end of each row. */
+.row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+    .row-actions .icon-button {
+        width: 28px;
+        height: 28px;
+        padding: 5px;
+    }
+
+    .row-actions .icon {
+        width: 15px;
+        height: 15px;
+    }
+/* Utility: muted text colour. */
+.text-muted {
+    color: var(--muted);
+}
+/* Utility: success (green) text. */
+.text-success {
+    color: var(--primary);
+}
+/* Utility: danger (red) text. */
+.text-danger {
+    color: var(--danger);
+}
+/* Utility: right-align (Actions column). */
+.text-right {
+    text-align: right !important;
+}
+/* Utility: medium font weight. */
+.font-medium {
+    font-weight: 600;
+}
+/* Inline message box. */
+.notice {
+    background: var(--primary-soft);
+    border: 1px solid #b6d2b640;
+    border-radius: 8px;
+    color: var(--primary);
+    padding: 13px 16px;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 19px;
+}
+
+    .notice p {
+        margin: 3px 0 0;
+        font-size: 11px;
+    }
+/* Amber variant (browser storage unavailable). */
+.notice-warning {
+    color: #9c742b;
+    border-color: #ead9b8;
+    background: #fff9ec;
+}
+/* Blue/green variant (catalog vs stock note). */
+.notice-info {
+    color: #597d95;
+    border-color: #dce7f0;
+    background: #f0f6fa;
+}
+/* Shown when filters match no products. */
+.empty-state {
+    text-align: center;
+    padding: 38px 20px;
+    color: var(--muted);
+    white-space: normal;
+}
+
+    .empty-state > .icon {
+        display: block;
+        margin: 0 auto 13px;
+        width: 29px;
+        height: 29px;
+        color: #aab8a6;
+    }
+
+    .empty-state strong {
+        display: block;
+        color: var(--text);
+        font-size: 14px;
+    }
+
+    .empty-state p {
+        font-size: 12px;
+        margin: 6px auto 0;
+        max-width: 350px;
+    }
+/* ==========================================================================
+   FORMS, DIALOGS (ADD / EDIT / VIEW PRODUCT) AND TOASTS
+   ========================================================================== */
+
+/* Two-column grid for the add/edit product form. */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+/* One label + input group in a form. */
+.field {
+    min-width: 0;
+}
+
+    .field.full, .form-grid .full {
+        grid-column: 1 / -1;
+    }
+
+    .field label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .field input:not([type="checkbox"]):not([type="radio"]),
+    .field select,
+    .field textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: var(--surface);
+        padding: 10px 11px;
+        min-height: 40px;
+        font-size: 12px;
+    }
+
+        .field input:focus, .field select:focus, .field textarea:focus {
+            border-color: #77a282;
+            outline: 2px solid #a4c4a24a;
+            outline-offset: 1px;
+        }
+
+    .field textarea {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .field small {
+        display: block;
+        margin-top: 6px;
+        font-size: 10px;
+        color: var(--muted);
+    }
+
+    .field input:disabled {
+        background: var(--surface-soft);
+        color: var(--muted);
+        cursor: not-allowed;
+    }
+/* Native <dialog> used for add / edit / view product. */
+.modal {
+    width: min(640px, calc(100vw - 32px));
+    max-height: calc(100vh - 36px);
+    max-height: calc(100dvh - 36px);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    background: var(--surface);
+    color: var(--text);
+    padding: 0;
+    box-shadow: 0 30px 100px #14261c33;
+    overflow: hidden;
+}
+/* Wider dialog variant. */
+.modal-wide {
+    width: min(890px, calc(100vw - 32px));
+}
+/* Dimmed page behind the open dialog. */
+.modal::backdrop {
+    background: #15271f7a;
+    backdrop-filter: blur(3px);
+}
+/* Form inside the dialog; header, body, footer stack vertically. */
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    max-height: inherit;
+    margin: 0;
+}
+/* Dialog title row with close button. */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    padding: 20px 24px 17px;
+    border-bottom: 1px solid var(--border);
+}
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 18px;
+    }
+/* Scrollable dialog content (filled by JavaScript). */
+.modal-body {
+    padding: 22px 24px;
+    overflow: auto;
+    min-height: 0;
+}
+/* Cancel / Save buttons row. */
+.modal-footer {
+    display: flex;
+    gap: 9px;
+    justify-content: flex-end;
+    padding: 15px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-soft);
+}
+/* Validation error message shown above the footer. */
+.modal-error {
+    padding: 11px 15px;
+    margin: 0 24px 17px;
+    color: var(--danger);
+    background: #c76b5810;
+    border: 1px solid #c76b5840;
+    border-radius: 6px;
+    font-size: 12px;
+}
+/* Confirmation dialog layout (e.g. archive product). */
+.confirmation {
+    text-align: center;
+    padding: 8px 18px 12px;
+}
+
+.confirmation-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 16px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+}
+
+.confirmation p {
+    font-size: 14px;
+}
+
+.confirmation small {
+    color: var(--muted);
+}
+/* Label/value row in the product detail dialog. */
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 20px;
+    margin: 10px 0;
+    font-size: 12px;
+}
+
+    .summary-row.total {
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+        font-size: 17px;
+        font-weight: 650;
+    }
+/* Readable paragraph styling inside dialogs. */
+.prose {
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+    .prose h3 {
+        margin: 20px 0 8px;
+    }
+/* One entry in the notifications dialog. */
+.notification-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+    .notification-item:last-child {
+        border-bottom: 0;
+    }
+
+    .notification-item > span:nth-child(2) {
+        flex: 1;
+    }
+
+    .notification-item strong {
+        display: block;
+        font-size: 12px;
+    }
+
+    .notification-item small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+    }
+
+    .notification-item:hover strong {
+        color: var(--primary);
+    }
+/* Fixed corner area where toasts appear. */
+.toast-region {
+    position: fixed;
+    bottom: 22px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    max-width: min(430px, calc(100vw - 32px));
+    pointer-events: none;
+}
+/* Small success/error message that pops in then disappears. */
+.toast {
+    padding: 13px 13px 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: 8px;
+    box-shadow: 0 6px 26px #14261c1a;
+    font-size: 12px;
+    pointer-events: auto;
+    animation: toast-in .18s ease-out;
+}
+
+    .toast > .icon {
+        color: var(--primary);
+    }
+
+    .toast > span {
+        flex: 1;
+    }
+/* Amber toast variant. */
+.toast-warning {
+    border-left-color: #bf853e;
+}
+
+.toast .icon-button {
+    width: 24px;
+    height: 24px;
+    padding: 3px;
+}
+/* Slide-up animation for toasts. */
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ==========================================================================
+   DARK-THEME OVERRIDES (colours that tokens alone cannot flip)
+   ========================================================================== */
+
+:root[data-theme="dark"] .button-primary {
+    color: #173220;
+}
+
+:root[data-theme="dark"] .tone-green,
+:root[data-theme="dark"] .status-success {
+    background: #2e4632;
+    color: #b4d6a9;
+}
+
+:root[data-theme="dark"] .tone-blue,
+:root[data-theme="dark"] .status-info {
+    background: #2b3d4c;
+    color: #abc6dc;
+}
+
+:root[data-theme="dark"] .tone-amber,
+:root[data-theme="dark"] .status-warning {
+    background: #453d2c;
+    color: #dfc68e;
+}
+
+:root[data-theme="dark"] .tone-purple,
+:root[data-theme="dark"] .status-purple {
+    background: #3d3449;
+    color: #c6b2d8;
+}
+
+:root[data-theme="dark"] .tone-rose,
+:root[data-theme="dark"] .status-danger {
+    background: #4a3431;
+    color: #e7afa5;
+}
+
+:root[data-theme="dark"] .status-neutral {
+    background: #344138;
+    color: #bac5b9;
+}
+
+:root[data-theme="dark"] .notice-info {
+    background: #273d48;
+    color: #afc9dc;
+    border-color: #3a5768;
+}
+
+:root[data-theme="dark"] .notice-warning {
+    background: #423a2b;
+    color: #dbc18d;
+    border-color: #665538;
+}
+/* ==========================================================================
+   RESPONSIVE / ACCESSIBILITY / PRINT
+   ========================================================================== */
+
+/* Very wide screens: a little more space above the content. */
+@media (min-width: 1700px) {
+    .main-content {
+        padding-top: 38px;
+    }
+}
+
+/* Respect "reduce motion" OS setting: turn off animations and smooth scroll. */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Print: hide navigation and controls, let the table flow across pages, black-on-white. */
+@media print {
+    :root, :root[data-theme="dark"] {
+        --bg: white;
+        --surface: white;
+        --surface-soft: #f5f5f5;
+        --text: #111;
+        --muted: #555;
+        --border: #ddd;
+        --primary: #264a31;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    .sidebar, .topbar, .workspace-footer, .page-actions, .toolbar, .tabs, .toast-region, .row-actions, .button, .icon-button, .noscript-notice {
+        display: none !important;
+    }
+
+    .workspace {
+        margin: 0;
+    }
+
+    .main-content {
+        max-width: none;
+        padding: 0;
+    }
+
+    .table-wrap {
+        overflow: visible;
+    }
+
+    .data-table {
+        min-width: 0 !important;
+    }
+
+        .data-table td, .data-table th {
+            padding: 8px;
+            white-space: normal !important;
+        }
+
+    .card {
+        break-inside: avoid;
+    }
+
+    .card {
+        margin-bottom: 15px;
+    }
+
+    body:has(.modal[open]) > .app-shell {
+        display: none;
+    }
+
+    .modal[open] {
+        position: static;
+        display: block;
+        margin: 0;
+        width: 100%;
+        max-height: none;
+        border: 0;
+        box-shadow: none;
+        overflow: visible;
+    }
+
+        .modal[open] .modal-form, .modal[open] .modal-body {
+            max-height: none;
+            overflow: visible;
+        }
+
+    .modal-footer, .modal-header {
+        display: none;
+    }
+
+    .modal::backdrop {
+        display: none;
+    }
+}

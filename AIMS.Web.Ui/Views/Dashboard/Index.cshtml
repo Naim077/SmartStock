@@ -1,0 +1,363 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_PrivateLayout";
+}
+<main class="main-content" id="main-content" tabindex="-1">
+    <div class="notice notice-warning" id="storage-warning" hidden>Browser storage is unavailable. Changes on this page will not persist.</div>
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">Workspace overview</span>
+            <h1>Inventory at a glance</h1>
+            <p class="page-description">A clear picture of your stock, sales and daily operations.</p>
+        </div>
+        <div class="page-actions">
+            <button class="button button-secondary" id="dashboard-export">
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-download">
+                    </use>
+                </svg>Export overview
+            </button>
+            <a class="button button-primary" href="purchases.html">
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-plus">
+                    </use>
+                </svg>Create purchase
+            </a>
+        </div>
+    </section>
+    <section class="stats-grid" aria-label="Key business indicators">
+        <article class="stat-card">
+            <div class="stat-label">
+                Inventory value<span class="stat-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-box">
+                    </use>
+                </svg>
+            </span>
+        </div>
+        <div class="stat-value" id="kpi-inventory">
+            <span class="currency">BDT</span>171,565
+        </div>
+        <p class="stat-meta">
+            <span class="stat-change">At weighted average cost</span>
+            <span id="kpi-product-count">12 active products</span>
+        </p>
+    </article>
+    <article class="stat-card">
+        <div class="stat-label">
+            Today's sales<span class="stat-icon">
+            <svg class="icon" aria-hidden="true">
+                <use href="#i-receipt">
+                </use>
+            </svg>
+        </span>
+    </div>
+    <div class="stat-value" id="kpi-sales">
+        <span class="currency">BDT</span>13,019
+    </div>
+    <p class="stat-meta">
+        <span class="stat-change" id="kpi-invoice-count">4 invoices</span>
+        <span>Net of today's returns</span>
+    </p>
+</article>
+<article class="stat-card">
+    <div class="stat-label">
+        Stock needs attention<span class="stat-icon">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-alert">
+            </use>
+        </svg>
+    </span>
+</div>
+<div class="stat-value" id="kpi-attention">
+    5<span class="currency"> products</span>
+</div>
+<p class="stat-meta">
+    <span class="text-warning" id="kpi-out-count">2 out of stock</span>
+    <span>Review replenishment</span>
+</p>
+</article>
+<article class="stat-card">
+    <div class="stat-label">
+        Open purchase orders<span class="stat-icon">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-truck">
+            </use>
+        </svg>
+    </span>
+</div>
+<div class="stat-value" id="kpi-orders">4</div>
+<p class="stat-meta">
+    <span class="stat-change" id="kpi-approved-count">2 approved</span>
+    <span id="kpi-draft-count">2 drafts to review</span>
+</p>
+</article>
+</section>
+<div class="content-grid">
+    <section class="card" aria-labelledby="sales-chart-title">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" id="sales-chart-title">Sales performance</h2>
+                <p class="card-subtitle">Your revenue over time, with a little more perspective.</p>
+            </div>
+            <label class="sr-only" for="dashboard-period">Chart period</label>
+            <select class="select" id="dashboard-period">
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+            </select>
+        </div>
+        <div class="chart-summary">
+            <strong id="chart-revenue-total">BDT 0</strong>
+            <small>net sales in period</small>
+            <span class="legend" style="margin-left:auto;margin-right:8px">Revenue</span>
+        </div>
+        <div class="overview-chart" id="sales-chart">
+            <svg viewBox="0 0 620 205" role="img" aria-label="Illustrative sales trend. Interactive values load with the demo.">
+                <path d="M42 40H601M42 80H601M42 120H601M42 160H601" stroke="#e5e9e2" fill="none" stroke-dasharray="3 4" />
+                <path d="M45 154C85 154 90 106 135 106S205 121 228 121S276 70 321 70S365 96 414 96S468 43 507 43S555 69 600 69" stroke="#547d58" stroke-width="2.5" fill="none" />
+            </svg>
+        </div>
+    </section>
+    <section class="card" aria-labelledby="health-title">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" id="health-title">Stock health</h2>
+                <p class="card-subtitle">Keep the right balance on your shelves.</p>
+            </div>
+            <a class="icon-button" href="stock.html" aria-label="Open stock overview">
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-arrow-up-right">
+                    </use>
+                </svg>
+            </a>
+        </div>
+        <div class="stock-health">
+            <div class="donut" id="stock-donut" role="img" aria-label="Stock health: 7 in stock, 3 low stock, 2 out of stock">
+                <div class="donut-center">
+                    <strong id="health-total">12</strong>
+                    <small>active products</small>
+                </div>
+            </div>
+            <div class="health-legend">
+                <div class="health-item">
+                    <span class="health-dot" style="background:#65846b">
+                    </span>In stock<strong id="health-healthy">7</strong>
+                </div>
+                <div class="health-item">
+                    <span class="health-dot" style="background:#d8b878">
+                    </span>Low stock<strong id="health-low">3</strong>
+                </div>
+                <div class="health-item">
+                    <span class="health-dot" style="background:#c68070">
+                    </span>Out of stock<strong id="health-out">2</strong>
+                </div>
+            </div>
+        </div>
+        <div class="health-note">
+            <span id="health-unit-count">449 units on hand</span>
+            <a href="reports.html">
+                Inventory report
+                <svg class="icon" aria-hidden="true" style="width:11px;height:11px">
+                    <use href="#i-arrow-right">
+                    </use>
+                </svg>
+            </a>
+        </div>
+    </section>
+</div>
+<section class="reorder-banner" aria-label="Replenishment shortcut">
+    <span class="banner-illustration">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-sparkles">
+            </use>
+        </svg>
+    </span>
+    <div class="banner-copy">
+        <h2>A little planning. A lot fewer stock-outs.</h2>
+        <p id="reorder-banner-copy">Review 5 products that could use a restock. You stay in control of every order.</p>
+    </div>
+    <a href="smart-reorder.html" class="button button-secondary">
+        Review suggestions
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow-right">
+            </use>
+        </svg>
+    </a>
+</section>
+<div class="content-grid">
+    <section class="card" aria-labelledby="attention-title">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" id="attention-title">Stock that needs attention</h2>
+                <p class="card-subtitle">Small actions now, smoother operations later.</p>
+            </div>
+            <a href="stock.html" class="button button-ghost button-sm">
+                View all
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-arrow-right">
+                    </use>
+                </svg>
+            </a>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table compact-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Available</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">
+                            <span class="sr-only">Action</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="dashboard-low-stock">
+                    <tr>
+                        <td>
+                            <div class="item-cell">
+                                <span class="item-icon tone-blue">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use href="#i-box">
+                                        </use>
+                                    </svg>
+                                </span>
+                                <span>
+                                    <span class="cell-title">USB-C Fast Charger</span>
+                                    <span class="cell-subtitle">EL-002</span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>8 units</td>
+                        <td>
+                            <span class="status status-warning">Low stock</span>
+                        </td>
+                        <td>
+                            <a href="smart-reorder.html" class="icon-button" aria-label="Review charger restock">
+                                <svg class="icon" aria-hidden="true">
+                                    <use href="#i-arrow-up-right">
+                                    </use>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="cell-title">Wireless Mouse</span>
+                            <span class="cell-subtitle">EL-003</span>
+                        </td>
+                        <td>0 units</td>
+                        <td>
+                            <span class="status status-danger">Out of stock</span>
+                        </td>
+                        <td>
+                            <a href="smart-reorder.html" class="icon-button" aria-label="Review mouse restock">
+                                <svg class="icon" aria-hidden="true">
+                                    <use href="#i-arrow-up-right">
+                                    </use>
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <span>Only active products below their reorder level</span>
+            <span id="attention-count">5 products</span>
+        </div>
+    </section>
+    <section class="card" aria-labelledby="activity-title">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title" id="activity-title">Recent activity</h2>
+                <p class="card-subtitle">The latest in your workspace.</p>
+            </div>
+            <a href="audit-log.html" class="icon-button" aria-label="View activity log">
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-arrow-up-right">
+                    </use>
+                </svg>
+            </a>
+        </div>
+        <div class="activity-list" id="dashboard-activity">
+            <div class="activity-item">
+                <span class="activity-symbol">
+                    <svg class="icon" aria-hidden="true">
+                        <use href="#i-check">
+                        </use>
+                    </svg>
+                </span>
+                <div>
+                    <strong>Workspace ready to explore</strong>
+                    <p>Sample products and orders are loaded locally.</p>
+                </div>
+            </div>
+            <div class="activity-item">
+                <span class="activity-symbol">
+                    <svg class="icon" aria-hidden="true">
+                        <use href="#i-stock">
+                        </use>
+                    </svg>
+                </span>
+                <div>
+                    <strong>Stock adjustment awaiting review</strong>
+                    <p>ADJ-3011, two damaged notebooks</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding-top:10px">
+            <a class="button button-secondary button-sm" href="audit-log.html" style="width:100%">
+                View activity log
+                <svg class="icon" aria-hidden="true">
+                    <use href="#i-arrow-right">
+                    </use>
+                </svg>
+            </a>
+        </div>
+    </section>
+</div>
+<nav class="quick-links" aria-label="Quick actions">
+    <a class="quick-link" href="products.html">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-box">
+            </use>
+        </svg>Manage products
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow-right">
+            </use>
+        </svg>
+    </a>
+    <a class="quick-link" href="sales.html">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-cart">
+            </use>
+        </svg>Record a sale
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow-right">
+            </use>
+        </svg>
+    </a>
+    <a class="quick-link" href="purchases.html">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-truck">
+            </use>
+        </svg>Receive stock
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow-right">
+            </use>
+        </svg>
+    </a>
+    <a class="quick-link" href="reports.html">
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-chart">
+            </use>
+        </svg>Explore reports
+        <svg class="icon" aria-hidden="true">
+            <use href="#i-arrow-right">
+            </use>
+        </svg>
+    </a>
+</nav>
+</main>

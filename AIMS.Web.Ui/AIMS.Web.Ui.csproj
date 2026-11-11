@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AIMS.Entities\AIMS.Entities.csproj" />
     <ProjectReference Include="..\AIMS.Facade\AIMS.Facade.csproj" />
     <ProjectReference Include="..\AIMS.Framework\AIMS.Framework.csproj" />
