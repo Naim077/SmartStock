@@ -1,18 +1,24 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Approval. UTC timestamps and posting rules are service responsibilities.
-public sealed class Approval
+[Table("Approval", Schema = "ss")]
+public class Approval
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long ApprovalId { get; set; }
     public long DocumentId { get; set; }
     public int VersionNo { get; set; }
-    public required string Purpose { get; set; }
-    public required string Decision { get; set; }
-    public required string Reason { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Purpose { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Decision { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Reason { get; set; } = null!;
     public Guid ReviewedByUserId { get; set; }
     public DateTime ReviewedUtc { get; set; }
-
-    public DocumentVersion DocumentVersion { get; set; } = null!;
-    public UserProfile ReviewedByUser { get; set; } = null!;
 }

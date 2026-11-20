@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class GoodsReceiptLineFacade : IGoodsReceiptLineFacade
+    public class GoodsReceiptLineFacade : IGoodsReceiptLineFacade
     {
         private readonly IGoodsReceiptLineRepository _goodsReceiptLineRepository;
 
         public GoodsReceiptLineFacade(IGoodsReceiptLineRepository goodsReceiptLineRepository)
         {
-            ArgumentNullException.ThrowIfNull(goodsReceiptLineRepository);
             _goodsReceiptLineRepository = goodsReceiptLineRepository;
         }
 
-        public Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesAsync()
         {
-            return _goodsReceiptLineRepository.GetAllAsync(cancellationToken);
+            return await _goodsReceiptLineRepository.GetAllAsync();
         }
 
-        public Task<GoodsReceiptLine?> GetGoodsReceiptLineByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<GoodsReceiptLine?> GetGoodsReceiptLineByIdAsync(long lineId)
         {
-            return _goodsReceiptLineRepository.GetByIdAsync(lineId, cancellationToken);
+            return await _goodsReceiptLineRepository.GetByIdAsync(lineId);
         }
 
-        public Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddGoodsReceiptLineAsync(GoodsReceiptLine goodsReceiptLine)
         {
-            return _goodsReceiptLineRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(goodsReceiptLine);
+            await _goodsReceiptLineRepository.AddAsync(goodsReceiptLine);
+        }
+
+        public async Task<bool> UpdateGoodsReceiptLineAsync(GoodsReceiptLine goodsReceiptLine)
+        {
+            ArgumentNullException.ThrowIfNull(goodsReceiptLine);
+            var existing = await _goodsReceiptLineRepository.GetByIdAsync(goodsReceiptLine.LineId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptLineRepository.UpdateAsync(goodsReceiptLine);
+            return true;
+        }
+
+        public async Task<bool> DeleteGoodsReceiptLineAsync(long lineId)
+        {
+            var existing = await _goodsReceiptLineRepository.GetByIdAsync(lineId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptLineRepository.DeleteAsync(lineId);
+            return true;
         }
     }
 }

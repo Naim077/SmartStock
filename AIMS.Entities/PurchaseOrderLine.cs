@@ -1,21 +1,27 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.PurchaseOrderLine. UTC timestamps and posting rules are service responsibilities.
-public sealed class PurchaseOrderLine
+[Table("PurchaseOrderLine", Schema = "ss")]
+public class PurchaseOrderLine
 {
+    [Key]
     public long LineId { get; set; }
     public long DocumentId { get; set; }
     public long ProductId { get; set; }
-    public required string ProductNameSnapshot { get; set; }
-    public required string UnitSnapshot { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ProductNameSnapshot { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string UnitSnapshot { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal OrderedQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal UnitCost { get; set; }
-    public decimal NetReceivedQuantity { get; set; } = 0m;
-    public decimal ClosedQuantity { get; set; } = 0m;
-
-    public DocumentLine DocumentLine { get; set; } = null!;
-    public PurchaseOrder PurchaseOrder { get; set; } = null!;
-    public ICollection<GoodsReceiptLine> GoodsReceiptLines { get; set; } = new List<GoodsReceiptLine>();
-    public ICollection<SuggestionConversion> SuggestionConversions { get; set; } = new List<SuggestionConversion>();
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal NetReceivedQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal ClosedQuantity { get; set; }
 }

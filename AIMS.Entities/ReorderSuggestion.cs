@@ -1,9 +1,15 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.ReorderSuggestion. UTC timestamps and posting rules are service responsibilities.
-public sealed class ReorderSuggestion
+[Table("ReorderSuggestion", Schema = "ss")]
+public class ReorderSuggestion
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long SuggestionId { get; set; }
     public Guid OpportunityKey { get; set; }
     public long ProductId { get; set; }
@@ -11,49 +17,73 @@ public sealed class ReorderSuggestion
     public long? ForecastRunId { get; set; }
     public DateTime GeneratedUtc { get; set; }
     public DateTime InputAsOfUtc { get; set; }
-    public required string CalculationVersion { get; set; }
-    public required byte[] InputHash { get; set; }
-    public required string InputSnapshotJson { get; set; }
-    public required string Status { get; set; }
-    public required string ReorderModeSnapshot { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string CalculationVersion { get; set; } = null!;
+    public byte[] InputHash { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string InputSnapshotJson { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Status { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string ReorderModeSnapshot { get; set; } = null!;
     public long ProductMovementVersion { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal SaleableQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal EligibleOnOrderQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal UncertainOnOrderQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal FutureOnOrderQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal PendingDraftQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? DailyDemand { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? DemandSigma { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? LeadTimeDays { get; set; }
-    public required string LeadTimeSource { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string LeadTimeSource { get; set; } = null!;
     public short LeadTimeSampleCount { get; set; }
     public short ReviewPeriodDays { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal SafetyFactor { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal QuantityIncrement { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? PackQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? MinimumOrderQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? ProposedUnitCost { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal SavedManualRop { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? CalculatedRop { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? EffectiveRop { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? SafetyStock { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? TargetQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? RawSuggestedQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? SuggestedQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? EstimatedCost { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? DaysOfStock { get; set; }
     public bool IsFallback { get; set; }
-    public required string Explanation { get; set; }
-    public required string MissingInputsJson { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Explanation { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string MissingInputsJson { get; set; } = null!;
     public Guid? OutcomeByUserId { get; set; }
     public DateTime? OutcomeUtc { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? OutcomeReason { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Product Product { get; set; } = null!;
-    public Supplier? Supplier { get; set; }
-    public ForecastRun? ForecastRun { get; set; }
-    public UserProfile? OutcomeByUser { get; set; }
-    public ICollection<SuggestionConversion> SuggestionConversions { get; set; } = new List<SuggestionConversion>();
-    public ICollection<AiToolCallLog> AiToolCallLogs { get; set; } = new List<AiToolCallLog>();
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

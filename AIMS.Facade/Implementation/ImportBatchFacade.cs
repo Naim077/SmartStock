@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ImportBatchFacade : IImportBatchFacade
+    public class ImportBatchFacade : IImportBatchFacade
     {
         private readonly IImportBatchRepository _importBatchRepository;
 
         public ImportBatchFacade(IImportBatchRepository importBatchRepository)
         {
-            ArgumentNullException.ThrowIfNull(importBatchRepository);
             _importBatchRepository = importBatchRepository;
         }
 
-        public Task<List<ImportBatch>> GetImportBatchesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<ImportBatch>> GetImportBatchesAsync()
         {
-            return _importBatchRepository.GetAllAsync(cancellationToken);
+            return await _importBatchRepository.GetAllAsync();
         }
 
-        public Task<ImportBatch?> GetImportBatchByIdAsync(long importBatchId, CancellationToken cancellationToken = default)
+        public async Task<ImportBatch?> GetImportBatchByIdAsync(long importBatchId)
         {
-            return _importBatchRepository.GetByIdAsync(importBatchId, cancellationToken);
+            return await _importBatchRepository.GetByIdAsync(importBatchId);
         }
 
-        public Task<List<ImportBatch>> GetImportBatchesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddImportBatchAsync(ImportBatch importBatch)
         {
-            return _importBatchRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(importBatch);
+            await _importBatchRepository.AddAsync(importBatch);
+        }
+
+        public async Task<bool> UpdateImportBatchAsync(ImportBatch importBatch)
+        {
+            ArgumentNullException.ThrowIfNull(importBatch);
+            var existing = await _importBatchRepository.GetByIdAsync(importBatch.ImportBatchId);
+            if (existing == null)
+                return false;
+
+            await _importBatchRepository.UpdateAsync(importBatch);
+            return true;
+        }
+
+        public async Task<bool> DeleteImportBatchAsync(long importBatchId)
+        {
+            var existing = await _importBatchRepository.GetByIdAsync(importBatchId);
+            if (existing == null)
+                return false;
+
+            await _importBatchRepository.DeleteAsync(importBatchId);
+            return true;
         }
     }
 }

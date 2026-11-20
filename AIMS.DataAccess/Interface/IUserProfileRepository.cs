@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IUserProfileRepository : IReadOnlyRepository<UserProfile>
+    public interface IUserProfileRepository
     {
-        Task<UserProfile?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task<List<UserProfile>> GetAllAsync();
+        Task<UserProfile?> GetByIdAsync(Guid userId);
+        Task AddAsync(UserProfile userProfile);
+        Task UpdateAsync(UserProfile userProfile);
+        Task DeleteAsync(Guid userId);
     }
 }

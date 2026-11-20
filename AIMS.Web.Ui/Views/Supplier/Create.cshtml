@@ -1,0 +1,58 @@
+@model AIMS.Entities.Supplier
+@{
+    ViewData["Title"] = "Add supplier";
+    Layout = "_PrivateLayout";
+}
+<link rel="stylesheet" href="~/css/Supplier/Supplier.css" asp-append-version="true" />
+<div class="supplier-page supplier-form-page">
+    <div class="supplier-heading">
+        <div><div class="supplier-eyebrow">SUPPLIER DIRECTORY</div><h1>Add supplier</h1><p>Enter the supplier's business and contact information.</p></div>
+        <a asp-action="Index" class="supplier-btn supplier-btn-light"><i class="bi bi-arrow-left"></i> Back to suppliers</a>
+    </div>
+    <form asp-controller="Supplier" asp-action="Create" method="post" class="supplier-form-card">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="supplier-validation"></div>
+        <div class="supplier-form-grid">
+            <div class="supplier-field">
+                <label asp-for="Name">Supplier name <span>*</span></label>
+                <input asp-for="Name" placeholder="Enter supplier or company name" required />
+                <span asp-validation-for="Name"></span>
+            </div>
+            <div class="supplier-field">
+                <label asp-for="ContactName">Contact person</label>
+                <input asp-for="ContactName" placeholder="Contact person's name" />
+            </div>
+            <div class="supplier-field">
+                <label asp-for="Phone">Phone number</label>
+                <input asp-for="Phone" placeholder="+880..." />
+            </div>
+            <div class="supplier-field">
+                <label asp-for="Email">Email address</label>
+                <input asp-for="Email" type="email" placeholder="supplier@example.com" />
+            </div>
+            <div class="supplier-field supplier-field-full">
+                <label asp-for="Address">Address</label>
+                <textarea asp-for="Address" rows="3" placeholder="Business address"></textarea>
+            </div>
+            <div class="supplier-field">
+                <label asp-for="PaymentTermsDays">Payment terms (days)</label>
+                <input asp-for="PaymentTermsDays" type="number" min="0" max="32767" />
+            </div>
+            <div class="supplier-field">
+                <label asp-for="ConfiguredLeadTimeDays">Configured lead time (days)</label>
+                <input asp-for="ConfiguredLeadTimeDays" type="number" min="0" step="0.01" placeholder="e.g. 5" />
+            </div>
+            <div class="supplier-field supplier-field-full supplier-active-toggle">
+                <label class="supplier-check-label">
+                    <input asp-for="IsActive" type="checkbox" />
+                    <span><strong>Active supplier</strong><small>This supplier can be selected for new purchase orders.</small></span>
+                </label>
+            </div>
+        </div>
+        <div class="supplier-form-actions">
+            <a asp-action="Index" class="supplier-btn supplier-btn-light">Cancel</a>
+            <button type="submit" class="supplier-btn supplier-btn-primary"><i class="bi bi-check2"></i> Save supplier</button>
+        </div>
+    </form>
+</div>
+

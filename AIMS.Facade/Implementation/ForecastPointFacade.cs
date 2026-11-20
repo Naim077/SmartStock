@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ForecastPointFacade : IForecastPointFacade
+    public class ForecastPointFacade : IForecastPointFacade
     {
         private readonly IForecastPointRepository _forecastPointRepository;
 
         public ForecastPointFacade(IForecastPointRepository forecastPointRepository)
         {
-            ArgumentNullException.ThrowIfNull(forecastPointRepository);
             _forecastPointRepository = forecastPointRepository;
         }
 
-        public Task<List<ForecastPoint>> GetForecastPointsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<ForecastPoint>> GetForecastPointsAsync()
         {
-            return _forecastPointRepository.GetAllAsync(cancellationToken);
+            return await _forecastPointRepository.GetAllAsync();
         }
 
-        public Task<ForecastPoint?> GetForecastPointByIdAsync(long forecastRunId, short horizonDays, CancellationToken cancellationToken = default)
+        public async Task<ForecastPoint?> GetForecastPointByIdAsync(long forecastRunId, short horizonDays)
         {
-            return _forecastPointRepository.GetByIdAsync(forecastRunId, horizonDays, cancellationToken);
+            return await _forecastPointRepository.GetByIdAsync(forecastRunId, horizonDays);
         }
 
-        public Task<List<ForecastPoint>> GetForecastPointsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddForecastPointAsync(ForecastPoint forecastPoint)
         {
-            return _forecastPointRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(forecastPoint);
+            await _forecastPointRepository.AddAsync(forecastPoint);
+        }
+
+        public async Task<bool> UpdateForecastPointAsync(ForecastPoint forecastPoint)
+        {
+            ArgumentNullException.ThrowIfNull(forecastPoint);
+            var existing = await _forecastPointRepository.GetByIdAsync(forecastPoint.ForecastRunId, forecastPoint.HorizonDays);
+            if (existing == null)
+                return false;
+
+            await _forecastPointRepository.UpdateAsync(forecastPoint);
+            return true;
+        }
+
+        public async Task<bool> DeleteForecastPointAsync(long forecastRunId, short horizonDays)
+        {
+            var existing = await _forecastPointRepository.GetByIdAsync(forecastRunId, horizonDays);
+            if (existing == null)
+                return false;
+
+            await _forecastPointRepository.DeleteAsync(forecastRunId, horizonDays);
+            return true;
         }
     }
 }

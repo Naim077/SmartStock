@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IStockBalanceRepository : IReadOnlyRepository<StockBalance>
+    public interface IStockBalanceRepository
     {
-        Task<StockBalance?> GetByIdAsync(long productBatchId, string bucket, CancellationToken cancellationToken = default);
+        Task<List<StockBalance>> GetAllAsync();
+        Task<StockBalance?> GetByIdAsync(long productBatchId, string bucket);
+        Task AddAsync(StockBalance stockBalance);
+        Task UpdateAsync(StockBalance stockBalance);
+        Task DeleteAsync(long productBatchId, string bucket);
     }
 }

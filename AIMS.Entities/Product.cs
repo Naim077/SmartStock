@@ -1,40 +1,51 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Product. UTC timestamps and posting rules are service responsibilities.
-public sealed class Product
+[Table("Product", Schema = "ss")]
+public class Product
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long ProductId { get; set; }
     public long CategoryId { get; set; }
     public long? PreferredSupplierId { get; set; }
-    public required string Sku { get; set; }
-    public string? NormalizedSku { get; private set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Sku { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string? NormalizedSku { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? Barcode { get; set; }
-    public string? NormalizedBarcode { get; private set; }
-    public required string Name { get; set; }
-    public required string BaseUnit { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string? NormalizedBarcode { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Name { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string BaseUnit { get; set; } = null!;
     public byte QuantityScale { get; set; }
-    public decimal? QuantityIncrement { get; private set; }
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal? QuantityIncrement { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal SellingUnitPrice { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal DefaultPurchaseUnitCost { get; set; }
-    public required string ReorderMode { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ReorderMode { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal ManualReorderPoint { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal PackQuantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal MinimumOrderQuantity { get; set; }
-    public bool ExpiryTracked { get; set; } = false;
+    public bool ExpiryTracked { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? ImageAssetReference { get; set; }
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
     public DateTime ActivatedUtc { get; set; }
     public DateTime? ArchivedUtc { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Category Category { get; set; } = null!;
-    public Supplier? PreferredSupplier { get; set; }
-    public ICollection<ProductBatch> ProductBatches { get; set; } = new List<ProductBatch>();
-    public ICollection<DocumentLine> DocumentLines { get; set; } = new List<DocumentLine>();
-    public ProductStockBalance? ProductStockBalance { get; set; }
-    public ICollection<ForecastRun> ForecastRuns { get; set; } = new List<ForecastRun>();
-    public ICollection<ReorderSuggestion> ReorderSuggestions { get; set; } = new List<ReorderSuggestion>();
-    public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
-    public ICollection<Alert> Alerts { get; set; } = new List<Alert>();
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

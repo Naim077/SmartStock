@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class UserProfileFacade : IUserProfileFacade
+    public class UserProfileFacade : IUserProfileFacade
     {
         private readonly IUserProfileRepository _userProfileRepository;
 
         public UserProfileFacade(IUserProfileRepository userProfileRepository)
         {
-            ArgumentNullException.ThrowIfNull(userProfileRepository);
             _userProfileRepository = userProfileRepository;
         }
 
-        public Task<List<UserProfile>> GetUserProfilesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<UserProfile>> GetUserProfilesAsync()
         {
-            return _userProfileRepository.GetAllAsync(cancellationToken);
+            return await _userProfileRepository.GetAllAsync();
         }
 
-        public Task<UserProfile?> GetUserProfileByIdAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<UserProfile?> GetUserProfileByIdAsync(Guid userId)
         {
-            return _userProfileRepository.GetByIdAsync(userId, cancellationToken);
+            return await _userProfileRepository.GetByIdAsync(userId);
         }
 
-        public Task<List<UserProfile>> GetUserProfilesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddUserProfileAsync(UserProfile userProfile)
         {
-            return _userProfileRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(userProfile);
+            await _userProfileRepository.AddAsync(userProfile);
+        }
+
+        public async Task<bool> UpdateUserProfileAsync(UserProfile userProfile)
+        {
+            ArgumentNullException.ThrowIfNull(userProfile);
+            var existing = await _userProfileRepository.GetByIdAsync(userProfile.UserId);
+            if (existing == null)
+                return false;
+
+            await _userProfileRepository.UpdateAsync(userProfile);
+            return true;
+        }
+
+        public async Task<bool> DeleteUserProfileAsync(Guid userId)
+        {
+            var existing = await _userProfileRepository.GetByIdAsync(userId);
+            if (existing == null)
+                return false;
+
+            await _userProfileRepository.DeleteAsync(userId);
+            return true;
         }
     }
 }

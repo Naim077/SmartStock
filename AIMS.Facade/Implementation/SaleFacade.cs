@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class SaleFacade : ISaleFacade
+    public class SaleFacade : ISaleFacade
     {
         private readonly ISaleRepository _saleRepository;
 
         public SaleFacade(ISaleRepository saleRepository)
         {
-            ArgumentNullException.ThrowIfNull(saleRepository);
             _saleRepository = saleRepository;
         }
 
-        public Task<List<Sale>> GetSalesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Sale>> GetSalesAsync()
         {
-            return _saleRepository.GetAllAsync(cancellationToken);
+            return await _saleRepository.GetAllAsync();
         }
 
-        public Task<Sale?> GetSaleByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<Sale?> GetSaleByIdAsync(long documentId)
         {
-            return _saleRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _saleRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<Sale>> GetSalesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddSaleAsync(Sale sale)
         {
-            return _saleRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(sale);
+            await _saleRepository.AddAsync(sale);
+        }
+
+        public async Task<bool> UpdateSaleAsync(Sale sale)
+        {
+            ArgumentNullException.ThrowIfNull(sale);
+            var existing = await _saleRepository.GetByIdAsync(sale.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _saleRepository.UpdateAsync(sale);
+            return true;
+        }
+
+        public async Task<bool> DeleteSaleAsync(long documentId)
+        {
+            var existing = await _saleRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _saleRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

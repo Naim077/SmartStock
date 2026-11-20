@@ -1,20 +1,23 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.AccountEntry. UTC timestamps and posting rules are service responsibilities.
-public sealed class AccountEntry
+[Table("AccountEntry", Schema = "ss")]
+public class AccountEntry
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long AccountEntryId { get; set; }
     public long PostingId { get; set; }
     public long? CustomerId { get; set; }
     public long? SupplierId { get; set; }
-    public required string EntryKind { get; set; }
-    public required string Side { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string EntryKind { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Side { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Amount { get; set; }
-
-    public Posting Posting { get; set; } = null!;
-    public Customer? Customer { get; set; }
-    public Supplier? Supplier { get; set; }
-    public ICollection<AccountAllocation> AccountAllocations { get; set; } = new List<AccountAllocation>();
-    public ICollection<AccountAllocation> AccountAllocationsAsDebitEntry { get; set; } = new List<AccountAllocation>();
 }

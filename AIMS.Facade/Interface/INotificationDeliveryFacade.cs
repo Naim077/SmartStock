@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed NotificationDelivery records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface INotificationDeliveryFacade
     {
-        Task<List<NotificationDelivery>> GetNotificationDeliveriesAsync(CancellationToken cancellationToken = default);
-        Task<NotificationDelivery?> GetNotificationDeliveryByIdAsync(long deliveryId, CancellationToken cancellationToken = default);
-        Task<List<NotificationDelivery>> GetNotificationDeliveriesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<NotificationDelivery>> GetNotificationDeliveriesAsync();
+        Task<NotificationDelivery?> GetNotificationDeliveryByIdAsync(long deliveryId);
+        Task AddNotificationDeliveryAsync(NotificationDelivery notificationDelivery);
+        Task<bool> UpdateNotificationDeliveryAsync(NotificationDelivery notificationDelivery);
+        Task<bool> DeleteNotificationDeliveryAsync(long deliveryId);
     }
 }

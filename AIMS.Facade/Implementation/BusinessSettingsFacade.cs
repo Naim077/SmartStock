@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class BusinessSettingsFacade : IBusinessSettingsFacade
+    public class BusinessSettingsFacade : IBusinessSettingsFacade
     {
         private readonly IBusinessSettingsRepository _businessSettingsRepository;
 
         public BusinessSettingsFacade(IBusinessSettingsRepository businessSettingsRepository)
         {
-            ArgumentNullException.ThrowIfNull(businessSettingsRepository);
             _businessSettingsRepository = businessSettingsRepository;
         }
 
-        public Task<List<BusinessSettings>> GetBusinessSettingsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<BusinessSettings>> GetBusinessSettingsesAsync()
         {
-            return _businessSettingsRepository.GetAllAsync(cancellationToken);
+            return await _businessSettingsRepository.GetAllAsync();
         }
 
-        public Task<BusinessSettings?> GetBusinessSettingsByIdAsync(byte settingsId, CancellationToken cancellationToken = default)
+        public async Task<BusinessSettings?> GetBusinessSettingsByIdAsync(byte settingsId)
         {
-            return _businessSettingsRepository.GetByIdAsync(settingsId, cancellationToken);
+            return await _businessSettingsRepository.GetByIdAsync(settingsId);
         }
 
-        public Task<List<BusinessSettings>> GetBusinessSettingsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddBusinessSettingsAsync(BusinessSettings businessSettings)
         {
-            return _businessSettingsRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(businessSettings);
+            await _businessSettingsRepository.AddAsync(businessSettings);
+        }
+
+        public async Task<bool> UpdateBusinessSettingsAsync(BusinessSettings businessSettings)
+        {
+            ArgumentNullException.ThrowIfNull(businessSettings);
+            var existing = await _businessSettingsRepository.GetByIdAsync(businessSettings.SettingsId);
+            if (existing == null)
+                return false;
+
+            await _businessSettingsRepository.UpdateAsync(businessSettings);
+            return true;
+        }
+
+        public async Task<bool> DeleteBusinessSettingsAsync(byte settingsId)
+        {
+            var existing = await _businessSettingsRepository.GetByIdAsync(settingsId);
+            if (existing == null)
+                return false;
+
+            await _businessSettingsRepository.DeleteAsync(settingsId);
+            return true;
         }
     }
 }

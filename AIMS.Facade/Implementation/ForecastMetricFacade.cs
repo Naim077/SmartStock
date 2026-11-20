@@ -1,33 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ForecastMetricFacade : IForecastMetricFacade
+    public class ForecastMetricFacade : IForecastMetricFacade
     {
         private readonly IForecastMetricRepository _forecastMetricRepository;
 
         public ForecastMetricFacade(IForecastMetricRepository forecastMetricRepository)
         {
-            ArgumentNullException.ThrowIfNull(forecastMetricRepository);
             _forecastMetricRepository = forecastMetricRepository;
         }
 
-        public Task<List<ForecastMetric>> GetForecastMetricsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<ForecastMetric>> GetForecastMetricsAsync()
         {
-            return _forecastMetricRepository.GetAllAsync(cancellationToken);
+            return await _forecastMetricRepository.GetAllAsync();
         }
 
-        public Task<ForecastMetric?> GetForecastMetricByIdAsync(long forecastRunId, string method, CancellationToken cancellationToken = default)
+        public async Task<ForecastMetric?> GetForecastMetricByIdAsync(long forecastRunId, string method)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(method);
-            return _forecastMetricRepository.GetByIdAsync(forecastRunId, method, cancellationToken);
+            return await _forecastMetricRepository.GetByIdAsync(forecastRunId, method);
         }
 
-        public Task<List<ForecastMetric>> GetForecastMetricsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddForecastMetricAsync(ForecastMetric forecastMetric)
         {
-            return _forecastMetricRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(forecastMetric);
+            await _forecastMetricRepository.AddAsync(forecastMetric);
+        }
+
+        public async Task<bool> UpdateForecastMetricAsync(ForecastMetric forecastMetric)
+        {
+            ArgumentNullException.ThrowIfNull(forecastMetric);
+            var existing = await _forecastMetricRepository.GetByIdAsync(forecastMetric.ForecastRunId, forecastMetric.Method);
+            if (existing == null)
+                return false;
+
+            await _forecastMetricRepository.UpdateAsync(forecastMetric);
+            return true;
+        }
+
+        public async Task<bool> DeleteForecastMetricAsync(long forecastRunId, string method)
+        {
+            var existing = await _forecastMetricRepository.GetByIdAsync(forecastRunId, method);
+            if (existing == null)
+                return false;
+
+            await _forecastMetricRepository.DeleteAsync(forecastRunId, method);
+            return true;
         }
     }
 }

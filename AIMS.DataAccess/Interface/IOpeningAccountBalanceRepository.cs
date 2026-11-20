@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IOpeningAccountBalanceRepository : IReadOnlyRepository<OpeningAccountBalance>
+    public interface IOpeningAccountBalanceRepository
     {
-        Task<OpeningAccountBalance?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default);
+        Task<List<OpeningAccountBalance>> GetAllAsync();
+        Task<OpeningAccountBalance?> GetByIdAsync(long documentId);
+        Task AddAsync(OpeningAccountBalance openingAccountBalance);
+        Task UpdateAsync(OpeningAccountBalance openingAccountBalance);
+        Task DeleteAsync(long documentId);
     }
 }

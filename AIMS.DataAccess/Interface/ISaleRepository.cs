@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface ISaleRepository : IReadOnlyRepository<Sale>
+    public interface ISaleRepository
     {
-        Task<Sale?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default);
+        Task<List<Sale>> GetAllAsync();
+        Task<Sale?> GetByIdAsync(long documentId);
+        Task AddAsync(Sale sale);
+        Task UpdateAsync(Sale sale);
+        Task DeleteAsync(long documentId);
     }
 }

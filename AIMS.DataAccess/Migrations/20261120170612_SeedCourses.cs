@@ -14,6 +14,9 @@ namespace AIMS.DataAccess.Migrations
             migrationBuilder.EnsureSchema(
                 name: "ss");
 
+            migrationBuilder.EnsureSchema(
+                name: "dbo");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -69,7 +72,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Category", x => x.CategoryId);
                     table.ForeignKey(
-                        name: "FK_Category_Parent",
+                        name: "FK_Category_Category_ParentCategoryId",
                         column: x => x.ParentCategoryId,
                         principalSchema: "ss",
                         principalTable: "Category",
@@ -98,6 +101,54 @@ namespace AIMS.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Permission",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(500)", nullable: true),
+                    DisplayText = table.Column<string>(type: "nvarchar(500)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permission", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionGroup",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Tag = table.Column<string>(type: "nvarchar(500)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionGroup", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PermissionGroupMap",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PermissionGroupId = table.Column<int>(type: "int", nullable: false),
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissionGroupMap", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Supplier",
                 schema: "ss",
                 columns: table => new
@@ -117,6 +168,22 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Supplier", x => x.SupplierId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPermission",
+                schema: "dbo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PermissionId = table.Column<int>(type: "int", nullable: true),
+                    PermissionGroupId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPermission", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -242,7 +309,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_UserProfile", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_UserProfile_IdentityUser",
+                        name: "FK_UserProfile_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -282,13 +349,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Product", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_Product_Category",
+                        name: "FK_Product_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalSchema: "ss",
                         principalTable: "Category",
                         principalColumn: "CategoryId");
                     table.ForeignKey(
-                        name: "FK_Product_Supplier",
+                        name: "FK_Product_Supplier_PreferredSupplierId",
                         column: x => x.PreferredSupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
@@ -311,7 +378,7 @@ namespace AIMS.DataAccess.Migrations
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionRedacted = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AnswerRedacted = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BudgetMonth = table.Column<DateOnly>(type: "date", nullable: false),
+                    BudgetMonth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReservedTokens = table.Column<int>(type: "int", nullable: false),
                     InputTokens = table.Column<int>(type: "int", nullable: false),
                     OutputTokens = table.Column<int>(type: "int", nullable: false),
@@ -325,7 +392,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AiChatLog", x => x.AiChatLogId);
                     table.ForeignKey(
-                        name: "FK_Chat_User",
+                        name: "FK_AiChatLog_UserProfile_UserId",
                         column: x => x.UserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -371,7 +438,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_BusinessSettings", x => x.SettingsId);
                     table.ForeignKey(
-                        name: "FK_Settings_User",
+                        name: "FK_BusinessSettings_UserProfile_UpdatedByUserId",
                         column: x => x.UpdatedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -398,7 +465,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_IdempotencyRequest", x => x.RequestId);
                     table.ForeignKey(
-                        name: "FK_Request_User",
+                        name: "FK_IdempotencyRequest_UserProfile_ActorUserId",
                         column: x => x.ActorUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -416,16 +483,16 @@ namespace AIMS.DataAccess.Migrations
                     IsUnbatched = table.Column<bool>(type: "bit", nullable: false),
                     BatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NormalizedBatchNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExpiryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FirstReceivedUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductBatch", x => x.ProductBatchId);
-                    table.UniqueConstraint("UQ_Batch_Product", x => new { x.ProductBatchId, x.ProductId });
+                    table.UniqueConstraint("AK_ProductBatch_ProductBatchId_ProductId", x => new { x.ProductBatchId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_Batch_Product",
+                        name: "FK_ProductBatch_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
@@ -453,13 +520,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Document", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_Document_Request",
+                        name: "FK_Document_IdempotencyRequest_CreationRequestId",
                         column: x => x.CreationRequestId,
                         principalSchema: "ss",
                         principalTable: "IdempotencyRequest",
                         principalColumn: "RequestId");
                     table.ForeignKey(
-                        name: "FK_Document_User",
+                        name: "FK_Document_UserProfile_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -490,23 +557,23 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ImportBatch", x => x.ImportBatchId);
                     table.ForeignKey(
-                        name: "FK_Import_Confirmer",
+                        name: "FK_ImportBatch_IdempotencyRequest_RequestId",
+                        column: x => x.RequestId,
+                        principalSchema: "ss",
+                        principalTable: "IdempotencyRequest",
+                        principalColumn: "RequestId");
+                    table.ForeignKey(
+                        name: "FK_ImportBatch_UserProfile_ConfirmedByUserId",
                         column: x => x.ConfirmedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
                         principalColumn: "UserId");
                     table.ForeignKey(
-                        name: "FK_Import_Creator",
+                        name: "FK_ImportBatch_UserProfile_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
                         principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Import_Request",
-                        column: x => x.RequestId,
-                        principalSchema: "ss",
-                        principalTable: "IdempotencyRequest",
-                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateTable(
@@ -535,13 +602,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_JobRun", x => x.JobRunId);
                     table.ForeignKey(
-                        name: "FK_Job_Request",
+                        name: "FK_JobRun_IdempotencyRequest_RequestId",
                         column: x => x.RequestId,
                         principalSchema: "ss",
                         principalTable: "IdempotencyRequest",
                         principalColumn: "RequestId");
                     table.ForeignKey(
-                        name: "FK_Job_User",
+                        name: "FK_JobRun_UserProfile_RequestedByUserId",
                         column: x => x.RequestedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -564,13 +631,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_DocumentVersion", x => new { x.DocumentId, x.VersionNo });
                     table.ForeignKey(
-                        name: "FK_DocumentVersion_Document",
+                        name: "FK_DocumentVersion_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_DocumentVersion_User",
+                        name: "FK_DocumentVersion_UserProfile_CapturedByUserId",
                         column: x => x.CapturedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -584,7 +651,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     DocumentId = table.Column<long>(type: "bigint", nullable: false),
                     SupplierId = table.Column<long>(type: "bigint", nullable: false),
-                    ExpectedDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    ExpectedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SupplierNameSnapshot = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SupplierAddressSnapshot = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PaymentTermsDaysSnapshot = table.Column<short>(type: "smallint", nullable: false),
@@ -598,23 +665,23 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_PurchaseOrder", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_PO_ClosingUser",
-                        column: x => x.ClosedOrCancelledByUserId,
-                        principalSchema: "ss",
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_PO_Document",
+                        name: "FK_PurchaseOrder_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_PO_Supplier",
+                        name: "FK_PurchaseOrder_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
                         principalColumn: "SupplierId");
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrder_UserProfile_ClosedOrCancelledByUserId",
+                        column: x => x.ClosedOrCancelledByUserId,
+                        principalSchema: "ss",
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -632,13 +699,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Sale", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_Sale_Customer",
+                        name: "FK_Sale_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalSchema: "ss",
                         principalTable: "Customer",
                         principalColumn: "CustomerId");
                     table.ForeignKey(
-                        name: "FK_Sale_Document",
+                        name: "FK_Sale_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
@@ -659,7 +726,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_StockChange", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_StockChange_Document",
+                        name: "FK_StockChange_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
@@ -683,22 +750,22 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DocumentLine", x => x.LineId);
-                    table.UniqueConstraint("UQ_DocumentLine_Identity", x => new { x.LineId, x.DocumentId, x.ProductId });
-                    table.UniqueConstraint("UQ_DocumentLine_Product", x => new { x.LineId, x.ProductId });
+                    table.UniqueConstraint("AK_DocumentLine_LineId_DocumentId_ProductId", x => new { x.LineId, x.DocumentId, x.ProductId });
+                    table.UniqueConstraint("AK_DocumentLine_LineId_ProductId", x => new { x.LineId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_DocumentLine_Document",
+                        name: "FK_DocumentLine_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_DocumentLine_Import",
+                        name: "FK_DocumentLine_ImportBatch_ImportBatchId",
                         column: x => x.ImportBatchId,
                         principalSchema: "ss",
                         principalTable: "ImportBatch",
                         principalColumn: "ImportBatchId");
                     table.ForeignKey(
-                        name: "FK_DocumentLine_Product",
+                        name: "FK_DocumentLine_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
@@ -722,25 +789,25 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_OpeningAccountBalance", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_OpeningAccount_Customer",
+                        name: "FK_OpeningAccountBalance_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalSchema: "ss",
                         principalTable: "Customer",
                         principalColumn: "CustomerId");
                     table.ForeignKey(
-                        name: "FK_OpeningAccount_Document",
+                        name: "FK_OpeningAccountBalance_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_OpeningAccount_Import",
+                        name: "FK_OpeningAccountBalance_ImportBatch_ImportBatchId",
                         column: x => x.ImportBatchId,
                         principalSchema: "ss",
                         principalTable: "ImportBatch",
                         principalColumn: "ImportBatchId");
                     table.ForeignKey(
-                        name: "FK_OpeningAccount_Supplier",
+                        name: "FK_OpeningAccountBalance_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
@@ -772,25 +839,25 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Alert", x => x.AlertId);
                     table.ForeignKey(
-                        name: "FK_Alert_Batch",
-                        columns: x => new { x.ProductBatchId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "ProductBatch",
-                        principalColumns: new[] { "ProductBatchId", "ProductId" });
-                    table.ForeignKey(
-                        name: "FK_Alert_Job",
+                        name: "FK_Alert_JobRun_JobRunId",
                         column: x => x.JobRunId,
                         principalSchema: "ss",
                         principalTable: "JobRun",
                         principalColumn: "JobRunId");
                     table.ForeignKey(
-                        name: "FK_Alert_Product",
+                        name: "FK_Alert_ProductBatch_ProductBatchId_ProductId",
+                        columns: x => new { x.ProductBatchId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "ProductBatch",
+                        principalColumns: new[] { "ProductBatchId", "ProductId" });
+                    table.ForeignKey(
+                        name: "FK_Alert_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
                         principalColumn: "ProductId");
                     table.ForeignKey(
-                        name: "FK_Alert_User",
+                        name: "FK_Alert_UserProfile_AcknowledgedByUserId",
                         column: x => x.AcknowledgedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -810,11 +877,11 @@ namespace AIMS.DataAccess.Migrations
                     Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ModelVersion = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Confidence = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HistoryStartDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    HistoryEndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    HistoryStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    HistoryEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TrainingCutoffUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ValidationStartDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    ValidationEndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    ValidationStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ValidationEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ValidationCutoffUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RefitCutoffUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CompleteDayCount = table.Column<int>(type: "int", nullable: false),
@@ -828,15 +895,15 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ForecastRun", x => x.ForecastRunId);
-                    table.UniqueConstraint("UQ_Forecast_Product", x => new { x.ForecastRunId, x.ProductId });
+                    table.UniqueConstraint("AK_ForecastRun_ForecastRunId_ProductId", x => new { x.ForecastRunId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_Forecast_Job",
+                        name: "FK_ForecastRun_JobRun_JobRunId",
                         column: x => x.JobRunId,
                         principalSchema: "ss",
                         principalTable: "JobRun",
                         principalColumn: "JobRunId");
                     table.ForeignKey(
-                        name: "FK_Forecast_Product",
+                        name: "FK_ForecastRun_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
@@ -862,17 +929,17 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Approval", x => x.ApprovalId);
                     table.ForeignKey(
-                        name: "FK_Approval_User",
-                        column: x => x.ReviewedByUserId,
-                        principalSchema: "ss",
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Approval_Version",
+                        name: "FK_Approval_DocumentVersion_DocumentId_VersionNo",
                         columns: x => new { x.DocumentId, x.VersionNo },
                         principalSchema: "ss",
                         principalTable: "DocumentVersion",
                         principalColumns: new[] { "DocumentId", "VersionNo" });
+                    table.ForeignKey(
+                        name: "FK_Approval_UserProfile_ReviewedByUserId",
+                        column: x => x.ReviewedByUserId,
+                        principalSchema: "ss",
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -887,31 +954,31 @@ namespace AIMS.DataAccess.Migrations
                     RequestId = table.Column<long>(type: "bigint", nullable: false),
                     ActorUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PostedUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BusinessDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    BusinessDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CorrelationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posting", x => x.PostingId);
-                    table.UniqueConstraint("UQ_Posting_IdDocument", x => new { x.PostingId, x.DocumentId });
+                    table.UniqueConstraint("AK_Posting_PostingId_DocumentId", x => new { x.PostingId, x.DocumentId });
                     table.ForeignKey(
-                        name: "FK_Posting_Request",
+                        name: "FK_Posting_DocumentVersion_DocumentId_VersionNo",
+                        columns: x => new { x.DocumentId, x.VersionNo },
+                        principalSchema: "ss",
+                        principalTable: "DocumentVersion",
+                        principalColumns: new[] { "DocumentId", "VersionNo" });
+                    table.ForeignKey(
+                        name: "FK_Posting_IdempotencyRequest_RequestId",
                         column: x => x.RequestId,
                         principalSchema: "ss",
                         principalTable: "IdempotencyRequest",
                         principalColumn: "RequestId");
                     table.ForeignKey(
-                        name: "FK_Posting_User",
+                        name: "FK_Posting_UserProfile_ActorUserId",
                         column: x => x.ActorUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
                         principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Posting_Version",
-                        columns: x => new { x.DocumentId, x.VersionNo },
-                        principalSchema: "ss",
-                        principalTable: "DocumentVersion",
-                        principalColumns: new[] { "DocumentId", "VersionNo" });
                 });
 
             migrationBuilder.CreateTable(
@@ -926,15 +993,15 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GoodsReceipt", x => x.DocumentId);
-                    table.UniqueConstraint("UQ_GRN_PO", x => new { x.DocumentId, x.PurchaseOrderId });
+                    table.UniqueConstraint("AK_GoodsReceipt_DocumentId_PurchaseOrderId", x => new { x.DocumentId, x.PurchaseOrderId });
                     table.ForeignKey(
-                        name: "FK_GRN_Document",
+                        name: "FK_GoodsReceipt_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_GRN_PO",
+                        name: "FK_GoodsReceipt_PurchaseOrder_PurchaseOrderId",
                         column: x => x.PurchaseOrderId,
                         principalSchema: "ss",
                         principalTable: "PurchaseOrder",
@@ -954,7 +1021,7 @@ namespace AIMS.DataAccess.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Method = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExternalReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ExternalEffectiveDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    ExternalEffectiveDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CashTenderedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     CashChangeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
@@ -962,25 +1029,25 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Payment", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_Payment_Customer",
+                        name: "FK_Payment_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalSchema: "ss",
                         principalTable: "Customer",
                         principalColumn: "CustomerId");
                     table.ForeignKey(
-                        name: "FK_Payment_Document",
+                        name: "FK_Payment_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_Payment_PO",
+                        name: "FK_Payment_PurchaseOrder_PurchaseOrderId",
                         column: x => x.PurchaseOrderId,
                         principalSchema: "ss",
                         principalTable: "PurchaseOrder",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_Payment_Supplier",
+                        name: "FK_Payment_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
@@ -1005,15 +1072,15 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PurchaseOrderLine", x => x.LineId);
-                    table.UniqueConstraint("UQ_POLine_Identity", x => new { x.LineId, x.DocumentId, x.ProductId });
+                    table.UniqueConstraint("AK_PurchaseOrderLine_LineId_DocumentId_ProductId", x => new { x.LineId, x.DocumentId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_POLine_Line",
+                        name: "FK_PurchaseOrderLine_DocumentLine_LineId_DocumentId_ProductId",
                         columns: x => new { x.LineId, x.DocumentId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "DocumentLine",
                         principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_POLine_PO",
+                        name: "FK_PurchaseOrderLine_PurchaseOrder_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "PurchaseOrder",
@@ -1042,15 +1109,15 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SaleLine", x => x.LineId);
-                    table.UniqueConstraint("UQ_SaleLine_Identity", x => new { x.LineId, x.DocumentId, x.ProductId });
+                    table.UniqueConstraint("AK_SaleLine_LineId_DocumentId_ProductId", x => new { x.LineId, x.DocumentId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_SaleLine_Line",
+                        name: "FK_SaleLine_DocumentLine_LineId_DocumentId_ProductId",
                         columns: x => new { x.LineId, x.DocumentId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "DocumentLine",
                         principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_SaleLine_Sale",
+                        name: "FK_SaleLine_Sale_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Sale",
@@ -1080,23 +1147,23 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_StockChangeLine", x => x.LineId);
                     table.ForeignKey(
-                        name: "FK_StockChangeLine_Batch",
+                        name: "FK_StockChangeLine_DocumentLine_LineId_DocumentId_ProductId",
+                        columns: x => new { x.LineId, x.DocumentId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "DocumentLine",
+                        principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
+                    table.ForeignKey(
+                        name: "FK_StockChangeLine_ProductBatch_ProductBatchId_ProductId",
                         columns: x => new { x.ProductBatchId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "ProductBatch",
                         principalColumns: new[] { "ProductBatchId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_StockChangeLine_Header",
+                        name: "FK_StockChangeLine_StockChange_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "StockChange",
                         principalColumn: "DocumentId");
-                    table.ForeignKey(
-                        name: "FK_StockChangeLine_Line",
-                        columns: x => new { x.LineId, x.DocumentId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "DocumentLine",
-                        principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
                 });
 
             migrationBuilder.CreateTable(
@@ -1123,13 +1190,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_NotificationDelivery", x => x.DeliveryId);
                     table.ForeignKey(
-                        name: "FK_Notification_Alert",
+                        name: "FK_NotificationDelivery_Alert_AlertId",
                         column: x => x.AlertId,
                         principalSchema: "ss",
                         principalTable: "Alert",
                         principalColumn: "AlertId");
                     table.ForeignKey(
-                        name: "FK_Notification_Job",
+                        name: "FK_NotificationDelivery_JobRun_JobRunId",
                         column: x => x.JobRunId,
                         principalSchema: "ss",
                         principalTable: "JobRun",
@@ -1157,7 +1224,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ForecastMetric", x => new { x.ForecastRunId, x.Method });
                     table.ForeignKey(
-                        name: "FK_Metric_Run",
+                        name: "FK_ForecastMetric_ForecastRun_ForecastRunId",
                         column: x => x.ForecastRunId,
                         principalSchema: "ss",
                         principalTable: "ForecastRun",
@@ -1171,7 +1238,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     ForecastRunId = table.Column<long>(type: "bigint", nullable: false),
                     SnapshotPhase = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ObservationDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ObservationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NetDemand = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     IsComplete = table.Column<bool>(type: "bit", nullable: false),
                     IsCensored = table.Column<bool>(type: "bit", nullable: false),
@@ -1182,7 +1249,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ForecastObservation", x => new { x.ForecastRunId, x.SnapshotPhase, x.ObservationDate });
                     table.ForeignKey(
-                        name: "FK_Observation_Run",
+                        name: "FK_ForecastObservation_ForecastRun_ForecastRunId",
                         column: x => x.ForecastRunId,
                         principalSchema: "ss",
                         principalTable: "ForecastRun",
@@ -1205,7 +1272,7 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ForecastPoint", x => new { x.ForecastRunId, x.HorizonDays });
                     table.ForeignKey(
-                        name: "FK_ForecastPoint_Run",
+                        name: "FK_ForecastPoint_ForecastRun_ForecastRunId",
                         column: x => x.ForecastRunId,
                         principalSchema: "ss",
                         principalTable: "ForecastRun",
@@ -1267,31 +1334,31 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ReorderSuggestion", x => x.SuggestionId);
-                    table.UniqueConstraint("UQ_Suggestion_Opportunity", x => new { x.SuggestionId, x.OpportunityKey });
+                    table.UniqueConstraint("AK_ReorderSuggestion_SuggestionId_OpportunityKey", x => new { x.SuggestionId, x.OpportunityKey });
                     table.ForeignKey(
-                        name: "FK_Suggestion_Forecast",
+                        name: "FK_ReorderSuggestion_ForecastRun_ForecastRunId_ProductId",
                         columns: x => new { x.ForecastRunId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "ForecastRun",
                         principalColumns: new[] { "ForecastRunId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_Suggestion_OutcomeUser",
-                        column: x => x.OutcomeByUserId,
-                        principalSchema: "ss",
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Suggestion_Product",
+                        name: "FK_ReorderSuggestion_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
                         principalColumn: "ProductId");
                     table.ForeignKey(
-                        name: "FK_Suggestion_Supplier",
+                        name: "FK_ReorderSuggestion_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
                         principalColumn: "SupplierId");
+                    table.ForeignKey(
+                        name: "FK_ReorderSuggestion_UserProfile_OutcomeByUserId",
+                        column: x => x.OutcomeByUserId,
+                        principalSchema: "ss",
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1312,19 +1379,19 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AccountEntry", x => x.AccountEntryId);
                     table.ForeignKey(
-                        name: "FK_AccountEntry_Customer",
+                        name: "FK_AccountEntry_Customer_CustomerId",
                         column: x => x.CustomerId,
                         principalSchema: "ss",
                         principalTable: "Customer",
                         principalColumn: "CustomerId");
                     table.ForeignKey(
-                        name: "FK_AccountEntry_Posting",
+                        name: "FK_AccountEntry_Posting_PostingId",
                         column: x => x.PostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
                     table.ForeignKey(
-                        name: "FK_AccountEntry_Supplier",
+                        name: "FK_AccountEntry_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalSchema: "ss",
                         principalTable: "Supplier",
@@ -1359,43 +1426,43 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AuditLog", x => x.AuditLogId);
                     table.ForeignKey(
-                        name: "FK_Audit_Actor",
-                        column: x => x.ActorUserId,
-                        principalSchema: "ss",
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Audit_Document",
+                        name: "FK_AuditLog_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_Audit_Import",
+                        name: "FK_AuditLog_ImportBatch_ImportBatchId",
                         column: x => x.ImportBatchId,
                         principalSchema: "ss",
                         principalTable: "ImportBatch",
                         principalColumn: "ImportBatchId");
                     table.ForeignKey(
-                        name: "FK_Audit_Job",
+                        name: "FK_AuditLog_JobRun_JobRunId",
                         column: x => x.JobRunId,
                         principalSchema: "ss",
                         principalTable: "JobRun",
                         principalColumn: "JobRunId");
                     table.ForeignKey(
-                        name: "FK_Audit_Posting",
+                        name: "FK_AuditLog_Posting_PostingId",
                         column: x => x.PostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
                     table.ForeignKey(
-                        name: "FK_Audit_Product",
+                        name: "FK_AuditLog_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
                         principalColumn: "ProductId");
                     table.ForeignKey(
-                        name: "FK_Audit_TargetUser",
+                        name: "FK_AuditLog_UserProfile_ActorUserId",
+                        column: x => x.ActorUserId,
+                        principalSchema: "ss",
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_AuditLog_UserProfile_TargetUserId",
                         column: x => x.TargetUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -1418,13 +1485,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_ProductStockBalance", x => x.ProductId);
                     table.ForeignKey(
-                        name: "FK_ProductBalance_Posting",
+                        name: "FK_ProductStockBalance_Posting_LastPostingId",
                         column: x => x.LastPostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
                     table.ForeignKey(
-                        name: "FK_ProductBalance_Product",
+                        name: "FK_ProductStockBalance_Product_ProductId",
                         column: x => x.ProductId,
                         principalSchema: "ss",
                         principalTable: "Product",
@@ -1445,25 +1512,25 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SalesReturn", x => x.DocumentId);
-                    table.UniqueConstraint("UQ_Return_Sale", x => new { x.DocumentId, x.OriginalSaleId });
+                    table.UniqueConstraint("AK_SalesReturn_DocumentId_OriginalSaleId", x => new { x.DocumentId, x.OriginalSaleId });
                     table.ForeignKey(
-                        name: "FK_Return_Document",
+                        name: "FK_SalesReturn_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_Return_Sale",
-                        column: x => x.OriginalSaleId,
-                        principalSchema: "ss",
-                        principalTable: "Sale",
-                        principalColumn: "DocumentId");
-                    table.ForeignKey(
-                        name: "FK_SalesReturn_Posting",
+                        name: "FK_SalesReturn_Posting_PostingId_DocumentId",
                         columns: x => new { x.PostingId, x.DocumentId },
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumns: new[] { "PostingId", "DocumentId" });
+                    table.ForeignKey(
+                        name: "FK_SalesReturn_Sale_OriginalSaleId",
+                        column: x => x.OriginalSaleId,
+                        principalSchema: "ss",
+                        principalTable: "Sale",
+                        principalColumn: "DocumentId");
                 });
 
             migrationBuilder.CreateTable(
@@ -1483,17 +1550,17 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_StockBalance", x => new { x.ProductBatchId, x.Bucket });
                     table.ForeignKey(
-                        name: "FK_StockBalance_Batch",
-                        columns: x => new { x.ProductBatchId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "ProductBatch",
-                        principalColumns: new[] { "ProductBatchId", "ProductId" });
-                    table.ForeignKey(
-                        name: "FK_StockBalance_Posting",
+                        name: "FK_StockBalance_Posting_LastPostingId",
                         column: x => x.LastPostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
+                    table.ForeignKey(
+                        name: "FK_StockBalance_ProductBatch_ProductBatchId_ProductId",
+                        columns: x => new { x.ProductBatchId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "ProductBatch",
+                        principalColumns: new[] { "ProductBatchId", "ProductId" });
                 });
 
             migrationBuilder.CreateTable(
@@ -1518,29 +1585,29 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_StockMovement", x => x.StockMovementId);
                     table.ForeignKey(
-                        name: "FK_Movement_Batch",
-                        columns: x => new { x.ProductBatchId, x.ProductId },
+                        name: "FK_StockMovement_DocumentLine_SourceLineId_ProductId",
+                        columns: x => new { x.SourceLineId, x.ProductId },
                         principalSchema: "ss",
-                        principalTable: "ProductBatch",
-                        principalColumns: new[] { "ProductBatchId", "ProductId" });
+                        principalTable: "DocumentLine",
+                        principalColumns: new[] { "LineId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_Movement_Posting",
+                        name: "FK_StockMovement_Posting_PostingId",
                         column: x => x.PostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
                     table.ForeignKey(
-                        name: "FK_Movement_Reversed",
+                        name: "FK_StockMovement_ProductBatch_ProductBatchId_ProductId",
+                        columns: x => new { x.ProductBatchId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "ProductBatch",
+                        principalColumns: new[] { "ProductBatchId", "ProductId" });
+                    table.ForeignKey(
+                        name: "FK_StockMovement_StockMovement_ReversesMovementId",
                         column: x => x.ReversesMovementId,
                         principalSchema: "ss",
                         principalTable: "StockMovement",
                         principalColumn: "StockMovementId");
-                    table.ForeignKey(
-                        name: "FK_Movement_Source",
-                        columns: x => new { x.SourceLineId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "DocumentLine",
-                        principalColumns: new[] { "LineId", "ProductId" });
                 });
 
             migrationBuilder.CreateTable(
@@ -1557,19 +1624,19 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_GoodsReceiptReversal", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_GRNReversal_Document",
+                        name: "FK_GoodsReceiptReversal_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_GRNReversal_Original",
+                        name: "FK_GoodsReceiptReversal_GoodsReceipt_OriginalGoodsReceiptId",
                         column: x => x.OriginalGoodsReceiptId,
                         principalSchema: "ss",
                         principalTable: "GoodsReceipt",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_GRNReversal_Posting",
+                        name: "FK_GoodsReceiptReversal_Posting_PostingId_DocumentId",
                         columns: x => new { x.PostingId, x.DocumentId },
                         principalSchema: "ss",
                         principalTable: "Posting",
@@ -1590,19 +1657,19 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_PaymentReversal", x => x.DocumentId);
                     table.ForeignKey(
-                        name: "FK_PaymentReversal_Document",
+                        name: "FK_PaymentReversal_Document_DocumentId",
                         column: x => x.DocumentId,
                         principalSchema: "ss",
                         principalTable: "Document",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_PaymentReversal_Original",
+                        name: "FK_PaymentReversal_Payment_OriginalPaymentId",
                         column: x => x.OriginalPaymentId,
                         principalSchema: "ss",
                         principalTable: "Payment",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_PaymentReversal_Posting",
+                        name: "FK_PaymentReversal_Posting_PostingId_DocumentId",
                         columns: x => new { x.PostingId, x.DocumentId },
                         principalSchema: "ss",
                         principalTable: "Posting",
@@ -1628,13 +1695,13 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_PaymentSettlementEvent", x => x.EventId);
                     table.ForeignKey(
-                        name: "FK_PaymentSettlement_Payment",
+                        name: "FK_PaymentSettlementEvent_Payment_PaymentId",
                         column: x => x.PaymentId,
                         principalSchema: "ss",
                         principalTable: "Payment",
                         principalColumn: "DocumentId");
                     table.ForeignKey(
-                        name: "FK_PaymentSettlement_User",
+                        name: "FK_PaymentSettlementEvent_UserProfile_RecordedByUserId",
                         column: x => x.RecordedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -1662,25 +1729,25 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_GoodsReceiptLine", x => x.LineId);
                     table.ForeignKey(
-                        name: "FK_GRNLine_Batch",
-                        columns: x => new { x.ProductBatchId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "ProductBatch",
-                        principalColumns: new[] { "ProductBatchId", "ProductId" });
-                    table.ForeignKey(
-                        name: "FK_GRNLine_GRN",
-                        columns: x => new { x.DocumentId, x.PurchaseOrderId },
-                        principalSchema: "ss",
-                        principalTable: "GoodsReceipt",
-                        principalColumns: new[] { "DocumentId", "PurchaseOrderId" });
-                    table.ForeignKey(
-                        name: "FK_GRNLine_Line",
+                        name: "FK_GoodsReceiptLine_DocumentLine_LineId_DocumentId_ProductId",
                         columns: x => new { x.LineId, x.DocumentId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "DocumentLine",
                         principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_GRNLine_POLine",
+                        name: "FK_GoodsReceiptLine_GoodsReceipt_DocumentId_PurchaseOrderId",
+                        columns: x => new { x.DocumentId, x.PurchaseOrderId },
+                        principalSchema: "ss",
+                        principalTable: "GoodsReceipt",
+                        principalColumns: new[] { "DocumentId", "PurchaseOrderId" });
+                    table.ForeignKey(
+                        name: "FK_GoodsReceiptLine_ProductBatch_ProductBatchId_ProductId",
+                        columns: x => new { x.ProductBatchId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "ProductBatch",
+                        principalColumns: new[] { "ProductBatchId", "ProductId" });
+                    table.ForeignKey(
+                        name: "FK_GoodsReceiptLine_PurchaseOrderLine_PurchaseOrderLineId_PurchaseOrderId_ProductId",
                         columns: x => new { x.PurchaseOrderLineId, x.PurchaseOrderId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "PurchaseOrderLine",
@@ -1704,15 +1771,15 @@ namespace AIMS.DataAccess.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SaleBatchAllocation", x => x.AllocationId);
-                    table.UniqueConstraint("UQ_SaleAllocation_Identity", x => new { x.AllocationId, x.SaleId, x.ProductId });
+                    table.UniqueConstraint("AK_SaleBatchAllocation_AllocationId_SaleId_ProductId", x => new { x.AllocationId, x.SaleId, x.ProductId });
                     table.ForeignKey(
-                        name: "FK_SaleAllocation_Batch",
+                        name: "FK_SaleBatchAllocation_ProductBatch_ProductBatchId_ProductId",
                         columns: x => new { x.ProductBatchId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "ProductBatch",
                         principalColumns: new[] { "ProductBatchId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_SaleAllocation_Line",
+                        name: "FK_SaleBatchAllocation_SaleLine_SaleLineId_SaleId_ProductId",
                         columns: x => new { x.SaleLineId, x.SaleId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "SaleLine",
@@ -1743,25 +1810,25 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AiToolCallLog", x => x.ToolCallId);
                     table.ForeignKey(
-                        name: "FK_ToolCall_Chat",
+                        name: "FK_AiToolCallLog_AiChatLog_AiChatLogId",
                         column: x => x.AiChatLogId,
                         principalSchema: "ss",
                         principalTable: "AiChatLog",
                         principalColumn: "AiChatLogId");
                     table.ForeignKey(
-                        name: "FK_ToolCall_Forecast",
+                        name: "FK_AiToolCallLog_ForecastRun_ForecastRunId",
                         column: x => x.ForecastRunId,
                         principalSchema: "ss",
                         principalTable: "ForecastRun",
                         principalColumn: "ForecastRunId");
                     table.ForeignKey(
-                        name: "FK_ToolCall_Posting",
+                        name: "FK_AiToolCallLog_Posting_SourcePostingId",
                         column: x => x.SourcePostingId,
                         principalSchema: "ss",
                         principalTable: "Posting",
                         principalColumn: "PostingId");
                     table.ForeignKey(
-                        name: "FK_ToolCall_Suggestion",
+                        name: "FK_AiToolCallLog_ReorderSuggestion_SuggestionId",
                         column: x => x.SuggestionId,
                         principalSchema: "ss",
                         principalTable: "ReorderSuggestion",
@@ -1792,31 +1859,31 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_SuggestionConversion", x => x.ConversionId);
                     table.ForeignKey(
-                        name: "FK_Conversion_POLine",
-                        column: x => x.PurchaseOrderLineId,
-                        principalSchema: "ss",
-                        principalTable: "PurchaseOrderLine",
-                        principalColumn: "LineId");
-                    table.ForeignKey(
-                        name: "FK_Conversion_ReleaseUser",
-                        column: x => x.ReleasedByUserId,
-                        principalSchema: "ss",
-                        principalTable: "UserProfile",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Conversion_Request",
+                        name: "FK_SuggestionConversion_IdempotencyRequest_RequestId",
                         column: x => x.RequestId,
                         principalSchema: "ss",
                         principalTable: "IdempotencyRequest",
                         principalColumn: "RequestId");
                     table.ForeignKey(
-                        name: "FK_Conversion_Suggestion",
+                        name: "FK_SuggestionConversion_PurchaseOrderLine_PurchaseOrderLineId",
+                        column: x => x.PurchaseOrderLineId,
+                        principalSchema: "ss",
+                        principalTable: "PurchaseOrderLine",
+                        principalColumn: "LineId");
+                    table.ForeignKey(
+                        name: "FK_SuggestionConversion_ReorderSuggestion_SuggestionId_OpportunityKey",
                         columns: x => new { x.SuggestionId, x.OpportunityKey },
                         principalSchema: "ss",
                         principalTable: "ReorderSuggestion",
                         principalColumns: new[] { "SuggestionId", "OpportunityKey" });
                     table.ForeignKey(
-                        name: "FK_Conversion_User",
+                        name: "FK_SuggestionConversion_UserProfile_ReleasedByUserId",
+                        column: x => x.ReleasedByUserId,
+                        principalSchema: "ss",
+                        principalTable: "UserProfile",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_SuggestionConversion_UserProfile_ReviewedByUserId",
                         column: x => x.ReviewedByUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -1844,31 +1911,31 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_AccountAllocation", x => x.AllocationId);
                     table.ForeignKey(
-                        name: "FK_AccountAllocation_Credit",
-                        column: x => x.CreditEntryId,
-                        principalSchema: "ss",
-                        principalTable: "AccountEntry",
-                        principalColumn: "AccountEntryId");
-                    table.ForeignKey(
-                        name: "FK_AccountAllocation_Debit",
-                        column: x => x.DebitEntryId,
-                        principalSchema: "ss",
-                        principalTable: "AccountEntry",
-                        principalColumn: "AccountEntryId");
-                    table.ForeignKey(
-                        name: "FK_AccountAllocation_Request",
-                        column: x => x.RequestId,
-                        principalSchema: "ss",
-                        principalTable: "IdempotencyRequest",
-                        principalColumn: "RequestId");
-                    table.ForeignKey(
-                        name: "FK_AccountAllocation_Reversed",
+                        name: "FK_AccountAllocation_AccountAllocation_ReversesAllocationId",
                         column: x => x.ReversesAllocationId,
                         principalSchema: "ss",
                         principalTable: "AccountAllocation",
                         principalColumn: "AllocationId");
                     table.ForeignKey(
-                        name: "FK_AccountAllocation_User",
+                        name: "FK_AccountAllocation_AccountEntry_CreditEntryId",
+                        column: x => x.CreditEntryId,
+                        principalSchema: "ss",
+                        principalTable: "AccountEntry",
+                        principalColumn: "AccountEntryId");
+                    table.ForeignKey(
+                        name: "FK_AccountAllocation_AccountEntry_DebitEntryId",
+                        column: x => x.DebitEntryId,
+                        principalSchema: "ss",
+                        principalTable: "AccountEntry",
+                        principalColumn: "AccountEntryId");
+                    table.ForeignKey(
+                        name: "FK_AccountAllocation_IdempotencyRequest_RequestId",
+                        column: x => x.RequestId,
+                        principalSchema: "ss",
+                        principalTable: "IdempotencyRequest",
+                        principalColumn: "RequestId");
+                    table.ForeignKey(
+                        name: "FK_AccountAllocation_UserProfile_ActorUserId",
                         column: x => x.ActorUserId,
                         principalSchema: "ss",
                         principalTable: "UserProfile",
@@ -1894,19 +1961,19 @@ namespace AIMS.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_SalesReturnLine", x => x.LineId);
                     table.ForeignKey(
-                        name: "FK_ReturnLine_Allocation",
-                        columns: x => new { x.OriginalAllocationId, x.OriginalSaleId, x.ProductId },
-                        principalSchema: "ss",
-                        principalTable: "SaleBatchAllocation",
-                        principalColumns: new[] { "AllocationId", "SaleId", "ProductId" });
-                    table.ForeignKey(
-                        name: "FK_ReturnLine_Line",
+                        name: "FK_SalesReturnLine_DocumentLine_LineId_DocumentId_ProductId",
                         columns: x => new { x.LineId, x.DocumentId, x.ProductId },
                         principalSchema: "ss",
                         principalTable: "DocumentLine",
                         principalColumns: new[] { "LineId", "DocumentId", "ProductId" });
                     table.ForeignKey(
-                        name: "FK_ReturnLine_Return",
+                        name: "FK_SalesReturnLine_SaleBatchAllocation_OriginalAllocationId_OriginalSaleId_ProductId",
+                        columns: x => new { x.OriginalAllocationId, x.OriginalSaleId, x.ProductId },
+                        principalSchema: "ss",
+                        principalTable: "SaleBatchAllocation",
+                        principalColumns: new[] { "AllocationId", "SaleId", "ProductId" });
+                    table.ForeignKey(
+                        name: "FK_SalesReturnLine_SalesReturn_DocumentId_OriginalSaleId",
                         columns: x => new { x.DocumentId, x.OriginalSaleId },
                         principalSchema: "ss",
                         principalTable: "SalesReturn",
@@ -1941,9 +2008,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_AccountAllocation_ReversesAllocationId",
                 schema: "ss",
                 table: "AccountAllocation",
-                column: "ReversesAllocationId",
-                unique: true,
-                filter: "[ReversesAllocationId] IS NOT NULL");
+                column: "ReversesAllocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountEntry_CustomerId",
@@ -2186,8 +2251,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_GoodsReceiptLine_LineId_DocumentId_ProductId",
                 schema: "ss",
                 table: "GoodsReceiptLine",
-                columns: new[] { "LineId", "DocumentId", "ProductId" },
-                unique: true);
+                columns: new[] { "LineId", "DocumentId", "ProductId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GoodsReceiptLine_ProductBatchId_ProductId",
@@ -2205,15 +2269,13 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_GoodsReceiptReversal_OriginalGoodsReceiptId",
                 schema: "ss",
                 table: "GoodsReceiptReversal",
-                column: "OriginalGoodsReceiptId",
-                unique: true);
+                column: "OriginalGoodsReceiptId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GoodsReceiptReversal_PostingId_DocumentId",
                 schema: "ss",
                 table: "GoodsReceiptReversal",
-                columns: new[] { "PostingId", "DocumentId" },
-                unique: true);
+                columns: new[] { "PostingId", "DocumentId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_IdempotencyRequest_ActorUserId",
@@ -2303,15 +2365,13 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_PaymentReversal_OriginalPaymentId",
                 schema: "ss",
                 table: "PaymentReversal",
-                column: "OriginalPaymentId",
-                unique: true);
+                column: "OriginalPaymentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentReversal_PostingId_DocumentId",
                 schema: "ss",
                 table: "PaymentReversal",
-                columns: new[] { "PostingId", "DocumentId" },
-                unique: true);
+                columns: new[] { "PostingId", "DocumentId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentSettlementEvent_PaymentId",
@@ -2335,8 +2395,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_Posting_DocumentId_VersionNo",
                 schema: "ss",
                 table: "Posting",
-                columns: new[] { "DocumentId", "VersionNo" },
-                unique: true);
+                columns: new[] { "DocumentId", "VersionNo" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posting_RequestId",
@@ -2444,9 +2503,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_SalesReturn_PostingId_DocumentId",
                 schema: "ss",
                 table: "SalesReturn",
-                columns: new[] { "PostingId", "DocumentId" },
-                unique: true,
-                filter: "[PostingId] IS NOT NULL");
+                columns: new[] { "PostingId", "DocumentId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalesReturnLine_DocumentId_OriginalSaleId",
@@ -2458,8 +2515,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_SalesReturnLine_LineId_DocumentId_ProductId",
                 schema: "ss",
                 table: "SalesReturnLine",
-                columns: new[] { "LineId", "DocumentId", "ProductId" },
-                unique: true);
+                columns: new[] { "LineId", "DocumentId", "ProductId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalesReturnLine_OriginalAllocationId_OriginalSaleId_ProductId",
@@ -2489,8 +2545,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_StockChangeLine_LineId_DocumentId_ProductId",
                 schema: "ss",
                 table: "StockChangeLine",
-                columns: new[] { "LineId", "DocumentId", "ProductId" },
-                unique: true);
+                columns: new[] { "LineId", "DocumentId", "ProductId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockChangeLine_ProductBatchId_ProductId",
@@ -2514,9 +2569,7 @@ namespace AIMS.DataAccess.Migrations
                 name: "IX_StockMovement_ReversesMovementId",
                 schema: "ss",
                 table: "StockMovement",
-                column: "ReversesMovementId",
-                unique: true,
-                filter: "[ReversesMovementId] IS NOT NULL");
+                column: "ReversesMovementId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StockMovement_SourceLineId_ProductId",
@@ -2630,6 +2683,18 @@ namespace AIMS.DataAccess.Migrations
                 schema: "ss");
 
             migrationBuilder.DropTable(
+                name: "Permission",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "PermissionGroup",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
+                name: "PermissionGroupMap",
+                schema: "dbo");
+
+            migrationBuilder.DropTable(
                 name: "ProductStockBalance",
                 schema: "ss");
 
@@ -2652,6 +2717,10 @@ namespace AIMS.DataAccess.Migrations
             migrationBuilder.DropTable(
                 name: "SuggestionConversion",
                 schema: "ss");
+
+            migrationBuilder.DropTable(
+                name: "UserPermission",
+                schema: "dbo");
 
             migrationBuilder.DropTable(
                 name: "AccountEntry",

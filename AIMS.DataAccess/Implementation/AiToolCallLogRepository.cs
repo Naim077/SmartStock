@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class AiToolCallLogRepository : ReadOnlyRepository<AiToolCallLog>, IAiToolCallLogRepository
+    public class AiToolCallLogRepository : IAiToolCallLogRepository
     {
-        public AiToolCallLogRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public AiToolCallLogRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<AiToolCallLog?> GetByIdAsync(long toolCallId, CancellationToken cancellationToken = default)
+        public async Task<List<AiToolCallLog>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { toolCallId }, cancellationToken);
+            return await _dbContext.AiToolCallLogs.ToListAsync();
+        }
+
+        public async Task<AiToolCallLog?> GetByIdAsync(long toolCallId)
+        {
+            return await _dbContext.AiToolCallLogs.FindAsync(new object[] { toolCallId });
+        }
+
+        public async Task AddAsync(AiToolCallLog aiToolCallLog)
+        {
+            await _dbContext.AiToolCallLogs.AddAsync(aiToolCallLog);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(AiToolCallLog aiToolCallLog)
+        {
+            _dbContext.AiToolCallLogs.Update(aiToolCallLog);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long toolCallId)
+        {
+            var aiToolCallLog = await _dbContext.AiToolCallLogs.FindAsync(new object[] { toolCallId });
+            if (aiToolCallLog == null)
+                return;
+
+            _dbContext.AiToolCallLogs.Remove(aiToolCallLog);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

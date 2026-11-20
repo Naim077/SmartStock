@@ -1,32 +1,37 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.AuditLog. UTC timestamps and posting rules are service responsibilities.
-public sealed class AuditLog
+[Table("AuditLog", Schema = "ss")]
+public class AuditLog
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long AuditLogId { get; set; }
     public Guid? ActorUserId { get; set; }
-    public required string ActorType { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ActorType { get; set; } = null!;
     public DateTime OccurredUtc { get; set; }
     public Guid CorrelationId { get; set; }
-    public required string Action { get; set; }
-    public required string Outcome { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Action { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Outcome { get; set; } = null!;
     public long? DocumentId { get; set; }
     public long? PostingId { get; set; }
     public long? ProductId { get; set; }
     public Guid? TargetUserId { get; set; }
     public long? ImportBatchId { get; set; }
     public long? JobRunId { get; set; }
-    public required string EntityType { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string EntityType { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
     public string? EntityReference { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? BeforeRedactedJson { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? AfterRedactedJson { get; set; }
-
-    public UserProfile? ActorUser { get; set; }
-    public Document? Document { get; set; }
-    public Posting? Posting { get; set; }
-    public Product? Product { get; set; }
-    public UserProfile? TargetUser { get; set; }
-    public ImportBatch? ImportBatch { get; set; }
-    public JobRun? JobRun { get; set; }
 }

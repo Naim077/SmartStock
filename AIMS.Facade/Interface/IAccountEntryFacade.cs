@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed AccountEntry records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IAccountEntryFacade
     {
-        Task<List<AccountEntry>> GetAccountEntriesAsync(CancellationToken cancellationToken = default);
-        Task<AccountEntry?> GetAccountEntryByIdAsync(long accountEntryId, CancellationToken cancellationToken = default);
-        Task<List<AccountEntry>> GetAccountEntriesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<AccountEntry>> GetAccountEntriesAsync();
+        Task<AccountEntry?> GetAccountEntryByIdAsync(long accountEntryId);
+        Task AddAccountEntryAsync(AccountEntry accountEntry);
+        Task<bool> UpdateAccountEntryAsync(AccountEntry accountEntry);
+        Task<bool> DeleteAccountEntryAsync(long accountEntryId);
     }
 }

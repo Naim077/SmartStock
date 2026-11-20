@@ -1,21 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class ProductRepository : Repository<Product>, IProductRepository
+    public class ProductRepository : IProductRepository
     {
-        public ProductRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public ProductRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<Product?> GetByIdAsync(long productId, CancellationToken cancellationToken = default)
+        public async Task<List<Product>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { productId }, cancellationToken);
+            return await _dbContext.Products.ToListAsync();
         }
 
-        public Task<bool> DeleteAsync(long productId, byte[] rowVersion, CancellationToken cancellationToken = default)
+        public async Task<Product?> GetByIdAsync(long productId)
         {
-            return base.DeleteAsync(new object[] { productId }, rowVersion, cancellationToken);
+            return await _dbContext.Products.FindAsync(new object[] { productId });
+        }
+
+        public async Task AddAsync(Product product)
+        {
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Product product)
+        {
+            _dbContext.Products.Update(product);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long productId)
+        {
+            var product = await _dbContext.Products.FindAsync(new object[] { productId });
+            if (product == null)
+                return;
+
+            _dbContext.Products.Remove(product);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

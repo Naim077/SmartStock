@@ -1,24 +1,25 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.IdempotencyRequest. UTC timestamps and posting rules are service responsibilities.
-public sealed class IdempotencyRequest
+[Table("IdempotencyRequest", Schema = "ss")]
+public class IdempotencyRequest
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long RequestId { get; set; }
     public Guid ActorUserId { get; set; }
-    public required string Operation { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Operation { get; set; } = null!;
     public Guid RequestKey { get; set; }
-    public required byte[] PayloadHash { get; set; }
-    public required string RequestStatus { get; set; }
+    public byte[] PayloadHash { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string RequestStatus { get; set; } = null!;
     public DateTime CreatedUtc { get; set; }
     public DateTime? CompletedUtc { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? ResultJson { get; set; }
-
-    public UserProfile ActorUser { get; set; } = null!;
-    public ICollection<ImportBatch> ImportBatches { get; set; } = new List<ImportBatch>();
-    public ICollection<Document> Documents { get; set; } = new List<Document>();
-    public ICollection<Posting> Postings { get; set; } = new List<Posting>();
-    public ICollection<AccountAllocation> AccountAllocations { get; set; } = new List<AccountAllocation>();
-    public ICollection<JobRun> JobRuns { get; set; } = new List<JobRun>();
-    public ICollection<SuggestionConversion> SuggestionConversions { get; set; } = new List<SuggestionConversion>();
 }

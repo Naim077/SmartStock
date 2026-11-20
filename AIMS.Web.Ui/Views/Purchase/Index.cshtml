@@ -1,0 +1,150 @@
+﻿@using AIMS.Entities
+@model List<PurchaseOrder>
+@{
+    ViewData["Title"] = "Purchases";
+    Layout = "_PrivateLayout";
+
+    var documents = ViewBag.Documents as Dictionary<long, Document>
+        ?? new Dictionary<long, Document>();
+    var purchaseLines = ViewBag.PurchaseLines as Dictionary<long, List<PurchaseOrderLine>>
+        ?? new Dictionary<long, List<PurchaseOrderLine>>();
+
+    string search = ViewBag.Search as string ?? "";
+    string selectedStatus = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<link rel="stylesheet" href="~/css/Purchase/Purchase.css" asp-append-version="true" />
+
+<div class="purchase-page">
+    <div class="purchase-heading">
+        <div>
+            <div class="purchase-eyebrow">INVENTORY MANAGEMENT</div>
+            <h1>Purchases</h1>
+            <p>Manage purchase orders, track deliveries and monitor supplier spending.</p>
+        </div>
+        <div class="purchase-heading-actions">
+            <a class="purchase-btn purchase-btn-light" asp-controller="Inventory" asp-action="SmartReorder">
+                <i class="bi bi-stars"></i> Smart reorder
+            </a>
+            <a class="purchase-btn purchase-btn-primary" asp-controller="Purchase" asp-action="Create">
+                <i class="bi bi-plus-lg"></i> New purchase order
+            </a>
+        </div>
+    </div>
+
+    <section class="purchase-stats">
+        <article class="purchase-stat">
+            <div class="purchase-stat-top"><span>Total purchase orders</span><i class="bi bi-receipt"></i></div>
+            <strong>@ViewBag.TotalOrders</strong>
+            <small>All recorded orders</small>
+        </article>
+        <article class="purchase-stat">
+            <div class="purchase-stat-top"><span>Draft orders</span><i class="bi bi-file-earmark-text"></i></div>
+            <strong>@ViewBag.DraftOrders</strong>
+            <small>Not yet approved</small>
+        </article>
+        <article class="purchase-stat">
+            <div class="purchase-stat-top"><span>Approved</span><i class="bi bi-check2-circle"></i></div>
+            <strong>@ViewBag.ApprovedOrders</strong>
+            <small>Awaiting delivery</small>
+        </article>
+        <article class="purchase-stat">
+            <div class="purchase-stat-top"><span>Partially received</span><i class="bi bi-truck"></i></div>
+            <strong>@ViewBag.PartiallyReceivedOrders</strong>
+            <small>Goods received in parts</small>
+        </article>
+        <article class="purchase-stat">
+            <div class="purchase-stat-top"><span>Received orders</span><i class="bi bi-box-seam"></i></div>
+            <strong>@ViewBag.ReceivedOrders</strong>
+            <small>Fully received</small>
+        </article>
+    </section>
+
+    <section class="purchase-list-card">
+        <div class="purchase-list-header">
+            <div>
+                <h2>Purchase orders</h2>
+                <p>Review and track your supplier orders.</p>
+            </div>
+            <form asp-controller="Purchase" asp-action="Index" method="get" class="purchase-filters">
+                <div class="purchase-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" name="search" value="@search" placeholder="Search PO or supplier..." />
+                </div>
+                <select name="status" aria-label="Filter by status">
+                    <option value="All" selected="@(selectedStatus == "All")">All statuses</option>
+                    <option value="Draft" selected="@(selectedStatus == "Draft")">Draft</option>
+                    <option value="Approved" selected="@(selectedStatus == "Approved")">Approved</option>
+                    <option value="PartiallyReceived" selected="@(selectedStatus == "PartiallyReceived")">Partially received</option>
+                    <option value="Received" selected="@(selectedStatus == "Received")">Received</option>
+                    <option value="Cancelled" selected="@(selectedStatus == "Cancelled")">Cancelled</option>
+                </select>
+                <button class="purchase-filter-btn" type="submit">Filter</button>
+            </form>
+        </div>
+
+        <div class="purchase-table-wrap">
+            <table class="purchase-table">
+                <thead>
+                    <tr>
+                        <th>PO NUMBER</th>
+                        <th>SUPPLIER</th>
+                        <th>ORDER DATE</th>
+                        <th>EXPECTED DATE</th>
+                        <th>ITEMS</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6">
+                                <div class="purchase-empty">
+                                    <i class="bi bi-inbox"></i>
+                                    <strong>No purchase orders found</strong>
+                                    <span>Try changing your search or status filter.</span>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var po in Model)
+                        {
+                            var document = documents[po.DocumentId];
+                            var statusText = document.Status == "PartiallyReceived"
+                                ? "Partially Received" : document.Status;
+                            var statusClass = statusText.ToLowerInvariant().Replace(" ", "-");
+                            var itemCount = purchaseLines.TryGetValue(po.DocumentId, out var poLines)
+                                ? poLines.Count : 0;
+                            <tr>
+                                <td><span class="purchase-po-number">@(document.DocumentNo ?? $"PO-{po.DocumentId}")</span></td>
+                                <td>
+                                    <span class="purchase-supplier">@po.SupplierNameSnapshot</span>
+                                    @if (!string.IsNullOrWhiteSpace(po.SupplierAddressSnapshot))
+                                    {
+                                        <small class="purchase-subtext">@po.SupplierAddressSnapshot</small>
+                                    }
+                                </td>
+                                <td>@document.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                                <td>@(po.ExpectedDate?.ToString("dd MMM yyyy") ?? "—")</td>
+                                <td>@itemCount</td>
+                                <td><span class="purchase-status @statusClass">@statusText</span></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="purchase-table-footer">
+            <span>Showing <strong>@Model.Count</strong> purchase order(s)</span>
+            <span>Dates displayed in local time</span>
+        </div>
+    </section>
+
+    <div class="purchase-workflow-note">
+        <i class="bi bi-info-circle"></i>
+        Stock increases only when an authorized user posts a Goods Received Note (GRN), not when a purchase order is created or approved.
+    </div>
+</div>

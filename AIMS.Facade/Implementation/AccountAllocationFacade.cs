@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class AccountAllocationFacade : IAccountAllocationFacade
+    public class AccountAllocationFacade : IAccountAllocationFacade
     {
         private readonly IAccountAllocationRepository _accountAllocationRepository;
 
         public AccountAllocationFacade(IAccountAllocationRepository accountAllocationRepository)
         {
-            ArgumentNullException.ThrowIfNull(accountAllocationRepository);
             _accountAllocationRepository = accountAllocationRepository;
         }
 
-        public Task<List<AccountAllocation>> GetAccountAllocationsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<AccountAllocation>> GetAccountAllocationsAsync()
         {
-            return _accountAllocationRepository.GetAllAsync(cancellationToken);
+            return await _accountAllocationRepository.GetAllAsync();
         }
 
-        public Task<AccountAllocation?> GetAccountAllocationByIdAsync(long allocationId, CancellationToken cancellationToken = default)
+        public async Task<AccountAllocation?> GetAccountAllocationByIdAsync(long allocationId)
         {
-            return _accountAllocationRepository.GetByIdAsync(allocationId, cancellationToken);
+            return await _accountAllocationRepository.GetByIdAsync(allocationId);
         }
 
-        public Task<List<AccountAllocation>> GetAccountAllocationsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddAccountAllocationAsync(AccountAllocation accountAllocation)
         {
-            return _accountAllocationRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(accountAllocation);
+            await _accountAllocationRepository.AddAsync(accountAllocation);
+        }
+
+        public async Task<bool> UpdateAccountAllocationAsync(AccountAllocation accountAllocation)
+        {
+            ArgumentNullException.ThrowIfNull(accountAllocation);
+            var existing = await _accountAllocationRepository.GetByIdAsync(accountAllocation.AllocationId);
+            if (existing == null)
+                return false;
+
+            await _accountAllocationRepository.UpdateAsync(accountAllocation);
+            return true;
+        }
+
+        public async Task<bool> DeleteAccountAllocationAsync(long allocationId)
+        {
+            var existing = await _accountAllocationRepository.GetByIdAsync(allocationId);
+            if (existing == null)
+                return false;
+
+            await _accountAllocationRepository.DeleteAsync(allocationId);
+            return true;
         }
     }
 }

@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed Document records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IDocumentFacade
     {
-        Task<List<Document>> GetDocumentsAsync(CancellationToken cancellationToken = default);
-        Task<Document?> GetDocumentByIdAsync(long documentId, CancellationToken cancellationToken = default);
-        Task<List<Document>> GetDocumentsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<Document>> GetDocumentsAsync();
+        Task<Document?> GetDocumentByIdAsync(long documentId);
+        Task AddDocumentAsync(Document document);
+        Task<bool> UpdateDocumentAsync(Document document);
+        Task<bool> DeleteDocumentAsync(long documentId);
     }
 }

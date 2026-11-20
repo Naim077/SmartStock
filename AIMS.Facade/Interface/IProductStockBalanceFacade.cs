@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed ProductStockBalance records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IProductStockBalanceFacade
     {
-        Task<List<ProductStockBalance>> GetProductStockBalancesAsync(CancellationToken cancellationToken = default);
-        Task<ProductStockBalance?> GetProductStockBalanceByIdAsync(long productId, CancellationToken cancellationToken = default);
-        Task<List<ProductStockBalance>> GetProductStockBalancesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<ProductStockBalance>> GetProductStockBalancesAsync();
+        Task<ProductStockBalance?> GetProductStockBalanceByIdAsync(long productId);
+        Task AddProductStockBalanceAsync(ProductStockBalance productStockBalance);
+        Task<bool> UpdateProductStockBalanceAsync(ProductStockBalance productStockBalance);
+        Task<bool> DeleteProductStockBalanceAsync(long productId);
     }
 }

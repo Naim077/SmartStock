@@ -1,25 +1,29 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Payment. UTC timestamps and posting rules are service responsibilities.
-public sealed class Payment
+[Table("Payment", Schema = "ss")]
+public class Payment
 {
+    [Key]
     public long DocumentId { get; set; }
-    public required string PaymentKind { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string PaymentKind { get; set; } = null!;
     public long? CustomerId { get; set; }
     public long? SupplierId { get; set; }
     public long? PurchaseOrderId { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Amount { get; set; }
-    public required string Method { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Method { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
     public string? ExternalReference { get; set; }
-    public DateOnly? ExternalEffectiveDate { get; set; }
+    public DateTime? ExternalEffectiveDate { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? CashTenderedAmount { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? CashChangeAmount { get; set; }
-
-    public Document Document { get; set; } = null!;
-    public Customer? Customer { get; set; }
-    public Supplier? Supplier { get; set; }
-    public PurchaseOrder? PurchaseOrder { get; set; }
-    public PaymentReversal? PaymentReversal { get; set; }
-    public ICollection<PaymentSettlementEvent> PaymentSettlementEvents { get; set; } = new List<PaymentSettlementEvent>();
 }

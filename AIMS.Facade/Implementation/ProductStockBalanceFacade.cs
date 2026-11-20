@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ProductStockBalanceFacade : IProductStockBalanceFacade
+    public class ProductStockBalanceFacade : IProductStockBalanceFacade
     {
         private readonly IProductStockBalanceRepository _productStockBalanceRepository;
 
         public ProductStockBalanceFacade(IProductStockBalanceRepository productStockBalanceRepository)
         {
-            ArgumentNullException.ThrowIfNull(productStockBalanceRepository);
             _productStockBalanceRepository = productStockBalanceRepository;
         }
 
-        public Task<List<ProductStockBalance>> GetProductStockBalancesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<ProductStockBalance>> GetProductStockBalancesAsync()
         {
-            return _productStockBalanceRepository.GetAllAsync(cancellationToken);
+            return await _productStockBalanceRepository.GetAllAsync();
         }
 
-        public Task<ProductStockBalance?> GetProductStockBalanceByIdAsync(long productId, CancellationToken cancellationToken = default)
+        public async Task<ProductStockBalance?> GetProductStockBalanceByIdAsync(long productId)
         {
-            return _productStockBalanceRepository.GetByIdAsync(productId, cancellationToken);
+            return await _productStockBalanceRepository.GetByIdAsync(productId);
         }
 
-        public Task<List<ProductStockBalance>> GetProductStockBalancesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddProductStockBalanceAsync(ProductStockBalance productStockBalance)
         {
-            return _productStockBalanceRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(productStockBalance);
+            await _productStockBalanceRepository.AddAsync(productStockBalance);
+        }
+
+        public async Task<bool> UpdateProductStockBalanceAsync(ProductStockBalance productStockBalance)
+        {
+            ArgumentNullException.ThrowIfNull(productStockBalance);
+            var existing = await _productStockBalanceRepository.GetByIdAsync(productStockBalance.ProductId);
+            if (existing == null)
+                return false;
+
+            await _productStockBalanceRepository.UpdateAsync(productStockBalance);
+            return true;
+        }
+
+        public async Task<bool> DeleteProductStockBalanceAsync(long productId)
+        {
+            var existing = await _productStockBalanceRepository.GetByIdAsync(productId);
+            if (existing == null)
+                return false;
+
+            await _productStockBalanceRepository.DeleteAsync(productId);
+            return true;
         }
     }
 }

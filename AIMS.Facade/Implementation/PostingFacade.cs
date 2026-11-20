@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class PostingFacade : IPostingFacade
+    public class PostingFacade : IPostingFacade
     {
         private readonly IPostingRepository _postingRepository;
 
         public PostingFacade(IPostingRepository postingRepository)
         {
-            ArgumentNullException.ThrowIfNull(postingRepository);
             _postingRepository = postingRepository;
         }
 
-        public Task<List<Posting>> GetPostingsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Posting>> GetPostingsAsync()
         {
-            return _postingRepository.GetAllAsync(cancellationToken);
+            return await _postingRepository.GetAllAsync();
         }
 
-        public Task<Posting?> GetPostingByIdAsync(long postingId, CancellationToken cancellationToken = default)
+        public async Task<Posting?> GetPostingByIdAsync(long postingId)
         {
-            return _postingRepository.GetByIdAsync(postingId, cancellationToken);
+            return await _postingRepository.GetByIdAsync(postingId);
         }
 
-        public Task<List<Posting>> GetPostingsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddPostingAsync(Posting posting)
         {
-            return _postingRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(posting);
+            await _postingRepository.AddAsync(posting);
+        }
+
+        public async Task<bool> UpdatePostingAsync(Posting posting)
+        {
+            ArgumentNullException.ThrowIfNull(posting);
+            var existing = await _postingRepository.GetByIdAsync(posting.PostingId);
+            if (existing == null)
+                return false;
+
+            await _postingRepository.UpdateAsync(posting);
+            return true;
+        }
+
+        public async Task<bool> DeletePostingAsync(long postingId)
+        {
+            var existing = await _postingRepository.GetByIdAsync(postingId);
+            if (existing == null)
+                return false;
+
+            await _postingRepository.DeleteAsync(postingId);
+            return true;
         }
     }
 }

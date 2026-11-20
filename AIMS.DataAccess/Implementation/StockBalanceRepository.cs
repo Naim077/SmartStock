@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class StockBalanceRepository : ReadOnlyRepository<StockBalance>, IStockBalanceRepository
+    public class StockBalanceRepository : IStockBalanceRepository
     {
-        public StockBalanceRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public StockBalanceRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<StockBalance?> GetByIdAsync(long productBatchId, string bucket, CancellationToken cancellationToken = default)
+        public async Task<List<StockBalance>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { productBatchId, bucket }, cancellationToken);
+            return await _dbContext.StockBalances.ToListAsync();
+        }
+
+        public async Task<StockBalance?> GetByIdAsync(long productBatchId, string bucket)
+        {
+            return await _dbContext.StockBalances.FindAsync(new object[] { productBatchId, bucket });
+        }
+
+        public async Task AddAsync(StockBalance stockBalance)
+        {
+            await _dbContext.StockBalances.AddAsync(stockBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(StockBalance stockBalance)
+        {
+            _dbContext.StockBalances.Update(stockBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long productBatchId, string bucket)
+        {
+            var stockBalance = await _dbContext.StockBalances.FindAsync(new object[] { productBatchId, bucket });
+            if (stockBalance == null)
+                return;
+
+            _dbContext.StockBalances.Remove(stockBalance);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

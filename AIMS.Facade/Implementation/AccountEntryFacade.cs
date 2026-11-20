@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class AccountEntryFacade : IAccountEntryFacade
+    public class AccountEntryFacade : IAccountEntryFacade
     {
         private readonly IAccountEntryRepository _accountEntryRepository;
 
         public AccountEntryFacade(IAccountEntryRepository accountEntryRepository)
         {
-            ArgumentNullException.ThrowIfNull(accountEntryRepository);
             _accountEntryRepository = accountEntryRepository;
         }
 
-        public Task<List<AccountEntry>> GetAccountEntriesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<AccountEntry>> GetAccountEntriesAsync()
         {
-            return _accountEntryRepository.GetAllAsync(cancellationToken);
+            return await _accountEntryRepository.GetAllAsync();
         }
 
-        public Task<AccountEntry?> GetAccountEntryByIdAsync(long accountEntryId, CancellationToken cancellationToken = default)
+        public async Task<AccountEntry?> GetAccountEntryByIdAsync(long accountEntryId)
         {
-            return _accountEntryRepository.GetByIdAsync(accountEntryId, cancellationToken);
+            return await _accountEntryRepository.GetByIdAsync(accountEntryId);
         }
 
-        public Task<List<AccountEntry>> GetAccountEntriesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddAccountEntryAsync(AccountEntry accountEntry)
         {
-            return _accountEntryRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(accountEntry);
+            await _accountEntryRepository.AddAsync(accountEntry);
+        }
+
+        public async Task<bool> UpdateAccountEntryAsync(AccountEntry accountEntry)
+        {
+            ArgumentNullException.ThrowIfNull(accountEntry);
+            var existing = await _accountEntryRepository.GetByIdAsync(accountEntry.AccountEntryId);
+            if (existing == null)
+                return false;
+
+            await _accountEntryRepository.UpdateAsync(accountEntry);
+            return true;
+        }
+
+        public async Task<bool> DeleteAccountEntryAsync(long accountEntryId)
+        {
+            var existing = await _accountEntryRepository.GetByIdAsync(accountEntryId);
+            if (existing == null)
+                return false;
+
+            await _accountEntryRepository.DeleteAsync(accountEntryId);
+            return true;
         }
     }
 }

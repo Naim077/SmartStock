@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class AccountEntryRepository : ReadOnlyRepository<AccountEntry>, IAccountEntryRepository
+    public class AccountEntryRepository : IAccountEntryRepository
     {
-        public AccountEntryRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public AccountEntryRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<AccountEntry?> GetByIdAsync(long accountEntryId, CancellationToken cancellationToken = default)
+        public async Task<List<AccountEntry>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { accountEntryId }, cancellationToken);
+            return await _dbContext.AccountEntries.ToListAsync();
+        }
+
+        public async Task<AccountEntry?> GetByIdAsync(long accountEntryId)
+        {
+            return await _dbContext.AccountEntries.FindAsync(new object[] { accountEntryId });
+        }
+
+        public async Task AddAsync(AccountEntry accountEntry)
+        {
+            await _dbContext.AccountEntries.AddAsync(accountEntry);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(AccountEntry accountEntry)
+        {
+            _dbContext.AccountEntries.Update(accountEntry);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long accountEntryId)
+        {
+            var accountEntry = await _dbContext.AccountEntries.FindAsync(new object[] { accountEntryId });
+            if (accountEntry == null)
+                return;
+
+            _dbContext.AccountEntries.Remove(accountEntry);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

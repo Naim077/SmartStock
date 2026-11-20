@@ -1,0 +1,132 @@
+﻿@model AIMS.Web.Ui.Models.RegisterViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Create account | SmartStock";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Register.css" asp-append-version="true" />
+</head>
+<body class="login-page register-page">
+    <a class="skip-link" href="#register-main">Skip to registration</a>
+
+    <section class="login-story" aria-label="About SmartStock">
+        <a asp-controller="Home" asp-action="Index" class="brand" aria-label="SmartStock home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 34 36">
+                    <path d="M17 2 31 10 17 18 3 10Z" fill="#c5dba9" />
+                    <path d="m3 16 14 8 14-8M3 23l14 8 14-8" fill="none" stroke="#c5dba9" stroke-width="3" stroke-linejoin="round" />
+                </svg>
+            </span>
+            <span class="brand-word">smartstock<span>.</span></span>
+        </a>
+
+        <div class="login-story-content">
+            <span class="eyebrow">Good stock. Better business.</span>
+            <h1>Build better.<br />Manage <em>smarter.</em></h1>
+            <p>Bring your products, people and daily operations together in one thoughtful inventory workspace.</p>
+
+            <svg class="login-illustration" viewBox="0 0 280 170" role="img" aria-label="Illustration of connected inventory boxes">
+                <path d="m20 91 57-32 57 32-57 32Zm57 32v39m-57-71v39l57 32 57-32V91m2-39 54-31 54 31-54 31Zm54 31v39m-54-70v39l54 31 54-31V52" stroke="#8ba57c" fill="none" stroke-width="1.3" />
+                <path d="m77 59 57 32-57 32-57-32Z" fill="#c5dba9" fill-opacity=".07" />
+                <path d="m136 52 54-31 54 31-54 31Z" fill="#c5dba9" fill-opacity=".13" />
+                <circle cx="243" cy="130" r="17" fill="#c5dba9" />
+                <path d="m236 130 5 5 9-10" stroke="#23452d" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <span class="login-story-footer">A calmer way to manage what keeps your business moving.</span>
+        <span class="story-decoration story-decoration-one"></span>
+        <span class="story-decoration story-decoration-two"></span>
+    </section>
+
+    <main class="login-panel register-panel" id="register-main">
+        <div class="login-form register-form">
+            <span class="eyebrow form-eyebrow">Get started with SmartStock</span>
+            <h2>Create your account.</h2>
+            <p>Set up your workspace and take control of your inventory.</p>
+
+            <form asp-controller="Account" asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+
+                <div class="field">
+                    <label asp-for="DisplayName">Full name</label>
+                    <div class="input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+                        <input asp-for="DisplayName" autocomplete="name" placeholder="Enter your full name" />
+                    </div>
+                    <span asp-validation-for="DisplayName" class="field-error"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Email">Work email address</label>
+                    <div class="input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></svg>
+                        <input asp-for="Email" type="email" autocomplete="email" placeholder="you@company.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Password">Password</label>
+                    <div class="input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" /></svg>
+                        <input asp-for="Password" id="register-password" autocomplete="new-password" placeholder="Create a password" />
+                        <button class="password-toggle" type="button" data-password-toggle="register-password" aria-label="Show password" aria-pressed="false">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-error"></span>
+                    <span class="field-hint">Use at least 8 characters.</span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="ConfirmPassword">Confirm password</label>
+                    <div class="input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" /></svg>
+                        <input asp-for="ConfirmPassword" id="confirm-password" autocomplete="new-password" placeholder="Enter your password again" />
+                        <button class="password-toggle" type="button" data-password-toggle="confirm-password" aria-label="Show password" aria-pressed="false">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+                </div>
+
+                <button class="sign-in-button register-button" type="submit">
+                    <span>Create account</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg>
+                </button>
+            </form>
+
+            <div class="security-note">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z" /><path d="m8.5 12 2.3 2.3 4.7-5" /></svg>
+                <span>Your account details are protected.</span>
+            </div>
+
+            <p class="register-prompt">Already have an account? <a asp-controller="Account" asp-action="Login">Sign in</a></p>
+            <p class="form-footer">© @DateTime.UtcNow.Year SmartStock. All rights reserved.</p>
+        </div>
+    </main>
+
+    <script>
+            document.querySelectorAll('[data-password-toggle]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const input = document.getElementById(button.dataset.passwordToggle);
+                    if (!input) return;
+                    const showing = input.type === 'text';
+                    input.type = showing ? 'password' : 'text';
+                    button.setAttribute('aria-pressed', String(!showing));
+                    button.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+                });
+            });
+    </script>
+
+    <partial name="_ValidationScriptsPartial" />
+</body>
+</html>

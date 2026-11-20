@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class IdempotencyRequestRepository : ReadOnlyRepository<IdempotencyRequest>, IIdempotencyRequestRepository
+    public class IdempotencyRequestRepository : IIdempotencyRequestRepository
     {
-        public IdempotencyRequestRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public IdempotencyRequestRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<IdempotencyRequest?> GetByIdAsync(long requestId, CancellationToken cancellationToken = default)
+        public async Task<List<IdempotencyRequest>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { requestId }, cancellationToken);
+            return await _dbContext.IdempotencyRequests.ToListAsync();
+        }
+
+        public async Task<IdempotencyRequest?> GetByIdAsync(long requestId)
+        {
+            return await _dbContext.IdempotencyRequests.FindAsync(new object[] { requestId });
+        }
+
+        public async Task AddAsync(IdempotencyRequest idempotencyRequest)
+        {
+            await _dbContext.IdempotencyRequests.AddAsync(idempotencyRequest);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(IdempotencyRequest idempotencyRequest)
+        {
+            _dbContext.IdempotencyRequests.Update(idempotencyRequest);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long requestId)
+        {
+            var idempotencyRequest = await _dbContext.IdempotencyRequests.FindAsync(new object[] { requestId });
+            if (idempotencyRequest == null)
+                return;
+
+            _dbContext.IdempotencyRequests.Remove(idempotencyRequest);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

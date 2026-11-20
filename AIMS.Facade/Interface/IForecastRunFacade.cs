@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed ForecastRun records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IForecastRunFacade
     {
-        Task<List<ForecastRun>> GetForecastRunsAsync(CancellationToken cancellationToken = default);
-        Task<ForecastRun?> GetForecastRunByIdAsync(long forecastRunId, CancellationToken cancellationToken = default);
-        Task<List<ForecastRun>> GetForecastRunsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<ForecastRun>> GetForecastRunsAsync();
+        Task<ForecastRun?> GetForecastRunByIdAsync(long forecastRunId);
+        Task AddForecastRunAsync(ForecastRun forecastRun);
+        Task<bool> UpdateForecastRunAsync(ForecastRun forecastRun);
+        Task<bool> DeleteForecastRunAsync(long forecastRunId);
     }
 }

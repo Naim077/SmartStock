@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ApprovalFacade : IApprovalFacade
+    public class ApprovalFacade : IApprovalFacade
     {
         private readonly IApprovalRepository _approvalRepository;
 
         public ApprovalFacade(IApprovalRepository approvalRepository)
         {
-            ArgumentNullException.ThrowIfNull(approvalRepository);
             _approvalRepository = approvalRepository;
         }
 
-        public Task<List<Approval>> GetApprovalsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Approval>> GetApprovalsAsync()
         {
-            return _approvalRepository.GetAllAsync(cancellationToken);
+            return await _approvalRepository.GetAllAsync();
         }
 
-        public Task<Approval?> GetApprovalByIdAsync(long approvalId, CancellationToken cancellationToken = default)
+        public async Task<Approval?> GetApprovalByIdAsync(long approvalId)
         {
-            return _approvalRepository.GetByIdAsync(approvalId, cancellationToken);
+            return await _approvalRepository.GetByIdAsync(approvalId);
         }
 
-        public Task<List<Approval>> GetApprovalsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddApprovalAsync(Approval approval)
         {
-            return _approvalRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(approval);
+            await _approvalRepository.AddAsync(approval);
+        }
+
+        public async Task<bool> UpdateApprovalAsync(Approval approval)
+        {
+            ArgumentNullException.ThrowIfNull(approval);
+            var existing = await _approvalRepository.GetByIdAsync(approval.ApprovalId);
+            if (existing == null)
+                return false;
+
+            await _approvalRepository.UpdateAsync(approval);
+            return true;
+        }
+
+        public async Task<bool> DeleteApprovalAsync(long approvalId)
+        {
+            var existing = await _approvalRepository.GetByIdAsync(approvalId);
+            if (existing == null)
+                return false;
+
+            await _approvalRepository.DeleteAsync(approvalId);
+            return true;
         }
     }
 }

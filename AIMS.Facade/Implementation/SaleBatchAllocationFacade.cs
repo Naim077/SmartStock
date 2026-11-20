@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class SaleBatchAllocationFacade : ISaleBatchAllocationFacade
+    public class SaleBatchAllocationFacade : ISaleBatchAllocationFacade
     {
         private readonly ISaleBatchAllocationRepository _saleBatchAllocationRepository;
 
         public SaleBatchAllocationFacade(ISaleBatchAllocationRepository saleBatchAllocationRepository)
         {
-            ArgumentNullException.ThrowIfNull(saleBatchAllocationRepository);
             _saleBatchAllocationRepository = saleBatchAllocationRepository;
         }
 
-        public Task<List<SaleBatchAllocation>> GetSaleBatchAllocationsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<SaleBatchAllocation>> GetSaleBatchAllocationsAsync()
         {
-            return _saleBatchAllocationRepository.GetAllAsync(cancellationToken);
+            return await _saleBatchAllocationRepository.GetAllAsync();
         }
 
-        public Task<SaleBatchAllocation?> GetSaleBatchAllocationByIdAsync(long allocationId, CancellationToken cancellationToken = default)
+        public async Task<SaleBatchAllocation?> GetSaleBatchAllocationByIdAsync(long allocationId)
         {
-            return _saleBatchAllocationRepository.GetByIdAsync(allocationId, cancellationToken);
+            return await _saleBatchAllocationRepository.GetByIdAsync(allocationId);
         }
 
-        public Task<List<SaleBatchAllocation>> GetSaleBatchAllocationsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddSaleBatchAllocationAsync(SaleBatchAllocation saleBatchAllocation)
         {
-            return _saleBatchAllocationRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(saleBatchAllocation);
+            await _saleBatchAllocationRepository.AddAsync(saleBatchAllocation);
+        }
+
+        public async Task<bool> UpdateSaleBatchAllocationAsync(SaleBatchAllocation saleBatchAllocation)
+        {
+            ArgumentNullException.ThrowIfNull(saleBatchAllocation);
+            var existing = await _saleBatchAllocationRepository.GetByIdAsync(saleBatchAllocation.AllocationId);
+            if (existing == null)
+                return false;
+
+            await _saleBatchAllocationRepository.UpdateAsync(saleBatchAllocation);
+            return true;
+        }
+
+        public async Task<bool> DeleteSaleBatchAllocationAsync(long allocationId)
+        {
+            var existing = await _saleBatchAllocationRepository.GetByIdAsync(allocationId);
+            if (existing == null)
+                return false;
+
+            await _saleBatchAllocationRepository.DeleteAsync(allocationId);
+            return true;
         }
     }
 }

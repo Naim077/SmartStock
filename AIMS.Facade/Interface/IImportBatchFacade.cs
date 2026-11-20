@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed ImportBatch records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IImportBatchFacade
     {
-        Task<List<ImportBatch>> GetImportBatchesAsync(CancellationToken cancellationToken = default);
-        Task<ImportBatch?> GetImportBatchByIdAsync(long importBatchId, CancellationToken cancellationToken = default);
-        Task<List<ImportBatch>> GetImportBatchesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<ImportBatch>> GetImportBatchesAsync();
+        Task<ImportBatch?> GetImportBatchByIdAsync(long importBatchId);
+        Task AddImportBatchAsync(ImportBatch importBatch);
+        Task<bool> UpdateImportBatchAsync(ImportBatch importBatch);
+        Task<bool> DeleteImportBatchAsync(long importBatchId);
     }
 }

@@ -1,10 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IProductRepository : IRepository<Product>
+    public interface IProductRepository
     {
-        Task<Product?> GetByIdAsync(long productId, CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(long productId, byte[] rowVersion, CancellationToken cancellationToken = default);
+        Task<List<Product>> GetAllAsync();
+        Task<Product?> GetByIdAsync(long productId);
+        Task AddAsync(Product product);
+        Task UpdateAsync(Product product);
+        Task DeleteAsync(long productId);
     }
 }

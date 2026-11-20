@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class PaymentRepository : ReadOnlyRepository<Payment>, IPaymentRepository
+    public class PaymentRepository : IPaymentRepository
     {
-        public PaymentRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public PaymentRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<Payment?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<List<Payment>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { documentId }, cancellationToken);
+            return await _dbContext.Payments.ToListAsync();
+        }
+
+        public async Task<Payment?> GetByIdAsync(long documentId)
+        {
+            return await _dbContext.Payments.FindAsync(new object[] { documentId });
+        }
+
+        public async Task AddAsync(Payment payment)
+        {
+            await _dbContext.Payments.AddAsync(payment);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Payment payment)
+        {
+            _dbContext.Payments.Update(payment);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long documentId)
+        {
+            var payment = await _dbContext.Payments.FindAsync(new object[] { documentId });
+            if (payment == null)
+                return;
+
+            _dbContext.Payments.Remove(payment);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

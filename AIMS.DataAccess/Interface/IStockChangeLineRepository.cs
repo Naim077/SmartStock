@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IStockChangeLineRepository : IReadOnlyRepository<StockChangeLine>
+    public interface IStockChangeLineRepository
     {
-        Task<StockChangeLine?> GetByIdAsync(long lineId, CancellationToken cancellationToken = default);
+        Task<List<StockChangeLine>> GetAllAsync();
+        Task<StockChangeLine?> GetByIdAsync(long lineId);
+        Task AddAsync(StockChangeLine stockChangeLine);
+        Task UpdateAsync(StockChangeLine stockChangeLine);
+        Task DeleteAsync(long lineId);
     }
 }

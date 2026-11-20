@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed GoodsReceiptLine records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IGoodsReceiptLineFacade
     {
-        Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesAsync(CancellationToken cancellationToken = default);
-        Task<GoodsReceiptLine?> GetGoodsReceiptLineByIdAsync(long lineId, CancellationToken cancellationToken = default);
-        Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<GoodsReceiptLine>> GetGoodsReceiptLinesAsync();
+        Task<GoodsReceiptLine?> GetGoodsReceiptLineByIdAsync(long lineId);
+        Task AddGoodsReceiptLineAsync(GoodsReceiptLine goodsReceiptLine);
+        Task<bool> UpdateGoodsReceiptLineAsync(GoodsReceiptLine goodsReceiptLine);
+        Task<bool> DeleteGoodsReceiptLineAsync(long lineId);
     }
 }

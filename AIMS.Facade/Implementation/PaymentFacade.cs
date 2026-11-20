@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class PaymentFacade : IPaymentFacade
+    public class PaymentFacade : IPaymentFacade
     {
         private readonly IPaymentRepository _paymentRepository;
 
         public PaymentFacade(IPaymentRepository paymentRepository)
         {
-            ArgumentNullException.ThrowIfNull(paymentRepository);
             _paymentRepository = paymentRepository;
         }
 
-        public Task<List<Payment>> GetPaymentsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Payment>> GetPaymentsAsync()
         {
-            return _paymentRepository.GetAllAsync(cancellationToken);
+            return await _paymentRepository.GetAllAsync();
         }
 
-        public Task<Payment?> GetPaymentByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<Payment?> GetPaymentByIdAsync(long documentId)
         {
-            return _paymentRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _paymentRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<Payment>> GetPaymentsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddPaymentAsync(Payment payment)
         {
-            return _paymentRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(payment);
+            await _paymentRepository.AddAsync(payment);
+        }
+
+        public async Task<bool> UpdatePaymentAsync(Payment payment)
+        {
+            ArgumentNullException.ThrowIfNull(payment);
+            var existing = await _paymentRepository.GetByIdAsync(payment.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _paymentRepository.UpdateAsync(payment);
+            return true;
+        }
+
+        public async Task<bool> DeletePaymentAsync(long documentId)
+        {
+            var existing = await _paymentRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _paymentRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

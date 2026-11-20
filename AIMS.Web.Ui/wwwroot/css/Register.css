@@ -1,0 +1,61 @@
+﻿/* Registration-specific refinements; shared SmartStock branding comes from Login.css. */
+.register-panel {
+    align-items: flex-start;
+    overflow-y: auto;
+    padding-top: 38px;
+    padding-bottom: 30px;
+}
+
+.register-form {
+    max-width: 420px;
+}
+
+    .register-form > p:not(.register-prompt):not(.form-footer) {
+        margin-bottom: 22px;
+    }
+
+    .register-form .field {
+        margin-bottom: 14px;
+    }
+
+        .register-form .field label {
+            margin-bottom: 7px;
+        }
+
+    .register-form .input-wrap {
+        min-height: 45px;
+    }
+
+        .register-form .input-wrap input {
+            height: 42px;
+        }
+
+.field-hint {
+    display: block;
+    margin-top: 5px;
+    color: #8a948b;
+    font-size: 10px;
+}
+
+.register-button {
+    margin-top: 8px;
+}
+
+.register-form .security-note {
+    margin-top: 18px;
+}
+
+.register-form .register-prompt {
+    margin-top: 19px;
+}
+
+.register-form .form-footer {
+    margin-top: 23px;
+}
+
+@media (max-width: 700px) {
+    .register-panel {
+        padding-top: 35px;
+        padding-bottom: 38px;
+    }
+}

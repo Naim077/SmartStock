@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed Payment records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IPaymentFacade
     {
-        Task<List<Payment>> GetPaymentsAsync(CancellationToken cancellationToken = default);
-        Task<Payment?> GetPaymentByIdAsync(long documentId, CancellationToken cancellationToken = default);
-        Task<List<Payment>> GetPaymentsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<Payment>> GetPaymentsAsync();
+        Task<Payment?> GetPaymentByIdAsync(long documentId);
+        Task AddPaymentAsync(Payment payment);
+        Task<bool> UpdatePaymentAsync(Payment payment);
+        Task<bool> DeletePaymentAsync(long documentId);
     }
 }

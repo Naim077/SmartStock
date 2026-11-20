@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class AuditLogRepository : ReadOnlyRepository<AuditLog>, IAuditLogRepository
+    public class AuditLogRepository : IAuditLogRepository
     {
-        public AuditLogRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public AuditLogRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<AuditLog?> GetByIdAsync(long auditLogId, CancellationToken cancellationToken = default)
+        public async Task<List<AuditLog>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { auditLogId }, cancellationToken);
+            return await _dbContext.AuditLogs.ToListAsync();
+        }
+
+        public async Task<AuditLog?> GetByIdAsync(long auditLogId)
+        {
+            return await _dbContext.AuditLogs.FindAsync(new object[] { auditLogId });
+        }
+
+        public async Task AddAsync(AuditLog auditLog)
+        {
+            await _dbContext.AuditLogs.AddAsync(auditLog);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(AuditLog auditLog)
+        {
+            _dbContext.AuditLogs.Update(auditLog);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long auditLogId)
+        {
+            var auditLog = await _dbContext.AuditLogs.FindAsync(new object[] { auditLogId });
+            if (auditLog == null)
+                return;
+
+            _dbContext.AuditLogs.Remove(auditLog);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

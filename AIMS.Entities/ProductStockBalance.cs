@@ -1,16 +1,21 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.ProductStockBalance. UTC timestamps and posting rules are service responsibilities.
-public sealed class ProductStockBalance
+[Table("ProductStockBalance", Schema = "ss")]
+public class ProductStockBalance
 {
+    [Key]
     public long ProductId { get; set; }
-    public decimal Quantity { get; set; } = 0m;
-    public decimal InventoryValue { get; set; } = 0m;
-    public long MovementVersion { get; set; } = 0L;
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal Quantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal InventoryValue { get; set; }
+    public long MovementVersion { get; set; }
     public long? LastPostingId { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Product Product { get; set; } = null!;
-    public Posting? LastPosting { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

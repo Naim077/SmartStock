@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface ISaleBatchAllocationRepository : IReadOnlyRepository<SaleBatchAllocation>
+    public interface ISaleBatchAllocationRepository
     {
-        Task<SaleBatchAllocation?> GetByIdAsync(long allocationId, CancellationToken cancellationToken = default);
+        Task<List<SaleBatchAllocation>> GetAllAsync();
+        Task<SaleBatchAllocation?> GetByIdAsync(long allocationId);
+        Task AddAsync(SaleBatchAllocation saleBatchAllocation);
+        Task UpdateAsync(SaleBatchAllocation saleBatchAllocation);
+        Task DeleteAsync(long allocationId);
     }
 }

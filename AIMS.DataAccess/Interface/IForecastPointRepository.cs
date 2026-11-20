@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IForecastPointRepository : IReadOnlyRepository<ForecastPoint>
+    public interface IForecastPointRepository
     {
-        Task<ForecastPoint?> GetByIdAsync(long forecastRunId, short horizonDays, CancellationToken cancellationToken = default);
+        Task<List<ForecastPoint>> GetAllAsync();
+        Task<ForecastPoint?> GetByIdAsync(long forecastRunId, short horizonDays);
+        Task AddAsync(ForecastPoint forecastPoint);
+        Task UpdateAsync(ForecastPoint forecastPoint);
+        Task DeleteAsync(long forecastRunId, short horizonDays);
     }
 }

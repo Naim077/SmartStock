@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed ReorderSuggestion records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IReorderSuggestionFacade
     {
-        Task<List<ReorderSuggestion>> GetReorderSuggestionsAsync(CancellationToken cancellationToken = default);
-        Task<ReorderSuggestion?> GetReorderSuggestionByIdAsync(long suggestionId, CancellationToken cancellationToken = default);
-        Task<List<ReorderSuggestion>> GetReorderSuggestionsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<ReorderSuggestion>> GetReorderSuggestionsAsync();
+        Task<ReorderSuggestion?> GetReorderSuggestionByIdAsync(long suggestionId);
+        Task AddReorderSuggestionAsync(ReorderSuggestion reorderSuggestion);
+        Task<bool> UpdateReorderSuggestionAsync(ReorderSuggestion reorderSuggestion);
+        Task<bool> DeleteReorderSuggestionAsync(long suggestionId);
     }
 }

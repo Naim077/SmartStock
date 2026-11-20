@@ -1,23 +1,28 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.GoodsReceiptLine. UTC timestamps and posting rules are service responsibilities.
-public sealed class GoodsReceiptLine
+[Table("GoodsReceiptLine", Schema = "ss")]
+public class GoodsReceiptLine
 {
+    [Key]
     public long LineId { get; set; }
     public long DocumentId { get; set; }
     public long ProductId { get; set; }
     public long PurchaseOrderId { get; set; }
     public long PurchaseOrderLineId { get; set; }
     public long ProductBatchId { get; set; }
-    public required string Bucket { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string Bucket { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Quantity { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal UnitCost { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal InventoryValue { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal PayableAmount { get; set; }
-
-    public DocumentLine DocumentLine { get; set; } = null!;
-    public GoodsReceipt GoodsReceipt { get; set; } = null!;
-    public PurchaseOrderLine PurchaseOrderLine { get; set; } = null!;
-    public ProductBatch ProductBatch { get; set; } = null!;
 }

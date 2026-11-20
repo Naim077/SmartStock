@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IBusinessSettingsRepository : IReadOnlyRepository<BusinessSettings>
+    public interface IBusinessSettingsRepository
     {
-        Task<BusinessSettings?> GetByIdAsync(byte settingsId, CancellationToken cancellationToken = default);
+        Task<List<BusinessSettings>> GetAllAsync();
+        Task<BusinessSettings?> GetByIdAsync(byte settingsId);
+        Task AddAsync(BusinessSettings businessSettings);
+        Task UpdateAsync(BusinessSettings businessSettings);
+        Task DeleteAsync(byte settingsId);
     }
 }

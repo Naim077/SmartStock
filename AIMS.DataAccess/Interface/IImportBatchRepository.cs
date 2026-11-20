@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IImportBatchRepository : IReadOnlyRepository<ImportBatch>
+    public interface IImportBatchRepository
     {
-        Task<ImportBatch?> GetByIdAsync(long importBatchId, CancellationToken cancellationToken = default);
+        Task<List<ImportBatch>> GetAllAsync();
+        Task<ImportBatch?> GetByIdAsync(long importBatchId);
+        Task AddAsync(ImportBatch importBatch);
+        Task UpdateAsync(ImportBatch importBatch);
+        Task DeleteAsync(long importBatchId);
     }
 }

@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IPaymentReversalRepository : IReadOnlyRepository<PaymentReversal>
+    public interface IPaymentReversalRepository
     {
-        Task<PaymentReversal?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default);
+        Task<List<PaymentReversal>> GetAllAsync();
+        Task<PaymentReversal?> GetByIdAsync(long documentId);
+        Task AddAsync(PaymentReversal paymentReversal);
+        Task UpdateAsync(PaymentReversal paymentReversal);
+        Task DeleteAsync(long documentId);
     }
 }

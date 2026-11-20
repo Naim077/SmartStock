@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class AuditLogFacade : IAuditLogFacade
+    public class AuditLogFacade : IAuditLogFacade
     {
         private readonly IAuditLogRepository _auditLogRepository;
 
         public AuditLogFacade(IAuditLogRepository auditLogRepository)
         {
-            ArgumentNullException.ThrowIfNull(auditLogRepository);
             _auditLogRepository = auditLogRepository;
         }
 
-        public Task<List<AuditLog>> GetAuditLogsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<AuditLog>> GetAuditLogsAsync()
         {
-            return _auditLogRepository.GetAllAsync(cancellationToken);
+            return await _auditLogRepository.GetAllAsync();
         }
 
-        public Task<AuditLog?> GetAuditLogByIdAsync(long auditLogId, CancellationToken cancellationToken = default)
+        public async Task<AuditLog?> GetAuditLogByIdAsync(long auditLogId)
         {
-            return _auditLogRepository.GetByIdAsync(auditLogId, cancellationToken);
+            return await _auditLogRepository.GetByIdAsync(auditLogId);
         }
 
-        public Task<List<AuditLog>> GetAuditLogsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddAuditLogAsync(AuditLog auditLog)
         {
-            return _auditLogRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(auditLog);
+            await _auditLogRepository.AddAsync(auditLog);
+        }
+
+        public async Task<bool> UpdateAuditLogAsync(AuditLog auditLog)
+        {
+            ArgumentNullException.ThrowIfNull(auditLog);
+            var existing = await _auditLogRepository.GetByIdAsync(auditLog.AuditLogId);
+            if (existing == null)
+                return false;
+
+            await _auditLogRepository.UpdateAsync(auditLog);
+            return true;
+        }
+
+        public async Task<bool> DeleteAuditLogAsync(long auditLogId)
+        {
+            var existing = await _auditLogRepository.GetByIdAsync(auditLogId);
+            if (existing == null)
+                return false;
+
+            await _auditLogRepository.DeleteAsync(auditLogId);
+            return true;
         }
     }
 }

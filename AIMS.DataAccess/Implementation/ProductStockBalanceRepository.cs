@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class ProductStockBalanceRepository : ReadOnlyRepository<ProductStockBalance>, IProductStockBalanceRepository
+    public class ProductStockBalanceRepository : IProductStockBalanceRepository
     {
-        public ProductStockBalanceRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public ProductStockBalanceRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<ProductStockBalance?> GetByIdAsync(long productId, CancellationToken cancellationToken = default)
+        public async Task<List<ProductStockBalance>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { productId }, cancellationToken);
+            return await _dbContext.ProductStockBalances.ToListAsync();
+        }
+
+        public async Task<ProductStockBalance?> GetByIdAsync(long productId)
+        {
+            return await _dbContext.ProductStockBalances.FindAsync(new object[] { productId });
+        }
+
+        public async Task AddAsync(ProductStockBalance productStockBalance)
+        {
+            await _dbContext.ProductStockBalances.AddAsync(productStockBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(ProductStockBalance productStockBalance)
+        {
+            _dbContext.ProductStockBalances.Update(productStockBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long productId)
+        {
+            var productStockBalance = await _dbContext.ProductStockBalances.FindAsync(new object[] { productId });
+            if (productStockBalance == null)
+                return;
+
+            _dbContext.ProductStockBalances.Remove(productStockBalance);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

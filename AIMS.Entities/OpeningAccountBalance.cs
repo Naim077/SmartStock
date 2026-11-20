@@ -1,19 +1,21 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.OpeningAccountBalance. UTC timestamps and posting rules are service responsibilities.
-public sealed class OpeningAccountBalance
+[Table("OpeningAccountBalance", Schema = "ss")]
+public class OpeningAccountBalance
 {
+    [Key]
     public long DocumentId { get; set; }
     public long? CustomerId { get; set; }
     public long? SupplierId { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal Amount { get; set; }
-    public required string SourceReference { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string SourceReference { get; set; } = null!;
     public int SourceRowNumber { get; set; }
     public long? ImportBatchId { get; set; }
-
-    public Document Document { get; set; } = null!;
-    public Customer? Customer { get; set; }
-    public Supplier? Supplier { get; set; }
-    public ImportBatch? ImportBatch { get; set; }
 }

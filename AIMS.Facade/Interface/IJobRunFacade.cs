@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed JobRun records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IJobRunFacade
     {
-        Task<List<JobRun>> GetJobRunsAsync(CancellationToken cancellationToken = default);
-        Task<JobRun?> GetJobRunByIdAsync(long jobRunId, CancellationToken cancellationToken = default);
-        Task<List<JobRun>> GetJobRunsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<JobRun>> GetJobRunsAsync();
+        Task<JobRun?> GetJobRunByIdAsync(long jobRunId);
+        Task AddJobRunAsync(JobRun jobRun);
+        Task<bool> UpdateJobRunAsync(JobRun jobRun);
+        Task<bool> DeleteJobRunAsync(long jobRunId);
     }
 }

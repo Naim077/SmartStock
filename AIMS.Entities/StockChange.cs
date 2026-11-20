@@ -1,14 +1,19 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.StockChange. UTC timestamps and posting rules are service responsibilities.
-public sealed class StockChange
+[Table("StockChange", Schema = "ss")]
+public class StockChange
 {
+    [Key]
     public long DocumentId { get; set; }
-    public required string ChangeKind { get; set; }
-    public required string Reason { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ChangeKind { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Reason { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
     public string? EvidenceReference { get; set; }
-
-    public Document Document { get; set; } = null!;
-    public ICollection<StockChangeLine> StockChangeLines { get; set; } = new List<StockChangeLine>();
 }

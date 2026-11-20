@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed PaymentSettlementEvent records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IPaymentSettlementEventFacade
     {
-        Task<List<PaymentSettlementEvent>> GetPaymentSettlementEventsAsync(CancellationToken cancellationToken = default);
-        Task<PaymentSettlementEvent?> GetPaymentSettlementEventByIdAsync(long eventId, CancellationToken cancellationToken = default);
-        Task<List<PaymentSettlementEvent>> GetPaymentSettlementEventsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<PaymentSettlementEvent>> GetPaymentSettlementEventsAsync();
+        Task<PaymentSettlementEvent?> GetPaymentSettlementEventByIdAsync(long eventId);
+        Task AddPaymentSettlementEventAsync(PaymentSettlementEvent paymentSettlementEvent);
+        Task<bool> UpdatePaymentSettlementEventAsync(PaymentSettlementEvent paymentSettlementEvent);
+        Task<bool> DeletePaymentSettlementEventAsync(long eventId);
     }
 }

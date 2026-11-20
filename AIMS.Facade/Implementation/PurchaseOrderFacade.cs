@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class PurchaseOrderFacade : IPurchaseOrderFacade
+    public class PurchaseOrderFacade : IPurchaseOrderFacade
     {
         private readonly IPurchaseOrderRepository _purchaseOrderRepository;
 
         public PurchaseOrderFacade(IPurchaseOrderRepository purchaseOrderRepository)
         {
-            ArgumentNullException.ThrowIfNull(purchaseOrderRepository);
             _purchaseOrderRepository = purchaseOrderRepository;
         }
 
-        public Task<List<PurchaseOrder>> GetPurchaseOrdersAsync(CancellationToken cancellationToken = default)
+        public async Task<List<PurchaseOrder>> GetPurchaseOrdersAsync()
         {
-            return _purchaseOrderRepository.GetAllAsync(cancellationToken);
+            return await _purchaseOrderRepository.GetAllAsync();
         }
 
-        public Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<PurchaseOrder?> GetPurchaseOrderByIdAsync(long documentId)
         {
-            return _purchaseOrderRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _purchaseOrderRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<PurchaseOrder>> GetPurchaseOrdersPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddPurchaseOrderAsync(PurchaseOrder purchaseOrder)
         {
-            return _purchaseOrderRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(purchaseOrder);
+            await _purchaseOrderRepository.AddAsync(purchaseOrder);
+        }
+
+        public async Task<bool> UpdatePurchaseOrderAsync(PurchaseOrder purchaseOrder)
+        {
+            ArgumentNullException.ThrowIfNull(purchaseOrder);
+            var existing = await _purchaseOrderRepository.GetByIdAsync(purchaseOrder.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _purchaseOrderRepository.UpdateAsync(purchaseOrder);
+            return true;
+        }
+
+        public async Task<bool> DeletePurchaseOrderAsync(long documentId)
+        {
+            var existing = await _purchaseOrderRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _purchaseOrderRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

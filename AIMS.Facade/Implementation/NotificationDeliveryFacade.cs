@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class NotificationDeliveryFacade : INotificationDeliveryFacade
+    public class NotificationDeliveryFacade : INotificationDeliveryFacade
     {
         private readonly INotificationDeliveryRepository _notificationDeliveryRepository;
 
         public NotificationDeliveryFacade(INotificationDeliveryRepository notificationDeliveryRepository)
         {
-            ArgumentNullException.ThrowIfNull(notificationDeliveryRepository);
             _notificationDeliveryRepository = notificationDeliveryRepository;
         }
 
-        public Task<List<NotificationDelivery>> GetNotificationDeliveriesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<NotificationDelivery>> GetNotificationDeliveriesAsync()
         {
-            return _notificationDeliveryRepository.GetAllAsync(cancellationToken);
+            return await _notificationDeliveryRepository.GetAllAsync();
         }
 
-        public Task<NotificationDelivery?> GetNotificationDeliveryByIdAsync(long deliveryId, CancellationToken cancellationToken = default)
+        public async Task<NotificationDelivery?> GetNotificationDeliveryByIdAsync(long deliveryId)
         {
-            return _notificationDeliveryRepository.GetByIdAsync(deliveryId, cancellationToken);
+            return await _notificationDeliveryRepository.GetByIdAsync(deliveryId);
         }
 
-        public Task<List<NotificationDelivery>> GetNotificationDeliveriesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddNotificationDeliveryAsync(NotificationDelivery notificationDelivery)
         {
-            return _notificationDeliveryRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(notificationDelivery);
+            await _notificationDeliveryRepository.AddAsync(notificationDelivery);
+        }
+
+        public async Task<bool> UpdateNotificationDeliveryAsync(NotificationDelivery notificationDelivery)
+        {
+            ArgumentNullException.ThrowIfNull(notificationDelivery);
+            var existing = await _notificationDeliveryRepository.GetByIdAsync(notificationDelivery.DeliveryId);
+            if (existing == null)
+                return false;
+
+            await _notificationDeliveryRepository.UpdateAsync(notificationDelivery);
+            return true;
+        }
+
+        public async Task<bool> DeleteNotificationDeliveryAsync(long deliveryId)
+        {
+            var existing = await _notificationDeliveryRepository.GetByIdAsync(deliveryId);
+            if (existing == null)
+                return false;
+
+            await _notificationDeliveryRepository.DeleteAsync(deliveryId);
+            return true;
         }
     }
 }

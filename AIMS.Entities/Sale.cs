@@ -1,17 +1,20 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Sale. UTC timestamps and posting rules are service responsibilities.
-public sealed class Sale
+[Table("Sale", Schema = "ss")]
+public class Sale
 {
+    [Key]
     public long DocumentId { get; set; }
     public long CustomerId { get; set; }
-    public required string CustomerNameSnapshot { get; set; }
-    public decimal InvoiceDiscountAmount { get; set; } = 0m;
+    [Column(TypeName = "nvarchar(max)")]
+    public string CustomerNameSnapshot { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal InvoiceDiscountAmount { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal TotalAmount { get; set; }
-
-    public Document Document { get; set; } = null!;
-    public Customer Customer { get; set; } = null!;
-    public ICollection<SaleLine> SaleLines { get; set; } = new List<SaleLine>();
-    public ICollection<SalesReturn> SalesReturns { get; set; } = new List<SalesReturn>();
 }

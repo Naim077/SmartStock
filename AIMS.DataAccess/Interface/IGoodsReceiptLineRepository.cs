@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IGoodsReceiptLineRepository : IReadOnlyRepository<GoodsReceiptLine>
+    public interface IGoodsReceiptLineRepository
     {
-        Task<GoodsReceiptLine?> GetByIdAsync(long lineId, CancellationToken cancellationToken = default);
+        Task<List<GoodsReceiptLine>> GetAllAsync();
+        Task<GoodsReceiptLine?> GetByIdAsync(long lineId);
+        Task AddAsync(GoodsReceiptLine goodsReceiptLine);
+        Task UpdateAsync(GoodsReceiptLine goodsReceiptLine);
+        Task DeleteAsync(long lineId);
     }
 }

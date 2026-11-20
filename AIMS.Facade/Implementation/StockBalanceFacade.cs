@@ -1,33 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class StockBalanceFacade : IStockBalanceFacade
+    public class StockBalanceFacade : IStockBalanceFacade
     {
         private readonly IStockBalanceRepository _stockBalanceRepository;
 
         public StockBalanceFacade(IStockBalanceRepository stockBalanceRepository)
         {
-            ArgumentNullException.ThrowIfNull(stockBalanceRepository);
             _stockBalanceRepository = stockBalanceRepository;
         }
 
-        public Task<List<StockBalance>> GetStockBalancesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<StockBalance>> GetStockBalancesAsync()
         {
-            return _stockBalanceRepository.GetAllAsync(cancellationToken);
+            return await _stockBalanceRepository.GetAllAsync();
         }
 
-        public Task<StockBalance?> GetStockBalanceByIdAsync(long productBatchId, string bucket, CancellationToken cancellationToken = default)
+        public async Task<StockBalance?> GetStockBalanceByIdAsync(long productBatchId, string bucket)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(bucket);
-            return _stockBalanceRepository.GetByIdAsync(productBatchId, bucket, cancellationToken);
+            return await _stockBalanceRepository.GetByIdAsync(productBatchId, bucket);
         }
 
-        public Task<List<StockBalance>> GetStockBalancesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddStockBalanceAsync(StockBalance stockBalance)
         {
-            return _stockBalanceRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(stockBalance);
+            await _stockBalanceRepository.AddAsync(stockBalance);
+        }
+
+        public async Task<bool> UpdateStockBalanceAsync(StockBalance stockBalance)
+        {
+            ArgumentNullException.ThrowIfNull(stockBalance);
+            var existing = await _stockBalanceRepository.GetByIdAsync(stockBalance.ProductBatchId, stockBalance.Bucket);
+            if (existing == null)
+                return false;
+
+            await _stockBalanceRepository.UpdateAsync(stockBalance);
+            return true;
+        }
+
+        public async Task<bool> DeleteStockBalanceAsync(long productBatchId, string bucket)
+        {
+            var existing = await _stockBalanceRepository.GetByIdAsync(productBatchId, bucket);
+            if (existing == null)
+                return false;
+
+            await _stockBalanceRepository.DeleteAsync(productBatchId, bucket);
+            return true;
         }
     }
 }

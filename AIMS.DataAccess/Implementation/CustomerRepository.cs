@@ -1,21 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class CustomerRepository : Repository<Customer>, ICustomerRepository
+    public class CustomerRepository : ICustomerRepository
     {
-        public CustomerRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public CustomerRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<Customer?> GetByIdAsync(long customerId, CancellationToken cancellationToken = default)
+        public async Task<List<Customer>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { customerId }, cancellationToken);
+            return await _dbContext.Customers.ToListAsync();
         }
 
-        public Task<bool> DeleteAsync(long customerId, byte[] rowVersion, CancellationToken cancellationToken = default)
+        public async Task<Customer?> GetByIdAsync(long customerId)
         {
-            return base.DeleteAsync(new object[] { customerId }, rowVersion, cancellationToken);
+            return await _dbContext.Customers.FindAsync(new object[] { customerId });
+        }
+
+        public async Task AddAsync(Customer customer)
+        {
+            await _dbContext.Customers.AddAsync(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Customer customer)
+        {
+            _dbContext.Customers.Update(customer);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long customerId)
+        {
+            var customer = await _dbContext.Customers.FindAsync(new object[] { customerId });
+            if (customer == null)
+                return;
+
+            _dbContext.Customers.Remove(customer);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

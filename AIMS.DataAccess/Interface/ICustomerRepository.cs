@@ -1,10 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface ICustomerRepository : IRepository<Customer>
+    public interface ICustomerRepository
     {
-        Task<Customer?> GetByIdAsync(long customerId, CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(long customerId, byte[] rowVersion, CancellationToken cancellationToken = default);
+        Task<List<Customer>> GetAllAsync();
+        Task<Customer?> GetByIdAsync(long customerId);
+        Task AddAsync(Customer customer);
+        Task UpdateAsync(Customer customer);
+        Task DeleteAsync(long customerId);
     }
 }

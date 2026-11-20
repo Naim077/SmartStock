@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class ForecastPointRepository : ReadOnlyRepository<ForecastPoint>, IForecastPointRepository
+    public class ForecastPointRepository : IForecastPointRepository
     {
-        public ForecastPointRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public ForecastPointRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<ForecastPoint?> GetByIdAsync(long forecastRunId, short horizonDays, CancellationToken cancellationToken = default)
+        public async Task<List<ForecastPoint>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { forecastRunId, horizonDays }, cancellationToken);
+            return await _dbContext.ForecastPoints.ToListAsync();
+        }
+
+        public async Task<ForecastPoint?> GetByIdAsync(long forecastRunId, short horizonDays)
+        {
+            return await _dbContext.ForecastPoints.FindAsync(new object[] { forecastRunId, horizonDays });
+        }
+
+        public async Task AddAsync(ForecastPoint forecastPoint)
+        {
+            await _dbContext.ForecastPoints.AddAsync(forecastPoint);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(ForecastPoint forecastPoint)
+        {
+            _dbContext.ForecastPoints.Update(forecastPoint);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long forecastRunId, short horizonDays)
+        {
+            var forecastPoint = await _dbContext.ForecastPoints.FindAsync(new object[] { forecastRunId, horizonDays });
+            if (forecastPoint == null)
+                return;
+
+            _dbContext.ForecastPoints.Remove(forecastPoint);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

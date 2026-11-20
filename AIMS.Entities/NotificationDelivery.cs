@@ -1,23 +1,31 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.NotificationDelivery. UTC timestamps and posting rules are service responsibilities.
-public sealed class NotificationDelivery
+[Table("NotificationDelivery", Schema = "ss")]
+public class NotificationDelivery
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long DeliveryId { get; set; }
     public long AlertId { get; set; }
     public long? JobRunId { get; set; }
-    public required string NotificationKey { get; set; }
-    public required string ApprovedRecipientReference { get; set; }
-    public required string Status { get; set; }
-    public byte AttemptCount { get; set; } = (byte)0;
+    [Column(TypeName = "nvarchar(max)")]
+    public string NotificationKey { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string ApprovedRecipientReference { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Status { get; set; } = null!;
+    public byte AttemptCount { get; set; }
     public DateTime CreatedUtc { get; set; }
     public DateTime? LastAttemptUtc { get; set; }
     public DateTime? NextAttemptUtc { get; set; }
     public DateTime? SentUtc { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? SafeErrorCode { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Alert Alert { get; set; } = null!;
-    public JobRun? JobRun { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

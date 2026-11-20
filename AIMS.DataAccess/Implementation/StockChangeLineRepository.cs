@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class StockChangeLineRepository : ReadOnlyRepository<StockChangeLine>, IStockChangeLineRepository
+    public class StockChangeLineRepository : IStockChangeLineRepository
     {
-        public StockChangeLineRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public StockChangeLineRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<StockChangeLine?> GetByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<List<StockChangeLine>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { lineId }, cancellationToken);
+            return await _dbContext.StockChangeLines.ToListAsync();
+        }
+
+        public async Task<StockChangeLine?> GetByIdAsync(long lineId)
+        {
+            return await _dbContext.StockChangeLines.FindAsync(new object[] { lineId });
+        }
+
+        public async Task AddAsync(StockChangeLine stockChangeLine)
+        {
+            await _dbContext.StockChangeLines.AddAsync(stockChangeLine);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(StockChangeLine stockChangeLine)
+        {
+            _dbContext.StockChangeLines.Update(stockChangeLine);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long lineId)
+        {
+            var stockChangeLine = await _dbContext.StockChangeLines.FindAsync(new object[] { lineId });
+            if (stockChangeLine == null)
+                return;
+
+            _dbContext.StockChangeLines.Remove(stockChangeLine);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

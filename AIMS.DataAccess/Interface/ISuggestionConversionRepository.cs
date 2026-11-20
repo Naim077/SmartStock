@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface ISuggestionConversionRepository : IReadOnlyRepository<SuggestionConversion>
+    public interface ISuggestionConversionRepository
     {
-        Task<SuggestionConversion?> GetByIdAsync(long conversionId, CancellationToken cancellationToken = default);
+        Task<List<SuggestionConversion>> GetAllAsync();
+        Task<SuggestionConversion?> GetByIdAsync(long conversionId);
+        Task AddAsync(SuggestionConversion suggestionConversion);
+        Task UpdateAsync(SuggestionConversion suggestionConversion);
+        Task DeleteAsync(long conversionId);
     }
 }

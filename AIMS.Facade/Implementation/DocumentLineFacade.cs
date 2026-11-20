@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class DocumentLineFacade : IDocumentLineFacade
+    public class DocumentLineFacade : IDocumentLineFacade
     {
         private readonly IDocumentLineRepository _documentLineRepository;
 
         public DocumentLineFacade(IDocumentLineRepository documentLineRepository)
         {
-            ArgumentNullException.ThrowIfNull(documentLineRepository);
             _documentLineRepository = documentLineRepository;
         }
 
-        public Task<List<DocumentLine>> GetDocumentLinesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<DocumentLine>> GetDocumentLinesAsync()
         {
-            return _documentLineRepository.GetAllAsync(cancellationToken);
+            return await _documentLineRepository.GetAllAsync();
         }
 
-        public Task<DocumentLine?> GetDocumentLineByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<DocumentLine?> GetDocumentLineByIdAsync(long lineId)
         {
-            return _documentLineRepository.GetByIdAsync(lineId, cancellationToken);
+            return await _documentLineRepository.GetByIdAsync(lineId);
         }
 
-        public Task<List<DocumentLine>> GetDocumentLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddDocumentLineAsync(DocumentLine documentLine)
         {
-            return _documentLineRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(documentLine);
+            await _documentLineRepository.AddAsync(documentLine);
+        }
+
+        public async Task<bool> UpdateDocumentLineAsync(DocumentLine documentLine)
+        {
+            ArgumentNullException.ThrowIfNull(documentLine);
+            var existing = await _documentLineRepository.GetByIdAsync(documentLine.LineId);
+            if (existing == null)
+                return false;
+
+            await _documentLineRepository.UpdateAsync(documentLine);
+            return true;
+        }
+
+        public async Task<bool> DeleteDocumentLineAsync(long lineId)
+        {
+            var existing = await _documentLineRepository.GetByIdAsync(lineId);
+            if (existing == null)
+                return false;
+
+            await _documentLineRepository.DeleteAsync(lineId);
+            return true;
         }
     }
 }

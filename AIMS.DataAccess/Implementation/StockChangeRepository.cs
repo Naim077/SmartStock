@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class StockChangeRepository : ReadOnlyRepository<StockChange>, IStockChangeRepository
+    public class StockChangeRepository : IStockChangeRepository
     {
-        public StockChangeRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public StockChangeRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<StockChange?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<List<StockChange>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { documentId }, cancellationToken);
+            return await _dbContext.StockChanges.ToListAsync();
+        }
+
+        public async Task<StockChange?> GetByIdAsync(long documentId)
+        {
+            return await _dbContext.StockChanges.FindAsync(new object[] { documentId });
+        }
+
+        public async Task AddAsync(StockChange stockChange)
+        {
+            await _dbContext.StockChanges.AddAsync(stockChange);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(StockChange stockChange)
+        {
+            _dbContext.StockChanges.Update(stockChange);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long documentId)
+        {
+            var stockChange = await _dbContext.StockChanges.FindAsync(new object[] { documentId });
+            if (stockChange == null)
+                return;
+
+            _dbContext.StockChanges.Remove(stockChange);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

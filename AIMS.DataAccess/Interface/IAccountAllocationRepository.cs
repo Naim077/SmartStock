@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IAccountAllocationRepository : IReadOnlyRepository<AccountAllocation>
+    public interface IAccountAllocationRepository
     {
-        Task<AccountAllocation?> GetByIdAsync(long allocationId, CancellationToken cancellationToken = default);
+        Task<List<AccountAllocation>> GetAllAsync();
+        Task<AccountAllocation?> GetByIdAsync(long allocationId);
+        Task AddAsync(AccountAllocation accountAllocation);
+        Task UpdateAsync(AccountAllocation accountAllocation);
+        Task DeleteAsync(long allocationId);
     }
 }

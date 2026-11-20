@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class SaleLineFacade : ISaleLineFacade
+    public class SaleLineFacade : ISaleLineFacade
     {
         private readonly ISaleLineRepository _saleLineRepository;
 
         public SaleLineFacade(ISaleLineRepository saleLineRepository)
         {
-            ArgumentNullException.ThrowIfNull(saleLineRepository);
             _saleLineRepository = saleLineRepository;
         }
 
-        public Task<List<SaleLine>> GetSaleLinesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<SaleLine>> GetSaleLinesAsync()
         {
-            return _saleLineRepository.GetAllAsync(cancellationToken);
+            return await _saleLineRepository.GetAllAsync();
         }
 
-        public Task<SaleLine?> GetSaleLineByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<SaleLine?> GetSaleLineByIdAsync(long lineId)
         {
-            return _saleLineRepository.GetByIdAsync(lineId, cancellationToken);
+            return await _saleLineRepository.GetByIdAsync(lineId);
         }
 
-        public Task<List<SaleLine>> GetSaleLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddSaleLineAsync(SaleLine saleLine)
         {
-            return _saleLineRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(saleLine);
+            await _saleLineRepository.AddAsync(saleLine);
+        }
+
+        public async Task<bool> UpdateSaleLineAsync(SaleLine saleLine)
+        {
+            ArgumentNullException.ThrowIfNull(saleLine);
+            var existing = await _saleLineRepository.GetByIdAsync(saleLine.LineId);
+            if (existing == null)
+                return false;
+
+            await _saleLineRepository.UpdateAsync(saleLine);
+            return true;
+        }
+
+        public async Task<bool> DeleteSaleLineAsync(long lineId)
+        {
+            var existing = await _saleLineRepository.GetByIdAsync(lineId);
+            if (existing == null)
+                return false;
+
+            await _saleLineRepository.DeleteAsync(lineId);
+            return true;
         }
     }
 }

@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class DocumentVersionFacade : IDocumentVersionFacade
+    public class DocumentVersionFacade : IDocumentVersionFacade
     {
         private readonly IDocumentVersionRepository _documentVersionRepository;
 
         public DocumentVersionFacade(IDocumentVersionRepository documentVersionRepository)
         {
-            ArgumentNullException.ThrowIfNull(documentVersionRepository);
             _documentVersionRepository = documentVersionRepository;
         }
 
-        public Task<List<DocumentVersion>> GetDocumentVersionsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<DocumentVersion>> GetDocumentVersionsAsync()
         {
-            return _documentVersionRepository.GetAllAsync(cancellationToken);
+            return await _documentVersionRepository.GetAllAsync();
         }
 
-        public Task<DocumentVersion?> GetDocumentVersionByIdAsync(long documentId, int versionNo, CancellationToken cancellationToken = default)
+        public async Task<DocumentVersion?> GetDocumentVersionByIdAsync(long documentId, int versionNo)
         {
-            return _documentVersionRepository.GetByIdAsync(documentId, versionNo, cancellationToken);
+            return await _documentVersionRepository.GetByIdAsync(documentId, versionNo);
         }
 
-        public Task<List<DocumentVersion>> GetDocumentVersionsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddDocumentVersionAsync(DocumentVersion documentVersion)
         {
-            return _documentVersionRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(documentVersion);
+            await _documentVersionRepository.AddAsync(documentVersion);
+        }
+
+        public async Task<bool> UpdateDocumentVersionAsync(DocumentVersion documentVersion)
+        {
+            ArgumentNullException.ThrowIfNull(documentVersion);
+            var existing = await _documentVersionRepository.GetByIdAsync(documentVersion.DocumentId, documentVersion.VersionNo);
+            if (existing == null)
+                return false;
+
+            await _documentVersionRepository.UpdateAsync(documentVersion);
+            return true;
+        }
+
+        public async Task<bool> DeleteDocumentVersionAsync(long documentId, int versionNo)
+        {
+            var existing = await _documentVersionRepository.GetByIdAsync(documentId, versionNo);
+            if (existing == null)
+                return false;
+
+            await _documentVersionRepository.DeleteAsync(documentId, versionNo);
+            return true;
         }
     }
 }

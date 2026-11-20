@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IStockMovementRepository : IReadOnlyRepository<StockMovement>
+    public interface IStockMovementRepository
     {
-        Task<StockMovement?> GetByIdAsync(long stockMovementId, CancellationToken cancellationToken = default);
+        Task<List<StockMovement>> GetAllAsync();
+        Task<StockMovement?> GetByIdAsync(long stockMovementId);
+        Task AddAsync(StockMovement stockMovement);
+        Task UpdateAsync(StockMovement stockMovement);
+        Task DeleteAsync(long stockMovementId);
     }
 }

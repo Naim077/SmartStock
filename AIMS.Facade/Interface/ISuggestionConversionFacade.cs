@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed SuggestionConversion records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface ISuggestionConversionFacade
     {
-        Task<List<SuggestionConversion>> GetSuggestionConversionsAsync(CancellationToken cancellationToken = default);
-        Task<SuggestionConversion?> GetSuggestionConversionByIdAsync(long conversionId, CancellationToken cancellationToken = default);
-        Task<List<SuggestionConversion>> GetSuggestionConversionsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<SuggestionConversion>> GetSuggestionConversionsAsync();
+        Task<SuggestionConversion?> GetSuggestionConversionByIdAsync(long conversionId);
+        Task AddSuggestionConversionAsync(SuggestionConversion suggestionConversion);
+        Task<bool> UpdateSuggestionConversionAsync(SuggestionConversion suggestionConversion);
+        Task<bool> DeleteSuggestionConversionAsync(long conversionId);
     }
 }

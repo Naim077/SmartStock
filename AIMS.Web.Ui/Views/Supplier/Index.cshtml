@@ -1,0 +1,143 @@
+@using AIMS.Entities
+@model List<Supplier>
+@{
+    ViewData["Title"] = "Suppliers";
+    Layout = "_PrivateLayout";
+    var search = ViewBag.Search as string ?? "";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<link rel="stylesheet" href="~/css/Supplier/Supplier.css" asp-append-version="true" />
+
+<div class="supplier-page">
+    <div class="supplier-heading">
+        <div>
+            <div class="supplier-eyebrow">INVENTORY MANAGEMENT</div>
+            <h1>Suppliers</h1>
+            <p>Manage supplier relationships, contact details and purchasing terms.</p>
+        </div>
+        <a asp-controller="Supplier" asp-action="Create" class="supplier-btn supplier-btn-primary">
+            <i class="bi bi-plus-lg"></i> Add supplier
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="supplier-alert"><i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]</div>
+    }
+
+    <section class="supplier-stats">
+        <article class="supplier-stat">
+            <div class="supplier-stat-top"><span>Total suppliers</span><i class="bi bi-buildings"></i></div>
+            <strong>@ViewBag.TotalSuppliers</strong>
+            <small>Registered suppliers</small>
+        </article>
+        <article class="supplier-stat">
+            <div class="supplier-stat-top"><span>Active suppliers</span><i class="bi bi-check-circle"></i></div>
+            <strong>@ViewBag.ActiveSuppliers</strong>
+            <small>Available for purchasing</small>
+        </article>
+        <article class="supplier-stat">
+            <div class="supplier-stat-top"><span>Inactive suppliers</span><i class="bi bi-pause-circle"></i></div>
+            <strong>@ViewBag.InactiveSuppliers</strong>
+            <small>Currently disabled</small>
+        </article>
+    </section>
+
+    <section class="supplier-list-card">
+        <div class="supplier-list-header">
+            <div>
+                <h2>All suppliers</h2>
+                <p>View and maintain your supplier directory.</p>
+            </div>
+            <form asp-controller="Supplier" asp-action="Index" method="get" class="supplier-filters">
+                <div class="supplier-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" name="search" value="@search" placeholder="Search supplier, contact, email..." />
+                </div>
+                <select name="status" aria-label="Filter supplier status">
+                    <option value="All" selected="@(selectedStatus == "All")">All suppliers</option>
+                    <option value="Active" selected="@(selectedStatus == "Active")">Active</option>
+                    <option value="Inactive" selected="@(selectedStatus == "Inactive")">Inactive</option>
+                </select>
+                <button type="submit" class="supplier-filter-btn">Filter</button>
+            </form>
+        </div>
+
+        <div class="supplier-table-wrap">
+            <table class="supplier-table">
+                <thead>
+                    <tr>
+                        <th>SUPPLIER</th>
+                        <th>CONTACT PERSON</th>
+                        <th>PHONE / EMAIL</th>
+                        <th>PAYMENT TERMS</th>
+                        <th>LEAD TIME</th>
+                        <th>STATUS</th>
+                        <th class="supplier-actions-heading">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr><td colspan="7">
+                        <div class="supplier-empty">
+                            <i class="bi bi-buildings"></i>
+                            <strong>No suppliers found</strong>
+                            <span>Add a supplier or adjust your search filters.</span>
+                        </div>
+                    </td></tr>
+                }
+                else
+                {
+                    @foreach (var supplier in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="supplier-name-cell">
+                                    <span class="supplier-avatar">@((supplier.Name ?? "?").Trim().Take(1).FirstOrDefault().ToString().ToUpperInvariant())</span>
+                                    <span>
+                                        <strong>@supplier.Name</strong>
+                                        <small>SUP-@supplier.SupplierId.ToString("D4")</small>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>@(string.IsNullOrWhiteSpace(supplier.ContactName) ? "—" : supplier.ContactName)</td>
+                            <td>
+                                <div class="supplier-contact">
+                                    <span>@(string.IsNullOrWhiteSpace(supplier.Phone) ? "—" : supplier.Phone)</span>
+                                    <small>@(string.IsNullOrWhiteSpace(supplier.Email) ? "No email" : supplier.Email)</small>
+                                </div>
+                            </td>
+                            <td>@supplier.PaymentTermsDays days</td>
+                            <td>@(supplier.ConfiguredLeadTimeDays?.ToString("0.##") ?? "—") days</td>
+                            <td>
+                                <span class="supplier-status @(supplier.IsActive ? "active" : "inactive")">
+                                    @(supplier.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="supplier-row-actions">
+                                    <a asp-controller="Supplier" asp-action="Edit" asp-route-id="@supplier.SupplierId" title="Edit supplier">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <form asp-controller="Supplier" asp-action="ToggleStatus" asp-route-id="@supplier.SupplierId" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" title="@(supplier.IsActive ? "Deactivate" : "Activate") supplier">
+                                            <i class="bi @(supplier.IsActive ? "bi-pause-circle" : "bi-play-circle")"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+        <div class="supplier-table-footer">
+            <span>Showing <strong>@Model.Count</strong> supplier(s)</span>
+            <span>Supplier information</span>
+        </div>
+    </section>
+</div>

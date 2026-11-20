@@ -1,38 +1,56 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.BusinessSettings. UTC timestamps and posting rules are service responsibilities.
-public sealed class BusinessSettings
+[Table("BusinessSettings", Schema = "ss")]
+public class BusinessSettings
 {
-    public byte SettingsId { get; set; } = 1;
-    public required string BusinessName { get; set; }
-    public required string CurrencyCode { get; set; }
-    public required string TimeZoneId { get; set; }
-    public required string InvoicePrefix { get; set; }
-    public decimal DiscountApprovalPercent { get; set; } = 10m;
+    [Key]
+    public byte SettingsId { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string BusinessName { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string CurrencyCode { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string TimeZoneId { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string InvoicePrefix { get; set; } = null!;
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal DiscountApprovalPercent { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal? AdjustmentApprovalThreshold { get; set; }
-    public short ExpiryWarningDays { get; set; } = (short)30;
-    public short DeadStockDays { get; set; } = (short)90;
-    public short ReviewPeriodDays { get; set; } = (short)7;
-    public decimal SafetyFactor { get; set; } = 1.65m;
-    public bool LlmEnabled { get; set; } = false;
+    public short ExpiryWarningDays { get; set; }
+    public short DeadStockDays { get; set; }
+    public short ReviewPeriodDays { get; set; }
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal SafetyFactor { get; set; }
+    public bool LlmEnabled { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? LlmProvider { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? LlmModel { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? LlmSecretReference { get; set; }
-    public short LlmRequestsPerMinute { get; set; } = (short)10;
-    public long LlmMonthlyTokenBudget { get; set; } = 0L;
-    public bool SmtpEnabled { get; set; } = false;
+    public short LlmRequestsPerMinute { get; set; }
+    public long LlmMonthlyTokenBudget { get; set; }
+    public bool SmtpEnabled { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? SmtpHost { get; set; }
     public int? SmtpPort { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? SmtpSecretReference { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? ApprovedRecipientsJson { get; set; }
-    public short ChatRetentionMonths { get; set; } = (short)12;
+    public short ChatRetentionMonths { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
     public string? RetentionPolicyReference { get; set; }
     public DateTime? RetentionApprovedUtc { get; set; }
-    public bool LegalHold { get; set; } = false;
+    public bool LegalHold { get; set; }
     public Guid UpdatedByUserId { get; set; }
     public DateTime UpdatedUtc { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public UserProfile UpdatedByUser { get; set; } = null!;
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

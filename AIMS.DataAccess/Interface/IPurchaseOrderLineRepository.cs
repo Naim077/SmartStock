@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IPurchaseOrderLineRepository : IReadOnlyRepository<PurchaseOrderLine>
+    public interface IPurchaseOrderLineRepository
     {
-        Task<PurchaseOrderLine?> GetByIdAsync(long lineId, CancellationToken cancellationToken = default);
+        Task<List<PurchaseOrderLine>> GetAllAsync();
+        Task<PurchaseOrderLine?> GetByIdAsync(long lineId);
+        Task AddAsync(PurchaseOrderLine purchaseOrderLine);
+        Task UpdateAsync(PurchaseOrderLine purchaseOrderLine);
+        Task DeleteAsync(long lineId);
     }
 }

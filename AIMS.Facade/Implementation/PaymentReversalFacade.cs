@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class PaymentReversalFacade : IPaymentReversalFacade
+    public class PaymentReversalFacade : IPaymentReversalFacade
     {
         private readonly IPaymentReversalRepository _paymentReversalRepository;
 
         public PaymentReversalFacade(IPaymentReversalRepository paymentReversalRepository)
         {
-            ArgumentNullException.ThrowIfNull(paymentReversalRepository);
             _paymentReversalRepository = paymentReversalRepository;
         }
 
-        public Task<List<PaymentReversal>> GetPaymentReversalsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<PaymentReversal>> GetPaymentReversalsAsync()
         {
-            return _paymentReversalRepository.GetAllAsync(cancellationToken);
+            return await _paymentReversalRepository.GetAllAsync();
         }
 
-        public Task<PaymentReversal?> GetPaymentReversalByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<PaymentReversal?> GetPaymentReversalByIdAsync(long documentId)
         {
-            return _paymentReversalRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _paymentReversalRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<PaymentReversal>> GetPaymentReversalsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddPaymentReversalAsync(PaymentReversal paymentReversal)
         {
-            return _paymentReversalRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(paymentReversal);
+            await _paymentReversalRepository.AddAsync(paymentReversal);
+        }
+
+        public async Task<bool> UpdatePaymentReversalAsync(PaymentReversal paymentReversal)
+        {
+            ArgumentNullException.ThrowIfNull(paymentReversal);
+            var existing = await _paymentReversalRepository.GetByIdAsync(paymentReversal.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _paymentReversalRepository.UpdateAsync(paymentReversal);
+            return true;
+        }
+
+        public async Task<bool> DeletePaymentReversalAsync(long documentId)
+        {
+            var existing = await _paymentReversalRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _paymentReversalRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

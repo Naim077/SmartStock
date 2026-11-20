@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class OpeningAccountBalanceRepository : ReadOnlyRepository<OpeningAccountBalance>, IOpeningAccountBalanceRepository
+    public class OpeningAccountBalanceRepository : IOpeningAccountBalanceRepository
     {
-        public OpeningAccountBalanceRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public OpeningAccountBalanceRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<OpeningAccountBalance?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<List<OpeningAccountBalance>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { documentId }, cancellationToken);
+            return await _dbContext.OpeningAccountBalances.ToListAsync();
+        }
+
+        public async Task<OpeningAccountBalance?> GetByIdAsync(long documentId)
+        {
+            return await _dbContext.OpeningAccountBalances.FindAsync(new object[] { documentId });
+        }
+
+        public async Task AddAsync(OpeningAccountBalance openingAccountBalance)
+        {
+            await _dbContext.OpeningAccountBalances.AddAsync(openingAccountBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(OpeningAccountBalance openingAccountBalance)
+        {
+            _dbContext.OpeningAccountBalances.Update(openingAccountBalance);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long documentId)
+        {
+            var openingAccountBalance = await _dbContext.OpeningAccountBalances.FindAsync(new object[] { documentId });
+            if (openingAccountBalance == null)
+                return;
+
+            _dbContext.OpeningAccountBalances.Remove(openingAccountBalance);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

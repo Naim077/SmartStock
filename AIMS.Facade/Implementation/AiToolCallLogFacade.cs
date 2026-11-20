@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class AiToolCallLogFacade : IAiToolCallLogFacade
+    public class AiToolCallLogFacade : IAiToolCallLogFacade
     {
         private readonly IAiToolCallLogRepository _aiToolCallLogRepository;
 
         public AiToolCallLogFacade(IAiToolCallLogRepository aiToolCallLogRepository)
         {
-            ArgumentNullException.ThrowIfNull(aiToolCallLogRepository);
             _aiToolCallLogRepository = aiToolCallLogRepository;
         }
 
-        public Task<List<AiToolCallLog>> GetAiToolCallLogsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<AiToolCallLog>> GetAiToolCallLogsAsync()
         {
-            return _aiToolCallLogRepository.GetAllAsync(cancellationToken);
+            return await _aiToolCallLogRepository.GetAllAsync();
         }
 
-        public Task<AiToolCallLog?> GetAiToolCallLogByIdAsync(long toolCallId, CancellationToken cancellationToken = default)
+        public async Task<AiToolCallLog?> GetAiToolCallLogByIdAsync(long toolCallId)
         {
-            return _aiToolCallLogRepository.GetByIdAsync(toolCallId, cancellationToken);
+            return await _aiToolCallLogRepository.GetByIdAsync(toolCallId);
         }
 
-        public Task<List<AiToolCallLog>> GetAiToolCallLogsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddAiToolCallLogAsync(AiToolCallLog aiToolCallLog)
         {
-            return _aiToolCallLogRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(aiToolCallLog);
+            await _aiToolCallLogRepository.AddAsync(aiToolCallLog);
+        }
+
+        public async Task<bool> UpdateAiToolCallLogAsync(AiToolCallLog aiToolCallLog)
+        {
+            ArgumentNullException.ThrowIfNull(aiToolCallLog);
+            var existing = await _aiToolCallLogRepository.GetByIdAsync(aiToolCallLog.ToolCallId);
+            if (existing == null)
+                return false;
+
+            await _aiToolCallLogRepository.UpdateAsync(aiToolCallLog);
+            return true;
+        }
+
+        public async Task<bool> DeleteAiToolCallLogAsync(long toolCallId)
+        {
+            var existing = await _aiToolCallLogRepository.GetByIdAsync(toolCallId);
+            if (existing == null)
+                return false;
+
+            await _aiToolCallLogRepository.DeleteAsync(toolCallId);
+            return true;
         }
     }
 }

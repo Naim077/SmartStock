@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed AuditLog records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IAuditLogFacade
     {
-        Task<List<AuditLog>> GetAuditLogsAsync(CancellationToken cancellationToken = default);
-        Task<AuditLog?> GetAuditLogByIdAsync(long auditLogId, CancellationToken cancellationToken = default);
-        Task<List<AuditLog>> GetAuditLogsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<AuditLog>> GetAuditLogsAsync();
+        Task<AuditLog?> GetAuditLogByIdAsync(long auditLogId);
+        Task AddAuditLogAsync(AuditLog auditLog);
+        Task<bool> UpdateAuditLogAsync(AuditLog auditLog);
+        Task<bool> DeleteAuditLogAsync(long auditLogId);
     }
 }

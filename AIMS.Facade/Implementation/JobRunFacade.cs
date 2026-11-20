@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class JobRunFacade : IJobRunFacade
+    public class JobRunFacade : IJobRunFacade
     {
         private readonly IJobRunRepository _jobRunRepository;
 
         public JobRunFacade(IJobRunRepository jobRunRepository)
         {
-            ArgumentNullException.ThrowIfNull(jobRunRepository);
             _jobRunRepository = jobRunRepository;
         }
 
-        public Task<List<JobRun>> GetJobRunsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<JobRun>> GetJobRunsAsync()
         {
-            return _jobRunRepository.GetAllAsync(cancellationToken);
+            return await _jobRunRepository.GetAllAsync();
         }
 
-        public Task<JobRun?> GetJobRunByIdAsync(long jobRunId, CancellationToken cancellationToken = default)
+        public async Task<JobRun?> GetJobRunByIdAsync(long jobRunId)
         {
-            return _jobRunRepository.GetByIdAsync(jobRunId, cancellationToken);
+            return await _jobRunRepository.GetByIdAsync(jobRunId);
         }
 
-        public Task<List<JobRun>> GetJobRunsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddJobRunAsync(JobRun jobRun)
         {
-            return _jobRunRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(jobRun);
+            await _jobRunRepository.AddAsync(jobRun);
+        }
+
+        public async Task<bool> UpdateJobRunAsync(JobRun jobRun)
+        {
+            ArgumentNullException.ThrowIfNull(jobRun);
+            var existing = await _jobRunRepository.GetByIdAsync(jobRun.JobRunId);
+            if (existing == null)
+                return false;
+
+            await _jobRunRepository.UpdateAsync(jobRun);
+            return true;
+        }
+
+        public async Task<bool> DeleteJobRunAsync(long jobRunId)
+        {
+            var existing = await _jobRunRepository.GetByIdAsync(jobRunId);
+            if (existing == null)
+                return false;
+
+            await _jobRunRepository.DeleteAsync(jobRunId);
+            return true;
         }
     }
 }

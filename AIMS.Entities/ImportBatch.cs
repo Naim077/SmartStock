@@ -1,27 +1,31 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.ImportBatch. UTC timestamps and posting rules are service responsibilities.
-public sealed class ImportBatch
+[Table("ImportBatch", Schema = "ss")]
+public class ImportBatch
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long ImportBatchId { get; set; }
-    public required string ImportKind { get; set; }
-    public required string SourceName { get; set; }
-    public required byte[] ContentHash { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ImportKind { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string SourceName { get; set; } = null!;
+    public byte[] ContentHash { get; set; } = null!;
     public int SourceRowCount { get; set; }
-    public required string ValidationStatus { get; set; }
-    public required string ValidationReportJson { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ValidationStatus { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string ValidationReportJson { get; set; } = null!;
     public Guid CreatedByUserId { get; set; }
     public DateTime CreatedUtc { get; set; }
     public Guid? ConfirmedByUserId { get; set; }
     public DateTime? ConfirmedUtc { get; set; }
     public long? RequestId { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public UserProfile CreatedByUser { get; set; } = null!;
-    public UserProfile? ConfirmedByUser { get; set; }
-    public IdempotencyRequest? IdempotencyRequest { get; set; }
-    public ICollection<DocumentLine> DocumentLines { get; set; } = new List<DocumentLine>();
-    public ICollection<OpeningAccountBalance> OpeningAccountBalances { get; set; } = new List<OpeningAccountBalance>();
-    public ICollection<AuditLog> AuditLogs { get; set; } = new List<AuditLog>();
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

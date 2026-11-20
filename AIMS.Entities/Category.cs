@@ -1,16 +1,21 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Category. UTC timestamps and posting rules are service responsibilities.
-public sealed class Category
+[Table("Category", Schema = "ss")]
+public class Category
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long CategoryId { get; set; }
     public long? ParentCategoryId { get; set; }
-    public required string Name { get; set; }
-    public string? NormalizedName { get; private set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Category? ParentCategory { get; set; }
-    public ICollection<Category> Categories { get; set; } = new List<Category>();
-    public ICollection<Product> Products { get; set; } = new List<Product>();
+    [Column(TypeName = "nvarchar(max)")]
+    public string Name { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string? NormalizedName { get; set; }
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }

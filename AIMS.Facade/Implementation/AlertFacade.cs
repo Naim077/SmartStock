@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class AlertFacade : IAlertFacade
+    public class AlertFacade : IAlertFacade
     {
         private readonly IAlertRepository _alertRepository;
 
         public AlertFacade(IAlertRepository alertRepository)
         {
-            ArgumentNullException.ThrowIfNull(alertRepository);
             _alertRepository = alertRepository;
         }
 
-        public Task<List<Alert>> GetAlertsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<Alert>> GetAlertsAsync()
         {
-            return _alertRepository.GetAllAsync(cancellationToken);
+            return await _alertRepository.GetAllAsync();
         }
 
-        public Task<Alert?> GetAlertByIdAsync(long alertId, CancellationToken cancellationToken = default)
+        public async Task<Alert?> GetAlertByIdAsync(long alertId)
         {
-            return _alertRepository.GetByIdAsync(alertId, cancellationToken);
+            return await _alertRepository.GetByIdAsync(alertId);
         }
 
-        public Task<List<Alert>> GetAlertsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddAlertAsync(Alert alert)
         {
-            return _alertRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(alert);
+            await _alertRepository.AddAsync(alert);
+        }
+
+        public async Task<bool> UpdateAlertAsync(Alert alert)
+        {
+            ArgumentNullException.ThrowIfNull(alert);
+            var existing = await _alertRepository.GetByIdAsync(alert.AlertId);
+            if (existing == null)
+                return false;
+
+            await _alertRepository.UpdateAsync(alert);
+            return true;
+        }
+
+        public async Task<bool> DeleteAlertAsync(long alertId)
+        {
+            var existing = await _alertRepository.GetByIdAsync(alertId);
+            if (existing == null)
+                return false;
+
+            await _alertRepository.DeleteAsync(alertId);
+            return true;
         }
     }
 }

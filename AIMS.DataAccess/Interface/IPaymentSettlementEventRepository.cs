@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IPaymentSettlementEventRepository : IReadOnlyRepository<PaymentSettlementEvent>
+    public interface IPaymentSettlementEventRepository
     {
-        Task<PaymentSettlementEvent?> GetByIdAsync(long eventId, CancellationToken cancellationToken = default);
+        Task<List<PaymentSettlementEvent>> GetAllAsync();
+        Task<PaymentSettlementEvent?> GetByIdAsync(long eventId);
+        Task AddAsync(PaymentSettlementEvent paymentSettlementEvent);
+        Task UpdateAsync(PaymentSettlementEvent paymentSettlementEvent);
+        Task DeleteAsync(long eventId);
     }
 }

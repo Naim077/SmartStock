@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface ISalesReturnLineRepository : IReadOnlyRepository<SalesReturnLine>
+    public interface ISalesReturnLineRepository
     {
-        Task<SalesReturnLine?> GetByIdAsync(long lineId, CancellationToken cancellationToken = default);
+        Task<List<SalesReturnLine>> GetAllAsync();
+        Task<SalesReturnLine?> GetByIdAsync(long lineId);
+        Task AddAsync(SalesReturnLine salesReturnLine);
+        Task UpdateAsync(SalesReturnLine salesReturnLine);
+        Task DeleteAsync(long lineId);
     }
 }

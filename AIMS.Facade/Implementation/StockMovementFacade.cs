@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class StockMovementFacade : IStockMovementFacade
+    public class StockMovementFacade : IStockMovementFacade
     {
         private readonly IStockMovementRepository _stockMovementRepository;
 
         public StockMovementFacade(IStockMovementRepository stockMovementRepository)
         {
-            ArgumentNullException.ThrowIfNull(stockMovementRepository);
             _stockMovementRepository = stockMovementRepository;
         }
 
-        public Task<List<StockMovement>> GetStockMovementsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<StockMovement>> GetStockMovementsAsync()
         {
-            return _stockMovementRepository.GetAllAsync(cancellationToken);
+            return await _stockMovementRepository.GetAllAsync();
         }
 
-        public Task<StockMovement?> GetStockMovementByIdAsync(long stockMovementId, CancellationToken cancellationToken = default)
+        public async Task<StockMovement?> GetStockMovementByIdAsync(long stockMovementId)
         {
-            return _stockMovementRepository.GetByIdAsync(stockMovementId, cancellationToken);
+            return await _stockMovementRepository.GetByIdAsync(stockMovementId);
         }
 
-        public Task<List<StockMovement>> GetStockMovementsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddStockMovementAsync(StockMovement stockMovement)
         {
-            return _stockMovementRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(stockMovement);
+            await _stockMovementRepository.AddAsync(stockMovement);
+        }
+
+        public async Task<bool> UpdateStockMovementAsync(StockMovement stockMovement)
+        {
+            ArgumentNullException.ThrowIfNull(stockMovement);
+            var existing = await _stockMovementRepository.GetByIdAsync(stockMovement.StockMovementId);
+            if (existing == null)
+                return false;
+
+            await _stockMovementRepository.UpdateAsync(stockMovement);
+            return true;
+        }
+
+        public async Task<bool> DeleteStockMovementAsync(long stockMovementId)
+        {
+            var existing = await _stockMovementRepository.GetByIdAsync(stockMovementId);
+            if (existing == null)
+                return false;
+
+            await _stockMovementRepository.DeleteAsync(stockMovementId);
+            return true;
         }
     }
 }

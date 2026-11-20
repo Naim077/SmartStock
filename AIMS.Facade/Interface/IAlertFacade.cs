@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed Alert records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IAlertFacade
     {
-        Task<List<Alert>> GetAlertsAsync(CancellationToken cancellationToken = default);
-        Task<Alert?> GetAlertByIdAsync(long alertId, CancellationToken cancellationToken = default);
-        Task<List<Alert>> GetAlertsPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<Alert>> GetAlertsAsync();
+        Task<Alert?> GetAlertByIdAsync(long alertId);
+        Task AddAlertAsync(Alert alert);
+        Task<bool> UpdateAlertAsync(Alert alert);
+        Task<bool> DeleteAlertAsync(long alertId);
     }
 }

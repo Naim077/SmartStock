@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed UserProfile records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IUserProfileFacade
     {
-        Task<List<UserProfile>> GetUserProfilesAsync(CancellationToken cancellationToken = default);
-        Task<UserProfile?> GetUserProfileByIdAsync(Guid userId, CancellationToken cancellationToken = default);
-        Task<List<UserProfile>> GetUserProfilesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<UserProfile>> GetUserProfilesAsync();
+        Task<UserProfile?> GetUserProfileByIdAsync(Guid userId);
+        Task AddUserProfileAsync(UserProfile userProfile);
+        Task<bool> UpdateUserProfileAsync(UserProfile userProfile);
+        Task<bool> DeleteUserProfileAsync(Guid userId);
     }
 }

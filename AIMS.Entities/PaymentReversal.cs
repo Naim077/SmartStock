@@ -1,15 +1,17 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.PaymentReversal. UTC timestamps and posting rules are service responsibilities.
-public sealed class PaymentReversal
+[Table("PaymentReversal", Schema = "ss")]
+public class PaymentReversal
 {
+    [Key]
     public long DocumentId { get; set; }
     public long OriginalPaymentId { get; set; }
     public long PostingId { get; set; }
-    public required string Reason { get; set; }
-
-    public Document Document { get; set; } = null!;
-    public Payment OriginalPayment { get; set; } = null!;
-    public Posting Posting { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Reason { get; set; } = null!;
 }

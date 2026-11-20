@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IDocumentRepository : IReadOnlyRepository<Document>
+    public interface IDocumentRepository
     {
-        Task<Document?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default);
+        Task<List<Document>> GetAllAsync();
+        Task<Document?> GetByIdAsync(long documentId);
+        Task AddAsync(Document document);
+        Task UpdateAsync(Document document);
+        Task DeleteAsync(long documentId);
     }
 }

@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class PurchaseOrderLineFacade : IPurchaseOrderLineFacade
+    public class PurchaseOrderLineFacade : IPurchaseOrderLineFacade
     {
         private readonly IPurchaseOrderLineRepository _purchaseOrderLineRepository;
 
         public PurchaseOrderLineFacade(IPurchaseOrderLineRepository purchaseOrderLineRepository)
         {
-            ArgumentNullException.ThrowIfNull(purchaseOrderLineRepository);
             _purchaseOrderLineRepository = purchaseOrderLineRepository;
         }
 
-        public Task<List<PurchaseOrderLine>> GetPurchaseOrderLinesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<PurchaseOrderLine>> GetPurchaseOrderLinesAsync()
         {
-            return _purchaseOrderLineRepository.GetAllAsync(cancellationToken);
+            return await _purchaseOrderLineRepository.GetAllAsync();
         }
 
-        public Task<PurchaseOrderLine?> GetPurchaseOrderLineByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<PurchaseOrderLine?> GetPurchaseOrderLineByIdAsync(long lineId)
         {
-            return _purchaseOrderLineRepository.GetByIdAsync(lineId, cancellationToken);
+            return await _purchaseOrderLineRepository.GetByIdAsync(lineId);
         }
 
-        public Task<List<PurchaseOrderLine>> GetPurchaseOrderLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddPurchaseOrderLineAsync(PurchaseOrderLine purchaseOrderLine)
         {
-            return _purchaseOrderLineRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(purchaseOrderLine);
+            await _purchaseOrderLineRepository.AddAsync(purchaseOrderLine);
+        }
+
+        public async Task<bool> UpdatePurchaseOrderLineAsync(PurchaseOrderLine purchaseOrderLine)
+        {
+            ArgumentNullException.ThrowIfNull(purchaseOrderLine);
+            var existing = await _purchaseOrderLineRepository.GetByIdAsync(purchaseOrderLine.LineId);
+            if (existing == null)
+                return false;
+
+            await _purchaseOrderLineRepository.UpdateAsync(purchaseOrderLine);
+            return true;
+        }
+
+        public async Task<bool> DeletePurchaseOrderLineAsync(long lineId)
+        {
+            var existing = await _purchaseOrderLineRepository.GetByIdAsync(lineId);
+            if (existing == null)
+                return false;
+
+            await _purchaseOrderLineRepository.DeleteAsync(lineId);
+            return true;
         }
     }
 }

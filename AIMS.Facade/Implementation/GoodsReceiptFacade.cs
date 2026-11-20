@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class GoodsReceiptFacade : IGoodsReceiptFacade
+    public class GoodsReceiptFacade : IGoodsReceiptFacade
     {
         private readonly IGoodsReceiptRepository _goodsReceiptRepository;
 
         public GoodsReceiptFacade(IGoodsReceiptRepository goodsReceiptRepository)
         {
-            ArgumentNullException.ThrowIfNull(goodsReceiptRepository);
             _goodsReceiptRepository = goodsReceiptRepository;
         }
 
-        public Task<List<GoodsReceipt>> GetGoodsReceiptsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<GoodsReceipt>> GetGoodsReceiptsAsync()
         {
-            return _goodsReceiptRepository.GetAllAsync(cancellationToken);
+            return await _goodsReceiptRepository.GetAllAsync();
         }
 
-        public Task<GoodsReceipt?> GetGoodsReceiptByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<GoodsReceipt?> GetGoodsReceiptByIdAsync(long documentId)
         {
-            return _goodsReceiptRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _goodsReceiptRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<GoodsReceipt>> GetGoodsReceiptsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddGoodsReceiptAsync(GoodsReceipt goodsReceipt)
         {
-            return _goodsReceiptRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(goodsReceipt);
+            await _goodsReceiptRepository.AddAsync(goodsReceipt);
+        }
+
+        public async Task<bool> UpdateGoodsReceiptAsync(GoodsReceipt goodsReceipt)
+        {
+            ArgumentNullException.ThrowIfNull(goodsReceipt);
+            var existing = await _goodsReceiptRepository.GetByIdAsync(goodsReceipt.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptRepository.UpdateAsync(goodsReceipt);
+            return true;
+        }
+
+        public async Task<bool> DeleteGoodsReceiptAsync(long documentId)
+        {
+            var existing = await _goodsReceiptRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

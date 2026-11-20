@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class GoodsReceiptReversalFacade : IGoodsReceiptReversalFacade
+    public class GoodsReceiptReversalFacade : IGoodsReceiptReversalFacade
     {
         private readonly IGoodsReceiptReversalRepository _goodsReceiptReversalRepository;
 
         public GoodsReceiptReversalFacade(IGoodsReceiptReversalRepository goodsReceiptReversalRepository)
         {
-            ArgumentNullException.ThrowIfNull(goodsReceiptReversalRepository);
             _goodsReceiptReversalRepository = goodsReceiptReversalRepository;
         }
 
-        public Task<List<GoodsReceiptReversal>> GetGoodsReceiptReversalsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<GoodsReceiptReversal>> GetGoodsReceiptReversalsAsync()
         {
-            return _goodsReceiptReversalRepository.GetAllAsync(cancellationToken);
+            return await _goodsReceiptReversalRepository.GetAllAsync();
         }
 
-        public Task<GoodsReceiptReversal?> GetGoodsReceiptReversalByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<GoodsReceiptReversal?> GetGoodsReceiptReversalByIdAsync(long documentId)
         {
-            return _goodsReceiptReversalRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _goodsReceiptReversalRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<GoodsReceiptReversal>> GetGoodsReceiptReversalsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddGoodsReceiptReversalAsync(GoodsReceiptReversal goodsReceiptReversal)
         {
-            return _goodsReceiptReversalRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(goodsReceiptReversal);
+            await _goodsReceiptReversalRepository.AddAsync(goodsReceiptReversal);
+        }
+
+        public async Task<bool> UpdateGoodsReceiptReversalAsync(GoodsReceiptReversal goodsReceiptReversal)
+        {
+            ArgumentNullException.ThrowIfNull(goodsReceiptReversal);
+            var existing = await _goodsReceiptReversalRepository.GetByIdAsync(goodsReceiptReversal.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptReversalRepository.UpdateAsync(goodsReceiptReversal);
+            return true;
+        }
+
+        public async Task<bool> DeleteGoodsReceiptReversalAsync(long documentId)
+        {
+            var existing = await _goodsReceiptReversalRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _goodsReceiptReversalRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

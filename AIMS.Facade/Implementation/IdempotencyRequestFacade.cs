@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class IdempotencyRequestFacade : IIdempotencyRequestFacade
+    public class IdempotencyRequestFacade : IIdempotencyRequestFacade
     {
         private readonly IIdempotencyRequestRepository _idempotencyRequestRepository;
 
         public IdempotencyRequestFacade(IIdempotencyRequestRepository idempotencyRequestRepository)
         {
-            ArgumentNullException.ThrowIfNull(idempotencyRequestRepository);
             _idempotencyRequestRepository = idempotencyRequestRepository;
         }
 
-        public Task<List<IdempotencyRequest>> GetIdempotencyRequestsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<IdempotencyRequest>> GetIdempotencyRequestsAsync()
         {
-            return _idempotencyRequestRepository.GetAllAsync(cancellationToken);
+            return await _idempotencyRequestRepository.GetAllAsync();
         }
 
-        public Task<IdempotencyRequest?> GetIdempotencyRequestByIdAsync(long requestId, CancellationToken cancellationToken = default)
+        public async Task<IdempotencyRequest?> GetIdempotencyRequestByIdAsync(long requestId)
         {
-            return _idempotencyRequestRepository.GetByIdAsync(requestId, cancellationToken);
+            return await _idempotencyRequestRepository.GetByIdAsync(requestId);
         }
 
-        public Task<List<IdempotencyRequest>> GetIdempotencyRequestsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddIdempotencyRequestAsync(IdempotencyRequest idempotencyRequest)
         {
-            return _idempotencyRequestRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(idempotencyRequest);
+            await _idempotencyRequestRepository.AddAsync(idempotencyRequest);
+        }
+
+        public async Task<bool> UpdateIdempotencyRequestAsync(IdempotencyRequest idempotencyRequest)
+        {
+            ArgumentNullException.ThrowIfNull(idempotencyRequest);
+            var existing = await _idempotencyRequestRepository.GetByIdAsync(idempotencyRequest.RequestId);
+            if (existing == null)
+                return false;
+
+            await _idempotencyRequestRepository.UpdateAsync(idempotencyRequest);
+            return true;
+        }
+
+        public async Task<bool> DeleteIdempotencyRequestAsync(long requestId)
+        {
+            var existing = await _idempotencyRequestRepository.GetByIdAsync(requestId);
+            if (existing == null)
+                return false;
+
+            await _idempotencyRequestRepository.DeleteAsync(requestId);
+            return true;
         }
     }
 }

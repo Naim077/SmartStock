@@ -41,7 +41,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("CreditEntryId")
                         .HasColumnType("bigint");
@@ -68,9 +68,7 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.HasIndex("ReversesAllocationId")
-                        .IsUnique()
-                        .HasFilter("[ReversesAllocationId] IS NOT NULL");
+                    b.HasIndex("ReversesAllocationId");
 
                     b.ToTable("AccountAllocation", "ss");
                 });
@@ -84,7 +82,7 @@ namespace AIMS.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AccountEntryId"));
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("CustomerId")
                         .HasColumnType("bigint");
@@ -125,8 +123,8 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<string>("AnswerRedacted")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("BudgetMonth")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("BudgetMonth")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CompletedUtc")
                         .HasColumnType("datetime2");
@@ -316,72 +314,6 @@ namespace AIMS.DataAccess.Migrations
                     b.ToTable("Alert", "ss");
                 });
 
-            modelBuilder.Entity("AIMS.Entities.ApplicationUser", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
-
             modelBuilder.Entity("AIMS.Entities.Approval", b =>
                 {
                     b.Property<long>("ApprovalId")
@@ -508,7 +440,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<decimal?>("AdjustmentApprovalThreshold")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ApprovedRecipientsJson")
                         .HasColumnType("nvarchar(max)");
@@ -528,7 +460,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<decimal>("DiscountApprovalPercent")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<short>("ExpiryWarningDays")
                         .HasColumnType("smallint");
@@ -574,7 +506,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<decimal>("SafetyFactor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<bool>("SmtpEnabled")
                         .HasColumnType("bit");
@@ -648,7 +580,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("CreditLimit")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -755,12 +687,6 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("LineId");
 
-                    b.HasAlternateKey("LineId", "ProductId")
-                        .HasName("UQ_DocumentLine_Product");
-
-                    b.HasAlternateKey("LineId", "DocumentId", "ProductId")
-                        .HasName("UQ_DocumentLine_Identity");
-
                     b.HasIndex("DocumentId");
 
                     b.HasIndex("ImportBatchId");
@@ -814,10 +740,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("Mae")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("Mape")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("MapeExcludedCount")
                         .HasColumnType("int");
@@ -826,13 +752,13 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("ObservedIntervalCoverage")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("SampleCount")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Wape")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("ForecastRunId", "Method");
 
@@ -847,8 +773,8 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<string>("SnapshotPhase")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateOnly>("ObservationDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("ObservationDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("GapReason")
                         .HasColumnType("nvarchar(max)");
@@ -863,7 +789,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("NetDemand")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("ForecastRunId", "SnapshotPhase", "ObservationDate");
 
@@ -879,16 +805,16 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<decimal?>("LowerQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("NominalCoverage")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("PredictedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("UpperQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("ForecastRunId", "HorizonDays");
 
@@ -919,11 +845,11 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<DateTime>("GeneratedUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("HistoryEndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("HistoryEndDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("HistoryStartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("HistoryStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("InputHash")
                         .IsRequired()
@@ -959,19 +885,16 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<DateTime?>("ValidationCutoffUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("ValidationEndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("ValidationEndDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("ValidationStartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("ValidationStartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("WarningText")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ForecastRunId");
-
-                    b.HasAlternateKey("ForecastRunId", "ProductId")
-                        .HasName("UQ_Forecast_Product");
 
                     b.HasIndex("JobRunId");
 
@@ -993,9 +916,6 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasAlternateKey("DocumentId", "PurchaseOrderId")
-                        .HasName("UQ_GRN_PO");
-
                     b.HasIndex("PurchaseOrderId");
 
                     b.ToTable("GoodsReceipt", "ss");
@@ -1014,10 +934,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("InventoryValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("PayableAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductBatchId")
                         .HasColumnType("bigint");
@@ -1032,10 +952,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("LineId");
 
@@ -1043,8 +963,7 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasIndex("ProductBatchId", "ProductId");
 
-                    b.HasIndex("LineId", "DocumentId", "ProductId")
-                        .IsUnique();
+                    b.HasIndex("LineId", "DocumentId", "ProductId");
 
                     b.HasIndex("PurchaseOrderLineId", "PurchaseOrderId", "ProductId");
 
@@ -1068,11 +987,9 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasIndex("OriginalGoodsReceiptId")
-                        .IsUnique();
+                    b.HasIndex("OriginalGoodsReceiptId");
 
-                    b.HasIndex("PostingId", "DocumentId")
-                        .IsUnique();
+                    b.HasIndex("PostingId", "DocumentId");
 
                     b.ToTable("GoodsReceiptReversal", "ss");
                 });
@@ -1312,7 +1229,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("CustomerId")
                         .HasColumnType("bigint");
@@ -1347,19 +1264,19 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("CashChangeAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("CashTenderedAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("CustomerId")
                         .HasColumnType("bigint");
 
-                    b.Property<DateOnly?>("ExternalEffectiveDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("ExternalEffectiveDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ExternalReference")
                         .HasColumnType("nvarchar(max)");
@@ -1406,11 +1323,9 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasIndex("OriginalPaymentId")
-                        .IsUnique();
+                    b.HasIndex("OriginalPaymentId");
 
-                    b.HasIndex("PostingId", "DocumentId")
-                        .IsUnique();
+                    b.HasIndex("PostingId", "DocumentId");
 
                     b.ToTable("PaymentReversal", "ss");
                 });
@@ -1454,6 +1369,73 @@ namespace AIMS.DataAccess.Migrations
                     b.ToTable("PaymentSettlementEvent", "ss");
                 });
 
+            modelBuilder.Entity("AIMS.Entities.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DisplayText")
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Permission", "dbo");
+                });
+
+            modelBuilder.Entity("AIMS.Entities.PermissionGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Tag")
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PermissionGroup", "dbo");
+                });
+
+            modelBuilder.Entity("AIMS.Entities.PermissionGroupMap", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PermissionGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PermissionGroupMap", "dbo");
+                });
+
             modelBuilder.Entity("AIMS.Entities.Posting", b =>
                 {
                     b.Property<long>("PostingId")
@@ -1465,8 +1447,8 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<Guid>("ActorUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("BusinessDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("BusinessDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("CorrelationId")
                         .HasColumnType("uniqueidentifier");
@@ -1485,15 +1467,11 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("PostingId");
 
-                    b.HasAlternateKey("PostingId", "DocumentId")
-                        .HasName("UQ_Posting_IdDocument");
-
                     b.HasIndex("ActorUserId");
 
                     b.HasIndex("RequestId");
 
-                    b.HasIndex("DocumentId", "VersionNo")
-                        .IsUnique();
+                    b.HasIndex("DocumentId", "VersionNo");
 
                     b.ToTable("Posting", "ss");
                 });
@@ -1523,7 +1501,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("DefaultPurchaseUnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<bool>("ExpiryTracked")
                         .HasColumnType("bit");
@@ -1535,10 +1513,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("ManualReorderPoint")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("MinimumOrderQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1551,13 +1529,13 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("PackQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("PreferredSupplierId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("QuantityIncrement")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<byte>("QuantityScale")
                         .HasColumnType("tinyint");
@@ -1573,7 +1551,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<decimal>("SellingUnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -1599,8 +1577,8 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<string>("BatchNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("ExpiryDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("FirstReceivedUtc")
                         .HasColumnType("datetime2");
@@ -1622,9 +1600,6 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("ProductBatchId");
 
-                    b.HasAlternateKey("ProductBatchId", "ProductId")
-                        .HasName("UQ_Batch_Product");
-
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductBatch", "ss");
@@ -1636,7 +1611,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("InventoryValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("LastPostingId")
                         .HasColumnType("bigint");
@@ -1645,7 +1620,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1677,8 +1652,8 @@ namespace AIMS.DataAccess.Migrations
                     b.Property<DateTime?>("ClosedOrCancelledUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("ExpectedDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("ExpectedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("FinalReceiptUtc")
                         .HasColumnType("datetime2");
@@ -1711,16 +1686,16 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("ClosedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("DocumentId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("NetReceivedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("OrderedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
@@ -1730,16 +1705,13 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("UnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("UnitSnapshot")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LineId");
-
-                    b.HasAlternateKey("LineId", "DocumentId", "ProductId")
-                        .HasName("UQ_POLine_Identity");
 
                     b.HasIndex("DocumentId");
 
@@ -1755,29 +1727,29 @@ namespace AIMS.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("SuggestionId"));
 
                     b.Property<decimal?>("CalculatedRop")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("CalculationVersion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("DailyDemand")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("DaysOfStock")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("DemandSigma")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("EffectiveRop")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("EligibleOnOrderQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("EstimatedCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Explanation")
                         .IsRequired()
@@ -1787,7 +1759,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("FutureOnOrderQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<DateTime>("GeneratedUtc")
                         .HasColumnType("datetime2");
@@ -1807,7 +1779,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal?>("LeadTimeDays")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<short>("LeadTimeSampleCount")
                         .HasColumnType("smallint");
@@ -1817,7 +1789,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("MinimumOrderQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("MissingInputsJson")
                         .IsRequired()
@@ -1836,10 +1808,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal?>("PackQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("PendingDraftQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
@@ -1848,13 +1820,13 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("ProposedUnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("QuantityIncrement")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("RawSuggestedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ReorderModeSnapshot")
                         .IsRequired()
@@ -1870,37 +1842,34 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<decimal>("SafetyFactor")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("SafetyStock")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("SaleableQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("SavedManualRop")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("SuggestedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long?>("SupplierId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("TargetQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("UncertainOnOrderQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("SuggestionId");
-
-                    b.HasAlternateKey("SuggestionId", "OpportunityKey")
-                        .HasName("UQ_Suggestion_Opportunity");
 
                     b.HasIndex("OutcomeByUserId");
 
@@ -1926,10 +1895,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("InvoiceDiscountAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("DocumentId");
 
@@ -1947,7 +1916,7 @@ namespace AIMS.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AllocationId"));
 
                     b.Property<decimal>("InventoryValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductBatchId")
                         .HasColumnType("bigint");
@@ -1956,7 +1925,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("SaleId")
                         .HasColumnType("bigint");
@@ -1965,9 +1934,6 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("AllocationId");
-
-                    b.HasAlternateKey("AllocationId", "SaleId", "ProductId")
-                        .HasName("UQ_SaleAllocation_Identity");
 
                     b.HasIndex("ProductBatchId", "ProductId");
 
@@ -1982,22 +1948,22 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("CogsValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("DocumentId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("ExplicitDiscountAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("GrossAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("InvoiceDiscountAllocation")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("NetAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
@@ -2007,22 +1973,19 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("UnitSnapshot")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("WacAtPosting")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("LineId");
-
-                    b.HasAlternateKey("LineId", "DocumentId", "ProductId")
-                        .HasName("UQ_SaleLine_Identity");
 
                     b.HasIndex("DocumentId");
 
@@ -2050,14 +2013,9 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasKey("DocumentId");
 
-                    b.HasAlternateKey("DocumentId", "OriginalSaleId")
-                        .HasName("UQ_Return_Sale");
-
                     b.HasIndex("OriginalSaleId");
 
-                    b.HasIndex("PostingId", "DocumentId")
-                        .IsUnique()
-                        .HasFilter("[PostingId] IS NOT NULL");
+                    b.HasIndex("PostingId", "DocumentId");
 
                     b.ToTable("SalesReturn", "ss");
                 });
@@ -2068,7 +2026,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("CreditAmount")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Disposition")
                         .IsRequired()
@@ -2087,17 +2045,16 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("RestockValue")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("LineId");
 
                     b.HasIndex("DocumentId", "OriginalSaleId");
 
-                    b.HasIndex("LineId", "DocumentId", "ProductId")
-                        .IsUnique();
+                    b.HasIndex("LineId", "DocumentId", "ProductId");
 
                     b.HasIndex("OriginalAllocationId", "OriginalSaleId", "ProductId");
 
@@ -2122,7 +2079,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -2166,7 +2123,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("ApprovedUnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Bucket")
                         .IsRequired()
@@ -2179,16 +2136,16 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("CountedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("DocumentId")
                         .HasColumnType("bigint");
 
                     b.Property<decimal?>("ExpectedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal?>("ExplicitValueDelta")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("ProductBatchId")
                         .HasColumnType("bigint");
@@ -2197,7 +2154,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("QuantityDelta")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ToBucket")
                         .HasColumnType("nvarchar(max)");
@@ -2208,8 +2165,7 @@ namespace AIMS.DataAccess.Migrations
 
                     b.HasIndex("ProductBatchId", "ProductId");
 
-                    b.HasIndex("LineId", "DocumentId", "ProductId")
-                        .IsUnique();
+                    b.HasIndex("LineId", "DocumentId", "ProductId");
 
                     b.ToTable("StockChangeLine", "ss");
                 });
@@ -2240,7 +2196,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("QuantityDelta")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
@@ -2252,15 +2208,13 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<decimal>("ValueDelta")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("StockMovementId");
 
                     b.HasIndex("PostingId");
 
-                    b.HasIndex("ReversesMovementId")
-                        .IsUnique()
-                        .HasFilter("[ReversesMovementId] IS NOT NULL");
+                    b.HasIndex("ReversesMovementId");
 
                     b.HasIndex("ProductBatchId", "ProductId");
 
@@ -2302,10 +2256,10 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ReviewedQuantity")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<decimal>("ReviewedUnitCost")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<long>("SuggestionId")
                         .HasColumnType("bigint");
@@ -2340,7 +2294,7 @@ namespace AIMS.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("ConfiguredLeadTimeDays")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("ContactName")
                         .HasColumnType("nvarchar(max)");
@@ -2370,6 +2324,28 @@ namespace AIMS.DataAccess.Migrations
                     b.HasKey("SupplierId");
 
                     b.ToTable("Supplier", "ss");
+                });
+
+            modelBuilder.Entity("AIMS.Entities.UserPermission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("PermissionGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPermission", "dbo");
                 });
 
             modelBuilder.Entity("AIMS.Entities.UserProfile", b =>
@@ -2456,6 +2432,72 @@ namespace AIMS.DataAccess.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -2537,1153 +2579,808 @@ namespace AIMS.DataAccess.Migrations
 
             modelBuilder.Entity("AIMS.Entities.AccountAllocation", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ActorUser")
-                        .WithMany("AccountAllocations")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_AccountAllocation_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.AccountEntry", "CreditEntry")
-                        .WithMany("AccountAllocations")
+                    b.HasOne("AIMS.Entities.AccountEntry", null)
+                        .WithMany()
                         .HasForeignKey("CreditEntryId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_AccountAllocation_Credit");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.AccountEntry", "DebitEntry")
-                        .WithMany("AccountAllocationsAsDebitEntry")
+                    b.HasOne("AIMS.Entities.AccountEntry", null)
+                        .WithMany()
                         .HasForeignKey("DebitEntryId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_AccountAllocation_Debit");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "IdempotencyRequest")
-                        .WithMany("AccountAllocations")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_AccountAllocation_Request");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.AccountAllocation", "ReversesAllocation")
-                        .WithOne("AccountAllocationAsReversesAllocation")
-                        .HasForeignKey("AIMS.Entities.AccountAllocation", "ReversesAllocationId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_AccountAllocation_Reversed");
-
-                    b.Navigation("ActorUser");
-
-                    b.Navigation("CreditEntry");
-
-                    b.Navigation("DebitEntry");
-
-                    b.Navigation("IdempotencyRequest");
-
-                    b.Navigation("ReversesAllocation");
+                    b.HasOne("AIMS.Entities.AccountAllocation", null)
+                        .WithMany()
+                        .HasForeignKey("ReversesAllocationId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.AccountEntry", b =>
                 {
-                    b.HasOne("AIMS.Entities.Customer", "Customer")
-                        .WithMany("AccountEntries")
+                    b.HasOne("AIMS.Entities.Customer", null)
+                        .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_AccountEntry_Customer");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithMany("AccountEntries")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("PostingId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_AccountEntry_Posting");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Supplier", "Supplier")
-                        .WithMany("AccountEntries")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_AccountEntry_Supplier");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Posting");
-
-                    b.Navigation("Supplier");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.AiChatLog", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "UserProfile")
-                        .WithMany("AiChatLogs")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Chat_User");
-
-                    b.Navigation("UserProfile");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.AiToolCallLog", b =>
                 {
-                    b.HasOne("AIMS.Entities.AiChatLog", "AiChatLog")
-                        .WithMany("AiToolCallLogs")
+                    b.HasOne("AIMS.Entities.AiChatLog", null)
+                        .WithMany()
                         .HasForeignKey("AiChatLogId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ToolCall_Chat");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ForecastRun", "ForecastRun")
-                        .WithMany("AiToolCallLogs")
+                    b.HasOne("AIMS.Entities.ForecastRun", null)
+                        .WithMany()
                         .HasForeignKey("ForecastRunId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_ToolCall_Forecast");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Posting", "SourcePosting")
-                        .WithMany("AiToolCallLogs")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("SourcePostingId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_ToolCall_Posting");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ReorderSuggestion", "ReorderSuggestion")
-                        .WithMany("AiToolCallLogs")
+                    b.HasOne("AIMS.Entities.ReorderSuggestion", null)
+                        .WithMany()
                         .HasForeignKey("SuggestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_ToolCall_Suggestion");
-
-                    b.Navigation("AiChatLog");
-
-                    b.Navigation("ForecastRun");
-
-                    b.Navigation("ReorderSuggestion");
-
-                    b.Navigation("SourcePosting");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.Alert", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "AcknowledgedByUser")
-                        .WithMany("Alerts")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("AcknowledgedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Alert_User");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.JobRun", "JobRun")
-                        .WithMany("Alerts")
+                    b.HasOne("AIMS.Entities.JobRun", null)
+                        .WithMany()
                         .HasForeignKey("JobRunId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Alert_Job");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("Alerts")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Alert_Product");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("Alerts")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Alert_Batch");
-
-                    b.Navigation("AcknowledgedByUser");
-
-                    b.Navigation("JobRun");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ProductBatch");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.Approval", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ReviewedByUser")
-                        .WithMany("Approvals")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ReviewedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Approval_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentVersion", "DocumentVersion")
-                        .WithMany("Approvals")
+                    b.HasOne("AIMS.Entities.DocumentVersion", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId", "VersionNo")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Approval_Version");
-
-                    b.Navigation("DocumentVersion");
-
-                    b.Navigation("ReviewedByUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.AuditLog", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ActorUser")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ActorUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Actor");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Document");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ImportBatch", "ImportBatch")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.ImportBatch", null)
+                        .WithMany()
                         .HasForeignKey("ImportBatchId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Import");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.JobRun", "JobRun")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.JobRun", null)
+                        .WithMany()
                         .HasForeignKey("JobRunId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Job");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("PostingId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Posting");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("AuditLogs")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_Product");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.UserProfile", "TargetUser")
-                        .WithMany("AuditLogsAsTargetUser")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("TargetUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Audit_TargetUser");
-
-                    b.Navigation("ActorUser");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("ImportBatch");
-
-                    b.Navigation("JobRun");
-
-                    b.Navigation("Posting");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("TargetUser");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.BusinessSettings", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "UpdatedByUser")
-                        .WithMany("BusinessSettings")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("UpdatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Settings_User");
-
-                    b.Navigation("UpdatedByUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.Category", b =>
                 {
-                    b.HasOne("AIMS.Entities.Category", "ParentCategory")
-                        .WithMany("Categories")
+                    b.HasOne("AIMS.Entities.Category", null)
+                        .WithMany()
                         .HasForeignKey("ParentCategoryId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Category_Parent");
-
-                    b.Navigation("ParentCategory");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.Document", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "CreatedByUser")
-                        .WithMany("Documents")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Document_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "CreationRequest")
-                        .WithMany("Documents")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("CreationRequestId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Document_Request");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("CreationRequest");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.DocumentLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithMany("DocumentLines")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_DocumentLine_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ImportBatch", "ImportBatch")
-                        .WithMany("DocumentLines")
+                    b.HasOne("AIMS.Entities.ImportBatch", null)
+                        .WithMany()
                         .HasForeignKey("ImportBatchId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_DocumentLine_Import");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("DocumentLines")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_DocumentLine_Product");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("ImportBatch");
-
-                    b.Navigation("Product");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.DocumentVersion", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "CapturedByUser")
-                        .WithMany("DocumentVersions")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("CapturedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_DocumentVersion_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithMany("DocumentVersions")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_DocumentVersion_Document");
-
-                    b.Navigation("CapturedByUser");
-
-                    b.Navigation("Document");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ForecastMetric", b =>
                 {
-                    b.HasOne("AIMS.Entities.ForecastRun", "ForecastRun")
-                        .WithMany("ForecastMetrics")
+                    b.HasOne("AIMS.Entities.ForecastRun", null)
+                        .WithMany()
                         .HasForeignKey("ForecastRunId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Metric_Run");
-
-                    b.Navigation("ForecastRun");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ForecastObservation", b =>
                 {
-                    b.HasOne("AIMS.Entities.ForecastRun", "ForecastRun")
-                        .WithMany("ForecastObservations")
+                    b.HasOne("AIMS.Entities.ForecastRun", null)
+                        .WithMany()
                         .HasForeignKey("ForecastRunId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Observation_Run");
-
-                    b.Navigation("ForecastRun");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ForecastPoint", b =>
                 {
-                    b.HasOne("AIMS.Entities.ForecastRun", "ForecastRun")
-                        .WithMany("ForecastPoints")
+                    b.HasOne("AIMS.Entities.ForecastRun", null)
+                        .WithMany()
                         .HasForeignKey("ForecastRunId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ForecastPoint_Run");
-
-                    b.Navigation("ForecastRun");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ForecastRun", b =>
                 {
-                    b.HasOne("AIMS.Entities.JobRun", "JobRun")
-                        .WithMany("ForecastRuns")
+                    b.HasOne("AIMS.Entities.JobRun", null)
+                        .WithMany()
                         .HasForeignKey("JobRunId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Forecast_Job");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("ForecastRuns")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Forecast_Product");
-
-                    b.Navigation("JobRun");
-
-                    b.Navigation("Product");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.GoodsReceipt", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("GoodsReceipt")
-                        .HasForeignKey("AIMS.Entities.GoodsReceipt", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRN_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.PurchaseOrder", "PurchaseOrder")
-                        .WithMany("GoodsReceipts")
+                    b.HasOne("AIMS.Entities.PurchaseOrder", null)
+                        .WithMany()
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRN_PO");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("PurchaseOrder");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.GoodsReceiptLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.GoodsReceipt", "GoodsReceipt")
-                        .WithMany("GoodsReceiptLines")
+                    b.HasOne("AIMS.Entities.GoodsReceipt", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId", "PurchaseOrderId")
                         .HasPrincipalKey("DocumentId", "PurchaseOrderId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNLine_GRN");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("GoodsReceiptLines")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNLine_Batch");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "DocumentLine")
-                        .WithOne("GoodsReceiptLine")
-                        .HasForeignKey("AIMS.Entities.GoodsReceiptLine", "LineId", "DocumentId", "ProductId")
-                        .HasPrincipalKey("AIMS.Entities.DocumentLine", "LineId", "DocumentId", "ProductId")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
+                        .HasForeignKey("LineId", "DocumentId", "ProductId")
+                        .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNLine_Line");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.PurchaseOrderLine", "PurchaseOrderLine")
-                        .WithMany("GoodsReceiptLines")
+                    b.HasOne("AIMS.Entities.PurchaseOrderLine", null)
+                        .WithMany()
                         .HasForeignKey("PurchaseOrderLineId", "PurchaseOrderId", "ProductId")
                         .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNLine_POLine");
-
-                    b.Navigation("DocumentLine");
-
-                    b.Navigation("GoodsReceipt");
-
-                    b.Navigation("ProductBatch");
-
-                    b.Navigation("PurchaseOrderLine");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.GoodsReceiptReversal", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("GoodsReceiptReversal")
-                        .HasForeignKey("AIMS.Entities.GoodsReceiptReversal", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNReversal_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.GoodsReceipt", "OriginalGoodsReceipt")
-                        .WithOne("GoodsReceiptReversal")
-                        .HasForeignKey("AIMS.Entities.GoodsReceiptReversal", "OriginalGoodsReceiptId")
+                    b.HasOne("AIMS.Entities.GoodsReceipt", null)
+                        .WithMany()
+                        .HasForeignKey("OriginalGoodsReceiptId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNReversal_Original");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithOne("GoodsReceiptReversal")
-                        .HasForeignKey("AIMS.Entities.GoodsReceiptReversal", "PostingId", "DocumentId")
-                        .HasPrincipalKey("AIMS.Entities.Posting", "PostingId", "DocumentId")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
+                        .HasForeignKey("PostingId", "DocumentId")
+                        .HasPrincipalKey("PostingId", "DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_GRNReversal_Posting");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("OriginalGoodsReceipt");
-
-                    b.Navigation("Posting");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.IdempotencyRequest", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ActorUser")
-                        .WithMany("IdempotencyRequests")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Request_User");
-
-                    b.Navigation("ActorUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ImportBatch", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ConfirmedByUser")
-                        .WithMany("ImportBatchesAsConfirmedByUser")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ConfirmedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Import_Confirmer");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.UserProfile", "CreatedByUser")
-                        .WithMany("ImportBatches")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Import_Creator");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "IdempotencyRequest")
-                        .WithMany("ImportBatches")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Import_Request");
-
-                    b.Navigation("ConfirmedByUser");
-
-                    b.Navigation("CreatedByUser");
-
-                    b.Navigation("IdempotencyRequest");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.JobRun", b =>
                 {
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "IdempotencyRequest")
-                        .WithMany("JobRuns")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Job_Request");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.UserProfile", "RequestedByUser")
-                        .WithMany("JobRuns")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("RequestedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Job_User");
-
-                    b.Navigation("IdempotencyRequest");
-
-                    b.Navigation("RequestedByUser");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.NotificationDelivery", b =>
                 {
-                    b.HasOne("AIMS.Entities.Alert", "Alert")
-                        .WithMany("NotificationDeliveries")
+                    b.HasOne("AIMS.Entities.Alert", null)
+                        .WithMany()
                         .HasForeignKey("AlertId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Notification_Alert");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.JobRun", "JobRun")
-                        .WithMany("NotificationDeliveries")
+                    b.HasOne("AIMS.Entities.JobRun", null)
+                        .WithMany()
                         .HasForeignKey("JobRunId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Notification_Job");
-
-                    b.Navigation("Alert");
-
-                    b.Navigation("JobRun");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.OpeningAccountBalance", b =>
                 {
-                    b.HasOne("AIMS.Entities.Customer", "Customer")
-                        .WithMany("OpeningAccountBalances")
+                    b.HasOne("AIMS.Entities.Customer", null)
+                        .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_OpeningAccount_Customer");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("OpeningAccountBalance")
-                        .HasForeignKey("AIMS.Entities.OpeningAccountBalance", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_OpeningAccount_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ImportBatch", "ImportBatch")
-                        .WithMany("OpeningAccountBalances")
+                    b.HasOne("AIMS.Entities.ImportBatch", null)
+                        .WithMany()
                         .HasForeignKey("ImportBatchId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_OpeningAccount_Import");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Supplier", "Supplier")
-                        .WithMany("OpeningAccountBalances")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_OpeningAccount_Supplier");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("ImportBatch");
-
-                    b.Navigation("Supplier");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.Payment", b =>
                 {
-                    b.HasOne("AIMS.Entities.Customer", "Customer")
-                        .WithMany("Payments")
+                    b.HasOne("AIMS.Entities.Customer", null)
+                        .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Payment_Customer");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("Payment")
-                        .HasForeignKey("AIMS.Entities.Payment", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Payment_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.PurchaseOrder", "PurchaseOrder")
-                        .WithMany("Payments")
+                    b.HasOne("AIMS.Entities.PurchaseOrder", null)
+                        .WithMany()
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Payment_PO");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Supplier", "Supplier")
-                        .WithMany("Payments")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Payment_Supplier");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("PurchaseOrder");
-
-                    b.Navigation("Supplier");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.PaymentReversal", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("PaymentReversal")
-                        .HasForeignKey("AIMS.Entities.PaymentReversal", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PaymentReversal_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Payment", "OriginalPayment")
-                        .WithOne("PaymentReversal")
-                        .HasForeignKey("AIMS.Entities.PaymentReversal", "OriginalPaymentId")
+                    b.HasOne("AIMS.Entities.Payment", null)
+                        .WithMany()
+                        .HasForeignKey("OriginalPaymentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PaymentReversal_Original");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithOne("PaymentReversal")
-                        .HasForeignKey("AIMS.Entities.PaymentReversal", "PostingId", "DocumentId")
-                        .HasPrincipalKey("AIMS.Entities.Posting", "PostingId", "DocumentId")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
+                        .HasForeignKey("PostingId", "DocumentId")
+                        .HasPrincipalKey("PostingId", "DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PaymentReversal_Posting");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("OriginalPayment");
-
-                    b.Navigation("Posting");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.PaymentSettlementEvent", b =>
                 {
-                    b.HasOne("AIMS.Entities.Payment", "Payment")
-                        .WithMany("PaymentSettlementEvents")
+                    b.HasOne("AIMS.Entities.Payment", null)
+                        .WithMany()
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PaymentSettlement_Payment");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.UserProfile", "RecordedByUser")
-                        .WithMany("PaymentSettlementEvents")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("RecordedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PaymentSettlement_User");
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("RecordedByUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.Posting", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ActorUser")
-                        .WithMany("Postings")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ActorUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Posting_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "IdempotencyRequest")
-                        .WithMany("Postings")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Posting_Request");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentVersion", "DocumentVersion")
-                        .WithOne("Posting")
-                        .HasForeignKey("AIMS.Entities.Posting", "DocumentId", "VersionNo")
+                    b.HasOne("AIMS.Entities.DocumentVersion", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId", "VersionNo")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Posting_Version");
-
-                    b.Navigation("ActorUser");
-
-                    b.Navigation("DocumentVersion");
-
-                    b.Navigation("IdempotencyRequest");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.Product", b =>
                 {
-                    b.HasOne("AIMS.Entities.Category", "Category")
-                        .WithMany("Products")
+                    b.HasOne("AIMS.Entities.Category", null)
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Product_Category");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Supplier", "PreferredSupplier")
-                        .WithMany("Products")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("PreferredSupplierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Product_Supplier");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("PreferredSupplier");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.ProductBatch", b =>
                 {
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("ProductBatches")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Batch_Product");
-
-                    b.Navigation("Product");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ProductStockBalance", b =>
                 {
-                    b.HasOne("AIMS.Entities.Posting", "LastPosting")
-                        .WithMany("ProductStockBalances")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("LastPostingId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_ProductBalance_Posting");
-
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithOne("ProductStockBalance")
-                        .HasForeignKey("AIMS.Entities.ProductStockBalance", "ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ProductBalance_Product");
-
-                    b.Navigation("LastPosting");
-
-                    b.Navigation("Product");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.PurchaseOrder", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "ClosedOrCancelledByUser")
-                        .WithMany("PurchaseOrders")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ClosedOrCancelledByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_PO_ClosingUser");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("PurchaseOrder")
-                        .HasForeignKey("AIMS.Entities.PurchaseOrder", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PO_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Supplier", "Supplier")
-                        .WithMany("PurchaseOrders")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PO_Supplier");
-
-                    b.Navigation("ClosedOrCancelledByUser");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("Supplier");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.PurchaseOrderLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.PurchaseOrder", "PurchaseOrder")
-                        .WithMany("PurchaseOrderLines")
+                    b.HasOne("AIMS.Entities.PurchaseOrder", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_POLine_PO");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "DocumentLine")
-                        .WithOne("PurchaseOrderLine")
-                        .HasForeignKey("AIMS.Entities.PurchaseOrderLine", "LineId", "DocumentId", "ProductId")
-                        .HasPrincipalKey("AIMS.Entities.DocumentLine", "LineId", "DocumentId", "ProductId")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
+                        .HasForeignKey("LineId", "DocumentId", "ProductId")
+                        .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_POLine_Line");
-
-                    b.Navigation("DocumentLine");
-
-                    b.Navigation("PurchaseOrder");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.ReorderSuggestion", b =>
                 {
-                    b.HasOne("AIMS.Entities.UserProfile", "OutcomeByUser")
-                        .WithMany("ReorderSuggestions")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("OutcomeByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Suggestion_OutcomeUser");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.Product", "Product")
-                        .WithMany("ReorderSuggestions")
+                    b.HasOne("AIMS.Entities.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Suggestion_Product");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Supplier", "Supplier")
-                        .WithMany("ReorderSuggestions")
+                    b.HasOne("AIMS.Entities.Supplier", null)
+                        .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Suggestion_Supplier");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ForecastRun", "ForecastRun")
-                        .WithMany("ReorderSuggestions")
+                    b.HasOne("AIMS.Entities.ForecastRun", null)
+                        .WithMany()
                         .HasForeignKey("ForecastRunId", "ProductId")
                         .HasPrincipalKey("ForecastRunId", "ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Suggestion_Forecast");
-
-                    b.Navigation("ForecastRun");
-
-                    b.Navigation("OutcomeByUser");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("Supplier");
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.Sale", b =>
                 {
-                    b.HasOne("AIMS.Entities.Customer", "Customer")
-                        .WithMany("Sales")
+                    b.HasOne("AIMS.Entities.Customer", null)
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Sale_Customer");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("Sale")
-                        .HasForeignKey("AIMS.Entities.Sale", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Sale_Document");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Document");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.SaleBatchAllocation", b =>
                 {
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("SaleBatchAllocations")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_SaleAllocation_Batch");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.SaleLine", "SaleLine")
-                        .WithMany("SaleBatchAllocations")
+                    b.HasOne("AIMS.Entities.SaleLine", null)
+                        .WithMany()
                         .HasForeignKey("SaleLineId", "SaleId", "ProductId")
                         .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_SaleAllocation_Line");
-
-                    b.Navigation("ProductBatch");
-
-                    b.Navigation("SaleLine");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.SaleLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.Sale", "Sale")
-                        .WithMany("SaleLines")
+                    b.HasOne("AIMS.Entities.Sale", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_SaleLine_Sale");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "DocumentLine")
-                        .WithOne("SaleLine")
-                        .HasForeignKey("AIMS.Entities.SaleLine", "LineId", "DocumentId", "ProductId")
-                        .HasPrincipalKey("AIMS.Entities.DocumentLine", "LineId", "DocumentId", "ProductId")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
+                        .HasForeignKey("LineId", "DocumentId", "ProductId")
+                        .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_SaleLine_Line");
-
-                    b.Navigation("DocumentLine");
-
-                    b.Navigation("Sale");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.SalesReturn", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("SalesReturn")
-                        .HasForeignKey("AIMS.Entities.SalesReturn", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Return_Document");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Sale", "OriginalSale")
-                        .WithMany("SalesReturns")
+                    b.HasOne("AIMS.Entities.Sale", null)
+                        .WithMany()
                         .HasForeignKey("OriginalSaleId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Return_Sale");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithOne("SalesReturn")
-                        .HasForeignKey("AIMS.Entities.SalesReturn", "PostingId", "DocumentId")
-                        .HasPrincipalKey("AIMS.Entities.Posting", "PostingId", "DocumentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_SalesReturn_Posting");
-
-                    b.Navigation("Document");
-
-                    b.Navigation("OriginalSale");
-
-                    b.Navigation("Posting");
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
+                        .HasForeignKey("PostingId", "DocumentId")
+                        .HasPrincipalKey("PostingId", "DocumentId")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("AIMS.Entities.SalesReturnLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.SalesReturn", "SalesReturn")
-                        .WithMany("SalesReturnLines")
+                    b.HasOne("AIMS.Entities.SalesReturn", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId", "OriginalSaleId")
                         .HasPrincipalKey("DocumentId", "OriginalSaleId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ReturnLine_Return");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "DocumentLine")
-                        .WithOne("SalesReturnLine")
-                        .HasForeignKey("AIMS.Entities.SalesReturnLine", "LineId", "DocumentId", "ProductId")
-                        .HasPrincipalKey("AIMS.Entities.DocumentLine", "LineId", "DocumentId", "ProductId")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
+                        .HasForeignKey("LineId", "DocumentId", "ProductId")
+                        .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ReturnLine_Line");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.SaleBatchAllocation", "OriginalAllocation")
-                        .WithMany("SalesReturnLines")
+                    b.HasOne("AIMS.Entities.SaleBatchAllocation", null)
+                        .WithMany()
                         .HasForeignKey("OriginalAllocationId", "OriginalSaleId", "ProductId")
                         .HasPrincipalKey("AllocationId", "SaleId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_ReturnLine_Allocation");
-
-                    b.Navigation("DocumentLine");
-
-                    b.Navigation("OriginalAllocation");
-
-                    b.Navigation("SalesReturn");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.StockBalance", b =>
                 {
-                    b.HasOne("AIMS.Entities.Posting", "LastPosting")
-                        .WithMany("StockBalances")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("LastPostingId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_StockBalance_Posting");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("StockBalances")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_StockBalance_Batch");
-
-                    b.Navigation("LastPosting");
-
-                    b.Navigation("ProductBatch");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.StockChange", b =>
                 {
-                    b.HasOne("AIMS.Entities.Document", "Document")
-                        .WithOne("StockChange")
-                        .HasForeignKey("AIMS.Entities.StockChange", "DocumentId")
+                    b.HasOne("AIMS.Entities.Document", null)
+                        .WithMany()
+                        .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_StockChange_Document");
-
-                    b.Navigation("Document");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.StockChangeLine", b =>
                 {
-                    b.HasOne("AIMS.Entities.StockChange", "StockChange")
-                        .WithMany("StockChangeLines")
+                    b.HasOne("AIMS.Entities.StockChange", null)
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_StockChangeLine_Header");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("StockChangeLines")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_StockChangeLine_Batch");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "DocumentLine")
-                        .WithOne("StockChangeLine")
-                        .HasForeignKey("AIMS.Entities.StockChangeLine", "LineId", "DocumentId", "ProductId")
-                        .HasPrincipalKey("AIMS.Entities.DocumentLine", "LineId", "DocumentId", "ProductId")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
+                        .HasForeignKey("LineId", "DocumentId", "ProductId")
+                        .HasPrincipalKey("LineId", "DocumentId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_StockChangeLine_Line");
-
-                    b.Navigation("DocumentLine");
-
-                    b.Navigation("ProductBatch");
-
-                    b.Navigation("StockChange");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.StockMovement", b =>
                 {
-                    b.HasOne("AIMS.Entities.Posting", "Posting")
-                        .WithMany("StockMovements")
+                    b.HasOne("AIMS.Entities.Posting", null)
+                        .WithMany()
                         .HasForeignKey("PostingId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Movement_Posting");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.StockMovement", "ReversesMovement")
-                        .WithOne("StockMovementAsReversesMovement")
-                        .HasForeignKey("AIMS.Entities.StockMovement", "ReversesMovementId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Movement_Reversed");
+                    b.HasOne("AIMS.Entities.StockMovement", null)
+                        .WithMany()
+                        .HasForeignKey("ReversesMovementId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.ProductBatch", "ProductBatch")
-                        .WithMany("StockMovements")
+                    b.HasOne("AIMS.Entities.ProductBatch", null)
+                        .WithMany()
                         .HasForeignKey("ProductBatchId", "ProductId")
                         .HasPrincipalKey("ProductBatchId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Movement_Batch");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.DocumentLine", "SourceLine")
-                        .WithMany("StockMovements")
+                    b.HasOne("AIMS.Entities.DocumentLine", null)
+                        .WithMany()
                         .HasForeignKey("SourceLineId", "ProductId")
                         .HasPrincipalKey("LineId", "ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Movement_Source");
-
-                    b.Navigation("Posting");
-
-                    b.Navigation("ProductBatch");
-
-                    b.Navigation("ReversesMovement");
-
-                    b.Navigation("SourceLine");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.SuggestionConversion", b =>
                 {
-                    b.HasOne("AIMS.Entities.PurchaseOrderLine", "PurchaseOrderLine")
-                        .WithMany("SuggestionConversions")
+                    b.HasOne("AIMS.Entities.PurchaseOrderLine", null)
+                        .WithMany()
                         .HasForeignKey("PurchaseOrderLineId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Conversion_POLine");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.UserProfile", "ReleasedByUser")
-                        .WithMany("SuggestionConversionsAsReleasedByUser")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ReleasedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_Conversion_ReleaseUser");
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("AIMS.Entities.IdempotencyRequest", "IdempotencyRequest")
-                        .WithMany("SuggestionConversions")
+                    b.HasOne("AIMS.Entities.IdempotencyRequest", null)
+                        .WithMany()
                         .HasForeignKey("RequestId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Conversion_Request");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.UserProfile", "ReviewedByUser")
-                        .WithMany("SuggestionConversions")
+                    b.HasOne("AIMS.Entities.UserProfile", null)
+                        .WithMany()
                         .HasForeignKey("ReviewedByUserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Conversion_User");
+                        .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ReorderSuggestion", "ReorderSuggestion")
-                        .WithMany("SuggestionConversions")
+                    b.HasOne("AIMS.Entities.ReorderSuggestion", null)
+                        .WithMany()
                         .HasForeignKey("SuggestionId", "OpportunityKey")
                         .HasPrincipalKey("SuggestionId", "OpportunityKey")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_Conversion_Suggestion");
-
-                    b.Navigation("IdempotencyRequest");
-
-                    b.Navigation("PurchaseOrderLine");
-
-                    b.Navigation("ReleasedByUser");
-
-                    b.Navigation("ReorderSuggestion");
-
-                    b.Navigation("ReviewedByUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AIMS.Entities.UserProfile", b =>
                 {
-                    b.HasOne("AIMS.Entities.ApplicationUser", "IdentityUser")
-                        .WithOne("Profile")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
+                        .WithOne()
                         .HasForeignKey("AIMS.Entities.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_UserProfile_IdentityUser");
-
-                    b.Navigation("IdentityUser");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -3697,7 +3394,7 @@ namespace AIMS.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("AIMS.Entities.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3706,7 +3403,7 @@ namespace AIMS.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("AIMS.Entities.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3721,7 +3418,7 @@ namespace AIMS.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AIMS.Entities.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3730,331 +3427,11 @@ namespace AIMS.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("AIMS.Entities.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AIMS.Entities.AccountAllocation", b =>
-                {
-                    b.Navigation("AccountAllocationAsReversesAllocation");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.AccountEntry", b =>
-                {
-                    b.Navigation("AccountAllocations");
-
-                    b.Navigation("AccountAllocationsAsDebitEntry");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.AiChatLog", b =>
-                {
-                    b.Navigation("AiToolCallLogs");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Alert", b =>
-                {
-                    b.Navigation("NotificationDeliveries");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.ApplicationUser", b =>
-                {
-                    b.Navigation("Profile");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Category", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Customer", b =>
-                {
-                    b.Navigation("AccountEntries");
-
-                    b.Navigation("OpeningAccountBalances");
-
-                    b.Navigation("Payments");
-
-                    b.Navigation("Sales");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Document", b =>
-                {
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("DocumentLines");
-
-                    b.Navigation("DocumentVersions");
-
-                    b.Navigation("GoodsReceipt");
-
-                    b.Navigation("GoodsReceiptReversal");
-
-                    b.Navigation("OpeningAccountBalance");
-
-                    b.Navigation("Payment");
-
-                    b.Navigation("PaymentReversal");
-
-                    b.Navigation("PurchaseOrder");
-
-                    b.Navigation("Sale");
-
-                    b.Navigation("SalesReturn");
-
-                    b.Navigation("StockChange");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.DocumentLine", b =>
-                {
-                    b.Navigation("GoodsReceiptLine");
-
-                    b.Navigation("PurchaseOrderLine");
-
-                    b.Navigation("SaleLine");
-
-                    b.Navigation("SalesReturnLine");
-
-                    b.Navigation("StockChangeLine");
-
-                    b.Navigation("StockMovements");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.DocumentVersion", b =>
-                {
-                    b.Navigation("Approvals");
-
-                    b.Navigation("Posting");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.ForecastRun", b =>
-                {
-                    b.Navigation("AiToolCallLogs");
-
-                    b.Navigation("ForecastMetrics");
-
-                    b.Navigation("ForecastObservations");
-
-                    b.Navigation("ForecastPoints");
-
-                    b.Navigation("ReorderSuggestions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.GoodsReceipt", b =>
-                {
-                    b.Navigation("GoodsReceiptLines");
-
-                    b.Navigation("GoodsReceiptReversal");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.IdempotencyRequest", b =>
-                {
-                    b.Navigation("AccountAllocations");
-
-                    b.Navigation("Documents");
-
-                    b.Navigation("ImportBatches");
-
-                    b.Navigation("JobRuns");
-
-                    b.Navigation("Postings");
-
-                    b.Navigation("SuggestionConversions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.ImportBatch", b =>
-                {
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("DocumentLines");
-
-                    b.Navigation("OpeningAccountBalances");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.JobRun", b =>
-                {
-                    b.Navigation("Alerts");
-
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("ForecastRuns");
-
-                    b.Navigation("NotificationDeliveries");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Payment", b =>
-                {
-                    b.Navigation("PaymentReversal");
-
-                    b.Navigation("PaymentSettlementEvents");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Posting", b =>
-                {
-                    b.Navigation("AccountEntries");
-
-                    b.Navigation("AiToolCallLogs");
-
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("GoodsReceiptReversal");
-
-                    b.Navigation("PaymentReversal");
-
-                    b.Navigation("ProductStockBalances");
-
-                    b.Navigation("SalesReturn");
-
-                    b.Navigation("StockBalances");
-
-                    b.Navigation("StockMovements");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Product", b =>
-                {
-                    b.Navigation("Alerts");
-
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("DocumentLines");
-
-                    b.Navigation("ForecastRuns");
-
-                    b.Navigation("ProductBatches");
-
-                    b.Navigation("ProductStockBalance");
-
-                    b.Navigation("ReorderSuggestions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.ProductBatch", b =>
-                {
-                    b.Navigation("Alerts");
-
-                    b.Navigation("GoodsReceiptLines");
-
-                    b.Navigation("SaleBatchAllocations");
-
-                    b.Navigation("StockBalances");
-
-                    b.Navigation("StockChangeLines");
-
-                    b.Navigation("StockMovements");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.PurchaseOrder", b =>
-                {
-                    b.Navigation("GoodsReceipts");
-
-                    b.Navigation("Payments");
-
-                    b.Navigation("PurchaseOrderLines");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.PurchaseOrderLine", b =>
-                {
-                    b.Navigation("GoodsReceiptLines");
-
-                    b.Navigation("SuggestionConversions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.ReorderSuggestion", b =>
-                {
-                    b.Navigation("AiToolCallLogs");
-
-                    b.Navigation("SuggestionConversions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Sale", b =>
-                {
-                    b.Navigation("SaleLines");
-
-                    b.Navigation("SalesReturns");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.SaleBatchAllocation", b =>
-                {
-                    b.Navigation("SalesReturnLines");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.SaleLine", b =>
-                {
-                    b.Navigation("SaleBatchAllocations");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.SalesReturn", b =>
-                {
-                    b.Navigation("SalesReturnLines");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.StockChange", b =>
-                {
-                    b.Navigation("StockChangeLines");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.StockMovement", b =>
-                {
-                    b.Navigation("StockMovementAsReversesMovement");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.Supplier", b =>
-                {
-                    b.Navigation("AccountEntries");
-
-                    b.Navigation("OpeningAccountBalances");
-
-                    b.Navigation("Payments");
-
-                    b.Navigation("Products");
-
-                    b.Navigation("PurchaseOrders");
-
-                    b.Navigation("ReorderSuggestions");
-                });
-
-            modelBuilder.Entity("AIMS.Entities.UserProfile", b =>
-                {
-                    b.Navigation("AccountAllocations");
-
-                    b.Navigation("AiChatLogs");
-
-                    b.Navigation("Alerts");
-
-                    b.Navigation("Approvals");
-
-                    b.Navigation("AuditLogs");
-
-                    b.Navigation("AuditLogsAsTargetUser");
-
-                    b.Navigation("BusinessSettings");
-
-                    b.Navigation("DocumentVersions");
-
-                    b.Navigation("Documents");
-
-                    b.Navigation("IdempotencyRequests");
-
-                    b.Navigation("ImportBatches");
-
-                    b.Navigation("ImportBatchesAsConfirmedByUser");
-
-                    b.Navigation("JobRuns");
-
-                    b.Navigation("PaymentSettlementEvents");
-
-                    b.Navigation("Postings");
-
-                    b.Navigation("PurchaseOrders");
-
-                    b.Navigation("ReorderSuggestions");
-
-                    b.Navigation("SuggestionConversions");
-
-                    b.Navigation("SuggestionConversionsAsReleasedByUser");
                 });
 #pragma warning restore 612, 618
         }

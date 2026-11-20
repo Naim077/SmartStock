@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed OpeningAccountBalance records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface IOpeningAccountBalanceFacade
     {
-        Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesAsync(CancellationToken cancellationToken = default);
-        Task<OpeningAccountBalance?> GetOpeningAccountBalanceByIdAsync(long documentId, CancellationToken cancellationToken = default);
-        Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesAsync();
+        Task<OpeningAccountBalance?> GetOpeningAccountBalanceByIdAsync(long documentId);
+        Task AddOpeningAccountBalanceAsync(OpeningAccountBalance openingAccountBalance);
+        Task<bool> UpdateOpeningAccountBalanceAsync(OpeningAccountBalance openingAccountBalance);
+        Task<bool> DeleteOpeningAccountBalanceAsync(long documentId);
     }
 }

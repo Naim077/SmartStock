@@ -1,16 +1,50 @@
 using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Implementation
 {
-    public sealed class GoodsReceiptRepository : ReadOnlyRepository<GoodsReceipt>, IGoodsReceiptRepository
+    public class GoodsReceiptRepository : IGoodsReceiptRepository
     {
-        public GoodsReceiptRepository(ApplicationDbContext dbContext) : base(dbContext)
+        private readonly ApplicationDbContext _dbContext;
+
+        public GoodsReceiptRepository(ApplicationDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
-        public Task<GoodsReceipt?> GetByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<List<GoodsReceipt>> GetAllAsync()
         {
-            return base.GetByIdAsync(new object[] { documentId }, cancellationToken);
+            return await _dbContext.GoodsReceipts.ToListAsync();
+        }
+
+        public async Task<GoodsReceipt?> GetByIdAsync(long documentId)
+        {
+            return await _dbContext.GoodsReceipts.FindAsync(new object[] { documentId });
+        }
+
+        public async Task AddAsync(GoodsReceipt goodsReceipt)
+        {
+            await _dbContext.GoodsReceipts.AddAsync(goodsReceipt);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(GoodsReceipt goodsReceipt)
+        {
+            _dbContext.GoodsReceipts.Update(goodsReceipt);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(long documentId)
+        {
+            var goodsReceipt = await _dbContext.GoodsReceipts.FindAsync(new object[] { documentId });
+            if (goodsReceipt == null)
+                return;
+
+            _dbContext.GoodsReceipts.Remove(goodsReceipt);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

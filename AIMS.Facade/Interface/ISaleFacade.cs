@@ -1,13 +1,15 @@
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Interface
 {
-    /// <summary>Read-only, detached queries for workflow-managed Sale records.</summary>
-    /// <remarks>Independent mutations are not exposed; changes require the owning workflow.</remarks>
     public interface ISaleFacade
     {
-        Task<List<Sale>> GetSalesAsync(CancellationToken cancellationToken = default);
-        Task<Sale?> GetSaleByIdAsync(long documentId, CancellationToken cancellationToken = default);
-        Task<List<Sale>> GetSalesPageAsync(int skip, int take, CancellationToken cancellationToken = default);
+        Task<List<Sale>> GetSalesAsync();
+        Task<Sale?> GetSaleByIdAsync(long documentId);
+        Task AddSaleAsync(Sale sale);
+        Task<bool> UpdateSaleAsync(Sale sale);
+        Task<bool> DeleteSaleAsync(long documentId);
     }
 }

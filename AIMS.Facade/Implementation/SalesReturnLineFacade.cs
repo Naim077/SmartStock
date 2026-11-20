@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class SalesReturnLineFacade : ISalesReturnLineFacade
+    public class SalesReturnLineFacade : ISalesReturnLineFacade
     {
         private readonly ISalesReturnLineRepository _salesReturnLineRepository;
 
         public SalesReturnLineFacade(ISalesReturnLineRepository salesReturnLineRepository)
         {
-            ArgumentNullException.ThrowIfNull(salesReturnLineRepository);
             _salesReturnLineRepository = salesReturnLineRepository;
         }
 
-        public Task<List<SalesReturnLine>> GetSalesReturnLinesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<SalesReturnLine>> GetSalesReturnLinesAsync()
         {
-            return _salesReturnLineRepository.GetAllAsync(cancellationToken);
+            return await _salesReturnLineRepository.GetAllAsync();
         }
 
-        public Task<SalesReturnLine?> GetSalesReturnLineByIdAsync(long lineId, CancellationToken cancellationToken = default)
+        public async Task<SalesReturnLine?> GetSalesReturnLineByIdAsync(long lineId)
         {
-            return _salesReturnLineRepository.GetByIdAsync(lineId, cancellationToken);
+            return await _salesReturnLineRepository.GetByIdAsync(lineId);
         }
 
-        public Task<List<SalesReturnLine>> GetSalesReturnLinesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddSalesReturnLineAsync(SalesReturnLine salesReturnLine)
         {
-            return _salesReturnLineRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(salesReturnLine);
+            await _salesReturnLineRepository.AddAsync(salesReturnLine);
+        }
+
+        public async Task<bool> UpdateSalesReturnLineAsync(SalesReturnLine salesReturnLine)
+        {
+            ArgumentNullException.ThrowIfNull(salesReturnLine);
+            var existing = await _salesReturnLineRepository.GetByIdAsync(salesReturnLine.LineId);
+            if (existing == null)
+                return false;
+
+            await _salesReturnLineRepository.UpdateAsync(salesReturnLine);
+            return true;
+        }
+
+        public async Task<bool> DeleteSalesReturnLineAsync(long lineId)
+        {
+            var existing = await _salesReturnLineRepository.GetByIdAsync(lineId);
+            if (existing == null)
+                return false;
+
+            await _salesReturnLineRepository.DeleteAsync(lineId);
+            return true;
         }
     }
 }

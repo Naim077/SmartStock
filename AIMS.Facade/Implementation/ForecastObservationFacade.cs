@@ -1,33 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class ForecastObservationFacade : IForecastObservationFacade
+    public class ForecastObservationFacade : IForecastObservationFacade
     {
         private readonly IForecastObservationRepository _forecastObservationRepository;
 
         public ForecastObservationFacade(IForecastObservationRepository forecastObservationRepository)
         {
-            ArgumentNullException.ThrowIfNull(forecastObservationRepository);
             _forecastObservationRepository = forecastObservationRepository;
         }
 
-        public Task<List<ForecastObservation>> GetForecastObservationsAsync(CancellationToken cancellationToken = default)
+        public async Task<List<ForecastObservation>> GetForecastObservationsAsync()
         {
-            return _forecastObservationRepository.GetAllAsync(cancellationToken);
+            return await _forecastObservationRepository.GetAllAsync();
         }
 
-        public Task<ForecastObservation?> GetForecastObservationByIdAsync(long forecastRunId, string snapshotPhase, DateOnly observationDate, CancellationToken cancellationToken = default)
+        public async Task<ForecastObservation?> GetForecastObservationByIdAsync(long forecastRunId, string snapshotPhase, DateTime observationDate)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(snapshotPhase);
-            return _forecastObservationRepository.GetByIdAsync(forecastRunId, snapshotPhase, observationDate, cancellationToken);
+            return await _forecastObservationRepository.GetByIdAsync(forecastRunId, snapshotPhase, observationDate);
         }
 
-        public Task<List<ForecastObservation>> GetForecastObservationsPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddForecastObservationAsync(ForecastObservation forecastObservation)
         {
-            return _forecastObservationRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(forecastObservation);
+            await _forecastObservationRepository.AddAsync(forecastObservation);
+        }
+
+        public async Task<bool> UpdateForecastObservationAsync(ForecastObservation forecastObservation)
+        {
+            ArgumentNullException.ThrowIfNull(forecastObservation);
+            var existing = await _forecastObservationRepository.GetByIdAsync(forecastObservation.ForecastRunId, forecastObservation.SnapshotPhase, forecastObservation.ObservationDate);
+            if (existing == null)
+                return false;
+
+            await _forecastObservationRepository.UpdateAsync(forecastObservation);
+            return true;
+        }
+
+        public async Task<bool> DeleteForecastObservationAsync(long forecastRunId, string snapshotPhase, DateTime observationDate)
+        {
+            var existing = await _forecastObservationRepository.GetByIdAsync(forecastRunId, snapshotPhase, observationDate);
+            if (existing == null)
+                return false;
+
+            await _forecastObservationRepository.DeleteAsync(forecastRunId, snapshotPhase, observationDate);
+            return true;
         }
     }
 }

@@ -1,32 +1,56 @@
-using AIMS.Entities;
 using AIMS.DataAccess.Interface;
+using AIMS.Entities;
 using AIMS.Facade.Interface;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AIMS.Facade.Implementation
 {
-    public sealed class OpeningAccountBalanceFacade : IOpeningAccountBalanceFacade
+    public class OpeningAccountBalanceFacade : IOpeningAccountBalanceFacade
     {
         private readonly IOpeningAccountBalanceRepository _openingAccountBalanceRepository;
 
         public OpeningAccountBalanceFacade(IOpeningAccountBalanceRepository openingAccountBalanceRepository)
         {
-            ArgumentNullException.ThrowIfNull(openingAccountBalanceRepository);
             _openingAccountBalanceRepository = openingAccountBalanceRepository;
         }
 
-        public Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesAsync(CancellationToken cancellationToken = default)
+        public async Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesAsync()
         {
-            return _openingAccountBalanceRepository.GetAllAsync(cancellationToken);
+            return await _openingAccountBalanceRepository.GetAllAsync();
         }
 
-        public Task<OpeningAccountBalance?> GetOpeningAccountBalanceByIdAsync(long documentId, CancellationToken cancellationToken = default)
+        public async Task<OpeningAccountBalance?> GetOpeningAccountBalanceByIdAsync(long documentId)
         {
-            return _openingAccountBalanceRepository.GetByIdAsync(documentId, cancellationToken);
+            return await _openingAccountBalanceRepository.GetByIdAsync(documentId);
         }
 
-        public Task<List<OpeningAccountBalance>> GetOpeningAccountBalancesPageAsync(int skip, int take, CancellationToken cancellationToken = default)
+        public async Task AddOpeningAccountBalanceAsync(OpeningAccountBalance openingAccountBalance)
         {
-            return _openingAccountBalanceRepository.GetPageAsync(skip, take, cancellationToken);
+            ArgumentNullException.ThrowIfNull(openingAccountBalance);
+            await _openingAccountBalanceRepository.AddAsync(openingAccountBalance);
+        }
+
+        public async Task<bool> UpdateOpeningAccountBalanceAsync(OpeningAccountBalance openingAccountBalance)
+        {
+            ArgumentNullException.ThrowIfNull(openingAccountBalance);
+            var existing = await _openingAccountBalanceRepository.GetByIdAsync(openingAccountBalance.DocumentId);
+            if (existing == null)
+                return false;
+
+            await _openingAccountBalanceRepository.UpdateAsync(openingAccountBalance);
+            return true;
+        }
+
+        public async Task<bool> DeleteOpeningAccountBalanceAsync(long documentId)
+        {
+            var existing = await _openingAccountBalanceRepository.GetByIdAsync(documentId);
+            if (existing == null)
+                return false;
+
+            await _openingAccountBalanceRepository.DeleteAsync(documentId);
+            return true;
         }
     }
 }

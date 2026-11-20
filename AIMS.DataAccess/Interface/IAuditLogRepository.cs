@@ -1,9 +1,15 @@
-using AIMS.DataAccess.Interface;
 using AIMS.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace AIMS.DataAccess.Interface
 {
-    public interface IAuditLogRepository : IReadOnlyRepository<AuditLog>
+    public interface IAuditLogRepository
     {
-        Task<AuditLog?> GetByIdAsync(long auditLogId, CancellationToken cancellationToken = default);
+        Task<List<AuditLog>> GetAllAsync();
+        Task<AuditLog?> GetByIdAsync(long auditLogId);
+        Task AddAsync(AuditLog auditLog);
+        Task UpdateAsync(AuditLog auditLog);
+        Task DeleteAsync(long auditLogId);
     }
 }

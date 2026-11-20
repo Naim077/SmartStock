@@ -1,27 +1,32 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIMS.Entities;
 
-// Maps to ss.Alert. UTC timestamps and posting rules are service responsibilities.
-public sealed class Alert
+[Table("Alert", Schema = "ss")]
+public class Alert
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long AlertId { get; set; }
-    public required string ConditionKey { get; set; }
-    public required string AlertKind { get; set; }
-    public required string Severity { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string ConditionKey { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string AlertKind { get; set; } = null!;
+    [Column(TypeName = "nvarchar(max)")]
+    public string Severity { get; set; } = null!;
     public long? ProductId { get; set; }
     public long? ProductBatchId { get; set; }
     public long? JobRunId { get; set; }
-    public required string SafeMessage { get; set; }
+    [Column(TypeName = "nvarchar(max)")]
+    public string SafeMessage { get; set; } = null!;
     public DateTime RaisedUtc { get; set; }
     public DateTime LastObservedUtc { get; set; }
     public Guid? AcknowledgedByUserId { get; set; }
     public DateTime? AcknowledgedUtc { get; set; }
     public DateTime? ResolvedUtc { get; set; }
-    public byte[] RowVersion { get; set; } = [];
-
-    public Product? Product { get; set; }
-    public ProductBatch? ProductBatch { get; set; }
-    public JobRun? JobRun { get; set; }
-    public UserProfile? AcknowledgedByUser { get; set; }
-    public ICollection<NotificationDelivery> NotificationDeliveries { get; set; } = new List<NotificationDelivery>();
+    [Timestamp]
+    public byte[] RowVersion { get; set; } = null!;
 }
