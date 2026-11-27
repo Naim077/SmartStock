@@ -21,15 +21,27 @@ public class SettingsController : Controller
     {
         var settings = (await _settingsFacade.GetBusinessSettingsesAsync()).FirstOrDefault();
         if (settings == null)
+        {
+            ViewBag.IsNewSettings = true;
             return View(new BusinessSettings
             {
+                SettingsId = 1,
                 BusinessName = "",
                 CurrencyCode = "BDT",
                 TimeZoneId = "Asia/Dhaka",
                 InvoicePrefix = "INV",
-                UpdatedUtc = DateTime.UtcNow
+                DiscountApprovalPercent = 0,
+                ExpiryWarningDays = 30,
+                DeadStockDays = 90,
+                ReviewPeriodDays = 7,
+                SafetyFactor = 1,
+                LlmRequestsPerMinute = 0,
+                LlmMonthlyTokenBudget = 0,
+                ChatRetentionMonths = 12
             });
+        }
 
+        ViewBag.IsNewSettings = false;
         return View(settings);
     }
 
@@ -42,12 +54,37 @@ public class SettingsController : Controller
         ModelState.Remove(nameof(BusinessSettings.UpdatedUtc));
 
         if (!ModelState.IsValid)
+        {
+            ViewBag.IsNewSettings = model.SettingsId == 0 ||
+                await _settingsFacade.GetBusinessSettingsByIdAsync(model.SettingsId) == null;
             return View(model);
+        }
+
+        if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+            return Forbid();
 
         var existing = await _settingsFacade.GetBusinessSettingsByIdAsync(model.SettingsId);
         if (existing == null)
         {
-            TempData["ErrorMessage"] = "Settings record was not found. Contact an administrator to initialize business settings.";
+            // This application uses one business-settings row. Initialize it once with key 1.
+            if (model.SettingsId == 0)
+                model.SettingsId = 1;
+
+            var anotherSettingsRow = (await _settingsFacade.GetBusinessSettingsesAsync()).FirstOrDefault();
+            if (anotherSettingsRow != null && anotherSettingsRow.SettingsId != model.SettingsId)
+            {
+                TempData["ErrorMessage"] = "A business-settings record already exists. Reload the page and edit that record.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            model.BusinessName = model.BusinessName.Trim();
+            model.CurrencyCode = model.CurrencyCode.Trim().ToUpperInvariant();
+            model.TimeZoneId = model.TimeZoneId.Trim();
+            model.InvoicePrefix = model.InvoicePrefix.Trim();
+            model.UpdatedByUserId = userId;
+            model.UpdatedUtc = DateTime.UtcNow;
+            await _settingsFacade.AddBusinessSettingsAsync(model);
+            TempData["SuccessMessage"] = "Business settings initialized successfully.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -71,12 +108,9 @@ public class SettingsController : Controller
         existing.SmtpPort = model.SmtpPort;
         existing.ChatRetentionMonths = model.ChatRetentionMonths;
         existing.LegalHold = model.LegalHold;
-
-        if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-            return Forbid();
-
         existing.UpdatedByUserId = userId;
         existing.UpdatedUtc = DateTime.UtcNow;
+
         await _settingsFacade.UpdateBusinessSettingsAsync(existing);
         TempData["SuccessMessage"] = "Business settings updated successfully.";
         return RedirectToAction(nameof(Index));
