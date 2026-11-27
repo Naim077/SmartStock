@@ -163,6 +163,9 @@ public class UsersController : Controller
         if (!string.IsNullOrWhiteSpace(model.Role) && !await _roleManager.RoleExistsAsync(model.Role))
             ModelState.AddModelError(nameof(model.Role), "Select a role that exists in the system.");
 
+        if (!string.IsNullOrWhiteSpace(model.Password) && model.Password.Length < 8)
+            ModelState.AddModelError(nameof(model.Password), "A new password must contain at least 8 characters.");
+
         if (!model.IsActive && User.FindFirstValue(ClaimTypes.NameIdentifier) == id.ToString())
             ModelState.AddModelError(nameof(model.IsActive), "You cannot deactivate your own signed-in account.");
 
@@ -174,6 +177,19 @@ public class UsersController : Controller
         {
             await LoadRoles();
             return View(model);
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.Password))
+        {
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(identity);
+            var passwordResult = await _userManager.ResetPasswordAsync(identity, resetToken, model.Password);
+            if (!passwordResult.Succeeded)
+            {
+                AddIdentityErrors(passwordResult);
+                await LoadRoles();
+                return View(model);
+            }
+            profile.MustChangePassword = true;
         }
 
         var newEmail = model.Email.Trim();
