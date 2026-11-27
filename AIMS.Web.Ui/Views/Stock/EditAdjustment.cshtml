@@ -1,0 +1,10 @@
+@model AIMS.Web.Ui.Models.StockAdjustmentViewModel
+@{
+    ViewData["Title"] = "Edit stock adjustment";
+    Layout = "_PrivateLayout";
+    ViewBag.FormAction = "EditAdjustment";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">INVENTORY CONTROL</span><h1>Edit adjustment draft</h1><p class="page-description">Only unposted adjustment drafts can be edited.</p></div></section>
+    <partial name="_AdjustmentForm" model="Model" />
+</main>
