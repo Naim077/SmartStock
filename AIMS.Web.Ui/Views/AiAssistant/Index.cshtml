@@ -1,0 +1,14 @@
+@using AIMS.Entities
+@model List<AiChatLog>
+@{
+    ViewData["Title"] = "AI Assistant";
+    Layout = "_PrivateLayout";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">AI INVENTORY ASSISTANT</span><h1>AI Assistant</h1><p class="page-description">Review your previous assistant conversations and request status.</p></div></section>
+    <div class="notice notice-warning">The chat interface is not connected to an AI provider yet. This page currently displays saved conversation history only.</div>
+    <section class="card"><div class="card-header"><h2 class="card-title">Your recent conversations</h2></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Started</th><th>Question</th><th>Status</th><th>Provider / model</th><th>Duration</th></tr></thead><tbody>
+    @if (!Model.Any()) { <tr><td colspan="5">No assistant conversations found.</td></tr> }
+    @foreach (var chat in Model) { <tr><td>@chat.StartedUtc.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</td><td>@chat.QuestionRedacted</td><td>@chat.Status</td><td>@(chat.Provider ?? "—") / @(chat.Model ?? "—")</td><td>@(chat.LatencyMilliseconds.HasValue ? $"{chat.LatencyMilliseconds} ms" : "—")</td></tr> }
+    </tbody></table></div></section>
+</main>
