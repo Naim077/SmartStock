@@ -1,0 +1,38 @@
+@using AIMS.Entities
+@model List<Sale>
+@{
+    ViewData["Title"] = "Sales";
+    Layout = "_PrivateLayout";
+    var docs = (Dictionary<long, Document>)ViewBag.Documents;
+    var lineCounts = (Dictionary<long, int>)ViewBag.LineCounts;
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading">
+        <div><span class="eyebrow">SALES MANAGEMENT</span><h1>Sales</h1><p class="page-description">Review recorded sales and invoice totals.</p></div>
+    </section>
+    <section class="stats-grid">
+        <article class="stat-card"><div class="stat-label">Sales invoices</div><div class="stat-value">@ViewBag.TotalSales</div></article>
+        <article class="stat-card"><div class="stat-label">Sales total</div><div class="stat-value">BDT @(((decimal)ViewBag.TotalRevenue).ToString("N2"))</div></article>
+    </section>
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Sales records</h2>
+            <form method="get" asp-controller="Sales" asp-action="Index" class="page-actions">
+                <input name="search" value="@ViewBag.Search" placeholder="Search invoice or customer" />
+                <select name="status"><option>All</option><option>Posted</option><option>Draft</option><option>Cancelled</option></select>
+                <button class="button button-secondary" type="submit">Filter</button>
+            </form>
+        </div>
+        <div class="table-wrap"><table class="data-table">
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th><th>Created</th></tr></thead>
+            <tbody>
+            @if (!Model.Any()) { <tr><td colspan="6">No sales records found.</td></tr> }
+            @foreach (var sale in Model) {
+                var doc = docs[sale.DocumentId];
+                <tr><td>@(doc.DocumentNo ?? $"SALE-{sale.DocumentId}")</td><td>@sale.CustomerNameSnapshot</td>
+                    <td>@(lineCounts.TryGetValue(sale.DocumentId, out var count) ? count : 0)</td>
+                    <td>@doc.Status</td><td>BDT @sale.TotalAmount.ToString("N2")</td><td>@doc.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td></tr>
+            }
+            </tbody>
+        </table></div>
+    </section>
+</main>
