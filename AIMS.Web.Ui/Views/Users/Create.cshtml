@@ -1,0 +1,10 @@
+@model AIMS.Web.Ui.Models.UserFormViewModel
+@{
+    ViewData["Title"] = "Create user";
+    Layout = "_PrivateLayout";
+    ViewBag.FormAction = "Create";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">ADMINISTRATION</span><h1>Create user</h1><p class="page-description">Create an Identity login and its matching user profile.</p></div></section>
+    <partial name="_UserForm" model="Model" />
+</main>
