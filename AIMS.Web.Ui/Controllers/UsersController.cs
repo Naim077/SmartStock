@@ -117,8 +117,12 @@ public class UsersController : Controller
         }
         catch
         {
+            var createdProfile = await _profileFacade.GetUserProfileByIdAsync(user.Id);
+            if (createdProfile != null)
+                await _profileFacade.DeleteUserProfileAsync(user.Id);
+
             await _userManager.DeleteAsync(user);
-            ModelState.AddModelError(string.Empty, "The user profile or role could not be saved. The Identity account was rolled back.");
+            ModelState.AddModelError(string.Empty, "The user profile or role could not be saved. The new account was rolled back.");
             await LoadRoles();
             return View(model);
         }
@@ -158,6 +162,9 @@ public class UsersController : Controller
 
         if (!string.IsNullOrWhiteSpace(model.Role) && !await _roleManager.RoleExistsAsync(model.Role))
             ModelState.AddModelError(nameof(model.Role), "Select a role that exists in the system.");
+
+        if (!model.IsActive && User.FindFirstValue(ClaimTypes.NameIdentifier) == id.ToString())
+            ModelState.AddModelError(nameof(model.IsActive), "You cannot deactivate your own signed-in account.");
 
         var emailOwner = await _userManager.FindByEmailAsync(model.Email);
         if (emailOwner != null && emailOwner.Id != id)
