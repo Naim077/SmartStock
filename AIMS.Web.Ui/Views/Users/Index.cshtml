@@ -1,0 +1,15 @@
+@using AIMS.Entities
+@model List<UserProfile>
+@{
+    ViewData["Title"] = "Users & roles";
+    Layout = "_PrivateLayout";
+    var emails = (Dictionary<Guid, string>)ViewBag.Emails;
+    var roles = (Dictionary<Guid, string>)ViewBag.Roles;
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">ADMINISTRATION</span><h1>Users &amp; roles</h1><p class="page-description">View user profiles, account status and assigned Identity roles.</p></div></section>
+    <section class="card"><div class="card-header"><h2 class="card-title">Registered users</h2></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Roles</th><th>Status</th><th>Created</th><th>Password</th></tr></thead><tbody>
+    @if (!Model.Any()) { <tr><td colspan="6">No user profiles found.</td></tr> }
+    @foreach (var user in Model) { <tr><td>@user.DisplayName</td><td>@(emails.TryGetValue(user.UserId, out var email) ? email : "Identity account not found")</td><td>@(roles.TryGetValue(user.UserId, out var role) && !string.IsNullOrWhiteSpace(role) ? role : "No role assigned")</td><td>@(user.IsActive ? "Active" : "Inactive")</td><td>@user.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td><td>@(user.MustChangePassword ? "Change required" : "Up to date")</td></tr> }
+    </tbody></table></div></section>
+</main>
