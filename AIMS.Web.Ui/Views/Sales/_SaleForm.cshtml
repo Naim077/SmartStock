@@ -1,0 +1,87 @@
+@using AIMS.Entities
+@model AIMS.Web.Ui.Models.SaleEntryViewModel
+@{
+    var customers = (IEnumerable<Customer>)ViewBag.Customers;
+    var products = (IEnumerable<Product>)ViewBag.Products;
+}
+<form asp-controller="Sales" asp-action="@ViewBag.FormAction" asp-route-id="@Model.DocumentId" method="post" class="card" style="padding:24px">
+    @Html.AntiForgeryToken()
+    <input asp-for="DocumentId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-grid">
+        <label>Customer
+            <select asp-for="CustomerId" class="form-control" required>
+                <option value="">Select an active customer</option>
+                @foreach (var customer in customers) { <option value="@customer.CustomerId">@customer.Name</option> }
+            </select>
+            <span asp-validation-for="CustomerId" class="text-danger"></span>
+        </label>
+    </div>
+    <h2 class="card-title" style="margin-top:24px">Sale items</h2>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>Product</th><th>Quantity</th><th>Unit price</th><th>Line discount</th><th></th></tr></thead>
+            <tbody id="sale-lines">
+                @for (var i = 0; i < Model.Lines.Count; i++)
+                {
+                    <tr class="sale-line">
+                        <td><select name="Lines[@i].ProductId" class="form-control" required>
+                            <option value="">Select product</option>
+                            @foreach (var product in products) { <option value="@product.ProductId" selected="@(Model.Lines[i].ProductId == product.ProductId)">@product.Name (@product.Sku)</option> }
+                        </select></td>
+                        <td><input name="Lines[@i].Quantity" value="@Model.Lines[i].Quantity" type="number" min="0.01" step="0.01" class="form-control" required /></td>
+                        <td><input name="Lines[@i].UnitPrice" value="@Model.Lines[i].UnitPrice" type="number" min="0" step="0.01" class="form-control" required /></td>
+                        <td><input name="Lines[@i].DiscountAmount" value="@Model.Lines[i].DiscountAmount" type="number" min="0" step="0.01" class="form-control" required /></td>
+                        <td><button type="button" class="button button-secondary remove-sale-line">Remove</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <template id="sale-line-template">
+        <tr class="sale-line">
+            <td><select name="Lines[__index__].ProductId" class="form-control" required>
+                <option value="">Select product</option>
+                @foreach (var product in products) { <option value="@product.ProductId">@product.Name (@product.Sku)</option> }
+            </select></td>
+            <td><input name="Lines[__index__].Quantity" value="1" type="number" min="0.01" step="0.01" class="form-control" required /></td>
+            <td><input name="Lines[__index__].UnitPrice" value="0" type="number" min="0" step="0.01" class="form-control" required /></td>
+            <td><input name="Lines[__index__].DiscountAmount" value="0" type="number" min="0" step="0.01" class="form-control" required /></td>
+            <td><button type="button" class="button button-secondary remove-sale-line">Remove</button></td>
+        </tr>
+    </template>
+    <div class="page-actions" style="margin-top:16px">
+        <button type="button" id="add-sale-line" class="button button-secondary">Add item</button>
+        <span class="page-description">This saves a Draft only. Stock is not reduced until your posting workflow is run.</span>
+    </div>
+    <div class="page-actions" style="margin-top:20px">
+        <a asp-controller="Sales" asp-action="Index" class="button button-secondary">Cancel</a>
+        <button type="submit" class="button button-primary">Save draft</button>
+    </div>
+</form>
+<script>
+(() => {
+    const body = document.getElementById('sale-lines');
+    const template = document.getElementById('sale-line-template');
+    const add = document.getElementById('add-sale-line');
+    if (!body || !template || !add) return;
+    const renumber = () => {
+        [...body.querySelectorAll('tr.sale-line')].forEach((row, index) => {
+            row.querySelectorAll('[name]').forEach(input => {
+                input.name = input.name.replace(/Lines\[\d+\]/, 'Lines[' + index + ']');
+            });
+        });
+    };
+    add.addEventListener('click', () => {
+        const index = body.querySelectorAll('tr.sale-line').length;
+        body.insertAdjacentHTML('beforeend', template.innerHTML.replaceAll('__index__', index));
+    });
+    body.addEventListener('click', event => {
+        const button = event.target.closest('.remove-sale-line');
+        if (!button) return;
+        if (body.querySelectorAll('tr.sale-line').length <= 1) return;
+        button.closest('tr').remove();
+        renumber();
+    });
+})();
+</script>
