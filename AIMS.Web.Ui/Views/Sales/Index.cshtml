@@ -5,6 +5,7 @@
     Layout = "_PrivateLayout";
     var docs = (Dictionary<long, Document>)ViewBag.Documents;
     var lineCounts = (Dictionary<long, int>)ViewBag.LineCounts;
+    var statuses = (IEnumerable<string>)ViewBag.Statuses;
 }
 <main class="main-content" id="main-content">
     <section class="page-heading">
@@ -21,7 +22,9 @@
         <div class="card-header"><h2 class="card-title">Sales records</h2>
             <form method="get" asp-controller="Sales" asp-action="Index" class="page-actions">
                 <input name="search" value="@ViewBag.Search" placeholder="Search invoice or customer" />
-                <select name="status"><option>All</option><option>Posted</option><option>Draft</option><option>Cancelled</option></select>
+                <select name="status"><option value="All">All statuses</option>
+                    @foreach (var status in statuses) { <option value="@status" selected="@(ViewBag.SelectedStatus?.ToString() == status)">@status</option> }
+                </select>
                 <button class="button button-secondary" type="submit">Filter</button>
             </form>
         </div>
