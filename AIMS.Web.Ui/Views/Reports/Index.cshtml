@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "_PrivateLayout";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">BUSINESS INTELLIGENCE</span><h1>Reports</h1><p class="page-description">A live summary calculated from saved inventory and transaction records.</p></div></section>
+    <section class="stats-grid">
+        <article class="stat-card"><div class="stat-label">Active products</div><div class="stat-value">@ViewBag.ProductCount</div></article>
+        <article class="stat-card"><div class="stat-label">Units in stock</div><div class="stat-value">@(((decimal)ViewBag.StockUnits).ToString("N2"))</div></article>
+        <article class="stat-card"><div class="stat-label">Inventory value</div><div class="stat-value">BDT @(((decimal)ViewBag.InventoryValue).ToString("N2"))</div></article>
+        <article class="stat-card"><div class="stat-label">Low stock products</div><div class="stat-value">@ViewBag.LowStockCount</div></article>
+        <article class="stat-card"><div class="stat-label">Sales invoices</div><div class="stat-value">@ViewBag.SalesCount</div></article>
+        <article class="stat-card"><div class="stat-label">Sales revenue</div><div class="stat-value">BDT @(((decimal)ViewBag.SalesRevenue).ToString("N2"))</div></article>
+        <article class="stat-card"><div class="stat-label">Purchase orders</div><div class="stat-value">@ViewBag.PurchaseOrders</div></article>
+    </section>
+    <p class="page-description">Report generated @(((DateTime)ViewBag.GeneratedUtc).ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")). Figures reflect records currently available in the database.</p>
+</main>
