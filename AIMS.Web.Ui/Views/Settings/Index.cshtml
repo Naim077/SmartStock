@@ -1,0 +1,44 @@
+@using AIMS.Entities
+@model BusinessSettings
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "_PrivateLayout";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">ADMINISTRATION</span><h1>Business settings</h1><p class="page-description">Configure business identity, currency and inventory policies.</p></div></section>
+    @if (TempData["SuccessMessage"] != null) { <div class="notice notice-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="notice notice-warning">@TempData["ErrorMessage"]</div> }
+    <form asp-controller="Settings" asp-action="Index" method="post" class="card" style="padding:24px">
+        @Html.AntiForgeryToken()
+        <input asp-for="SettingsId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <h2 class="card-title">Business information</h2>
+        <div class="form-grid">
+            <label>Business name<input asp-for="BusinessName" class="form-control" /></label>
+            <label>Currency code<input asp-for="CurrencyCode" class="form-control" /></label>
+            <label>Time zone<input asp-for="TimeZoneId" class="form-control" /></label>
+            <label>Invoice prefix<input asp-for="InvoicePrefix" class="form-control" /></label>
+            <label>Discount approval percent<input asp-for="DiscountApprovalPercent" class="form-control" /></label>
+            <label>Adjustment approval threshold<input asp-for="AdjustmentApprovalThreshold" class="form-control" /></label>
+            <label>Expiry warning days<input asp-for="ExpiryWarningDays" class="form-control" /></label>
+            <label>Dead stock days<input asp-for="DeadStockDays" class="form-control" /></label>
+            <label>Review period days<input asp-for="ReviewPeriodDays" class="form-control" /></label>
+            <label>Safety factor<input asp-for="SafetyFactor" class="form-control" /></label>
+            <label>Chat retention months<input asp-for="ChatRetentionMonths" class="form-control" /></label>
+        </div>
+        <h2 class="card-title" style="margin-top:24px">AI and notifications</h2>
+        <div class="form-grid">
+            <label><input asp-for="LlmEnabled" /> Enable LLM integration</label>
+            <label>LLM provider<input asp-for="LlmProvider" class="form-control" /></label>
+            <label>LLM model<input asp-for="LlmModel" class="form-control" /></label>
+            <label>Requests per minute<input asp-for="LlmRequestsPerMinute" class="form-control" /></label>
+            <label>Monthly token budget<input asp-for="LlmMonthlyTokenBudget" class="form-control" /></label>
+            <label><input asp-for="SmtpEnabled" /> Enable SMTP</label>
+            <label>SMTP host<input asp-for="SmtpHost" class="form-control" /></label>
+            <label>SMTP port<input asp-for="SmtpPort" class="form-control" /></label>
+            <label><input asp-for="LegalHold" /> Legal hold</label>
+        </div>
+        <p class="page-description">Secret references are intentionally not editable here. Configure credentials through your secure secret store.</p>
+        <div class="page-actions"><button type="submit" class="button button-primary">Save settings</button></div>
+    </form>
+</main>
