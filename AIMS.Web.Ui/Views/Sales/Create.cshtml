@@ -1,0 +1,10 @@
+@model AIMS.Web.Ui.Models.SaleEntryViewModel
+@{
+    ViewData["Title"] = "Create sale";
+    Layout = "_PrivateLayout";
+    ViewBag.FormAction = "Create";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">SALES MANAGEMENT</span><h1>Create sale</h1><p class="page-description">Create an unposted sales draft.</p></div></section>
+    <partial name="_SaleForm" model="Model" />
+</main>
