@@ -1,0 +1,53 @@
+@using AIMS.Entities
+@model List<StockChange>
+@{
+    ViewData["Title"] = "Stock adjustments";
+    Layout = "_PrivateLayout";
+    var documents = (Dictionary<long, Document>)ViewBag.Documents;
+    var counts = (Dictionary<long, int>)ViewBag.LineCounts;
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading">
+        <div><span class="eyebrow">INVENTORY CONTROL</span><h1>Stock adjustments</h1><p class="page-description">Create and maintain unposted stock adjustment documents.</p></div>
+        <div class="page-actions">
+            <a asp-controller="Stock" asp-action="Index" class="button button-secondary">Stock overview</a>
+            <a asp-controller="Stock" asp-action="CreateAdjustment" class="button button-primary">New adjustment</a>
+        </div>
+    </section>
+    @if (TempData["SuccessMessage"] != null) { <div class="notice notice-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="notice notice-warning">@TempData["ErrorMessage"]</div> }
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Adjustment documents</h2>
+            <form method="get" asp-controller="Stock" asp-action="Adjustments" class="page-actions">
+                <input name="search" value="@ViewBag.Search" placeholder="Search reason or type" />
+                <button class="button button-secondary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="table-wrap"><table class="data-table">
+            <thead><tr><th>Document</th><th>Type</th><th>Reason</th><th>Lines</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+            <tbody>
+            @if (!Model.Any()) { <tr><td colspan="7">No stock adjustment drafts found.</td></tr> }
+            @foreach (var change in Model)
+            {
+                var doc = documents[change.DocumentId];
+                <tr>
+                    <td>ADJ-@change.DocumentId</td><td>@change.ChangeKind</td><td>@change.Reason</td>
+                    <td>@(counts.TryGetValue(change.DocumentId, out var count) ? count : 0)</td><td>@doc.Status</td>
+                    <td>@doc.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td>
+                        @if (doc.Status.Equals("Draft", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <a asp-controller="Stock" asp-action="EditAdjustment" asp-route-id="@change.DocumentId" class="button button-secondary">Edit</a>
+                            <form asp-controller="Stock" asp-action="DeleteAdjustment" asp-route-id="@change.DocumentId" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="button button-secondary" onclick="return confirm('Delete this draft adjustment?')">Delete</button>
+                            </form>
+                        }
+                        else { <span>Workflow controlled</span> }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    </section>
+</main>
