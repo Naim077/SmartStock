@@ -4,16 +4,51 @@
     ViewData["Title"] = "Smart Reorder";
     Layout = "_PrivateLayout";
     var products = (Dictionary<long, Product>)ViewBag.Products;
+    var statuses = Model.Select(x => x.Status).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x).ToList();
 }
 <main class="main-content" id="main-content">
-    <section class="page-heading"><div><span class="eyebrow">INVENTORY INTELLIGENCE</span><h1>Smart Reorder</h1><p class="page-description">Review generated replenishment suggestions. Suggestions are read-only on this page.</p></div></section>
-    <section class="stats-grid"><article class="stat-card"><div class="stat-label">Suggestions</div><div class="stat-value">@ViewBag.TotalSuggestions</div></article><article class="stat-card"><div class="stat-label">Suggested units</div><div class="stat-value">@(((decimal)ViewBag.ProposedUnits).ToString("N2"))</div></article></section>
-    <section class="card"><div class="card-header"><h2 class="card-title">Reorder suggestions</h2>
-        <form method="get" asp-controller="SmartReorder" asp-action="Index" class="page-actions"><select name="status"><option value="All">All statuses</option><option>Pending</option><option>Accepted</option><option>Dismissed</option><option>Converted</option></select><button class="button button-secondary">Filter</button></form>
-    </div><div class="table-wrap"><table class="data-table"><thead><tr><th>Product</th><th>Generated</th><th>Status</th><th>Available</th><th>Reorder point</th><th>Suggested qty</th><th>Estimated cost</th></tr></thead><tbody>
-    @if (!Model.Any()) { <tr><td colspan="7">No reorder suggestions have been generated yet.</td></tr> }
-    @foreach (var suggestion in Model) {
-        <tr><td>@(products.TryGetValue(suggestion.ProductId, out var product) ? product.Name : $"Product #{suggestion.ProductId}")</td><td>@suggestion.GeneratedUtc.ToLocalTime().ToString("dd MMM yyyy")</td><td>@suggestion.Status</td><td>@suggestion.SaleableQuantity.ToString("N2")</td><td>@(suggestion.EffectiveRop?.ToString("N2") ?? "—")</td><td>@(suggestion.SuggestedQuantity?.ToString("N2") ?? "—")</td><td>@(suggestion.EstimatedCost.HasValue ? $"BDT {suggestion.EstimatedCost.Value:N2}" : "—")</td></tr>
-    }
-    </tbody></table></div></section>
+    <section class="page-heading"><div><span class="eyebrow">INVENTORY INTELLIGENCE</span><h1>Smart Reorder</h1><p class="page-description">Review generated replenishment suggestions and record human review notes.</p></div></section>
+    @if (TempData["SuccessMessage"] != null) { <div class="notice notice-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="notice notice-warning">@TempData["ErrorMessage"]</div> }
+    <section class="stats-grid">
+        <article class="stat-card"><div class="stat-label">Suggestions</div><div class="stat-value">@ViewBag.TotalSuggestions</div></article>
+        <article class="stat-card"><div class="stat-label">Suggested units</div><div class="stat-value">@(((decimal)ViewBag.ProposedUnits).ToString("N2"))</div></article>
+    </section>
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Reorder suggestions</h2>
+            <form method="get" asp-controller="SmartReorder" asp-action="Index" class="page-actions">
+                <select name="status"><option value="All">All statuses</option>
+                    @foreach (var status in statuses) { <option value="@status" selected="@(ViewBag.SelectedStatus?.ToString() == status)">@status</option> }
+                </select>
+                <button class="button button-secondary" type="submit">Filter</button>
+            </form>
+        </div>
+        <div class="table-wrap"><table class="data-table">
+            <thead><tr><th>Product</th><th>Generated</th><th>Status</th><th>Available</th><th>Reorder point</th><th>Suggested qty</th><th>Estimated cost</th><th>Review note</th></tr></thead>
+            <tbody>
+            @if (!Model.Any()) { <tr><td colspan="8">No reorder suggestions have been generated yet.</td></tr> }
+            @foreach (var suggestion in Model)
+            {
+                <tr>
+                    <td>@(products.TryGetValue(suggestion.ProductId, out var product) ? product.Name : $"Product #{suggestion.ProductId}")</td>
+                    <td>@suggestion.GeneratedUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td>@suggestion.Status</td>
+                    <td>@suggestion.SaleableQuantity.ToString("N2")</td>
+                    <td>@(suggestion.EffectiveRop?.ToString("N2") ?? "—")</td>
+                    <td>@(suggestion.SuggestedQuantity?.ToString("N2") ?? "—")</td>
+                    <td>@(suggestion.EstimatedCost.HasValue ? $"BDT {suggestion.EstimatedCost.Value:N2}" : "—")</td>
+                    <td>
+                        @if (suggestion.OutcomeUtc.HasValue) { <small>Reviewed @suggestion.OutcomeUtc.Value.ToLocalTime().ToString("dd MMM yyyy")</small> }
+                        <form asp-controller="SmartReorder" asp-action="Review" asp-route-id="@suggestion.SuggestionId" method="post">
+                            @Html.AntiForgeryToken()
+                            <input name="outcomeReason" value="@suggestion.OutcomeReason" maxlength="1000" placeholder="Add review note" class="form-control" required />
+                            <button type="submit" class="button button-secondary">Save note</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table></div>
+    </section>
+    <p class="page-description">Forecast inputs and generated quantities are preserved as historical snapshots. Review notes do not change stock or create a purchase order.</p>
 </main>
