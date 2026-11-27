@@ -229,19 +229,19 @@
                 <summary>Browse all pages</summary>
                 <div class="nojs-links">
                     <a href="index.html">Overview</a>
-                    <a href="@Url.Action("Index", "Product")">Products</a>
-                    <a href="@Url.Action("Index", "Product")">Stock overview</a>
-                    <a href="@Url.Action("Index", "Purchase")">Purchases</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Sales</a>
-                    <a href="@Url.Action("Index", "Supplier")">Suppliers</a>
-                    <a href="@Url.Action("Index", "Customer")">Customers</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Reports</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Smart Reorder</a>
-                    <a href="@Url.Action("Index", "Dashboard")">AI Assistant</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Users &amp; roles</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Audit log</a>
-                    <a href="@Url.Action("Index", "Dashboard")">Settings</a>
-                    <a href="@Url.Action("Login", "Account")">Welcome</a>
+                    <a asp-controller="Product" asp-action="Index">Products</a>
+                    <a asp-controller="Product" asp-action="Index">Stock overview</a>
+                    <a asp-controller="Purchase" asp-action="Index">Purchases</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Sales</a>
+                    <a asp-controller="Supplier" asp-action="Index">Suppliers</a>
+                    <a asp-controller="Customer" asp-action="Index">Customers</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Reports</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Smart Reorder</a>
+                    <a asp-controller="Dashboard" asp-action="Index">AI Assistant</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Users &amp; roles</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Audit log</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Settings</a>
+                    <a asp-controller="Account" asp-action="Login">Welcome</a>
                 </div>
             </details>
             <small>Enable JavaScript for filters, dialogs and browser-local changes.</small>
@@ -249,7 +249,7 @@
     </noscript>
     <div class="app-shell">
         <aside class="sidebar" id="sidebar" aria-label="Main navigation">
-            <a href="@Url.Action("Index", "Dashboard")" class="brand" aria-label="SmartStock overview">
+            <a asp-controller="Dashboard" asp-action="Index" class="brand" aria-label="SmartStock overview">
                 <span class="brand-mark">
                     <svg viewBox="0 0 34 36" aria-hidden="true">
                         <path d="M17 2 31 10 17 18 3 10Z" fill="#c5dba9" />
@@ -263,21 +263,21 @@
             <nav class="sidebar-nav" aria-label="SmartStock modules">
                 <div class="nav-group">
                     <h2 class="sidebar-caption">Workspace</h2>
-                    <a class="nav-link is-active" href="@Url.Action("Index", "Dashboard")" aria-current="page">
+                    <a class="nav-link is-active" asp-controller="Dashboard" asp-action="Index" aria-current="page">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-grid">
                             </use>
                         </svg>
                         <span>Overview</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Product")">
+                    <a class="nav-link" asp-controller="Product" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-box">
                             </use>
                         </svg>
                         <span>Products</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Product")">
+                    <a class="nav-link" asp-controller="Product" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-stock">
                             </use>
@@ -285,7 +285,7 @@
                         <span>Stock overview</span>
                         <span class="nav-badge" data-low-count aria-label="Products needing attention">5</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Purchase")">
+                    <a class="nav-link" asp-controller="Purchase" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-truck">
                             </use>
@@ -299,14 +299,14 @@
                         </svg>
                         <span>Sales</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Supplier")">
+                    <a class="nav-link" asp-controller="Supplier" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-layers">
                             </use>
                         </svg>
                         <span>Suppliers</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Customer")">
+                    <a class="nav-link" asp-controller="Customer" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-users">
                             </use>
@@ -355,7 +355,7 @@
                         </svg>
                         <span>Audit log</span>
                     </a>
-                    <a class="nav-link" href="@Url.Action("Index", "Dashboard")">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-settings">
                             </use>
@@ -373,13 +373,16 @@
                     </svg>
                     <span>Workspace guide</span>
                 </button>
-                <a class="nav-link" href="@Url.Action("Login", "Account")">
-                    <svg class="icon" aria-hidden="true">
-                        <use href="#i-logout">
-                        </use>
-                    </svg>
-                    <span>Leave preview</span>
-                </a>
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button class="nav-link" type="submit" style="width:100%;border:0;background:transparent;text-align:left">
+                        <svg class="icon" aria-hidden="true">
+                            <use href="#i-logout">
+                            </use>
+                        </svg>
+                        <span>Leave preview</span>
+                    </button>
+                </form>
             </div>
         </aside>
         <div class="workspace">
@@ -424,7 +427,7 @@
                             </svg>
                         </summary>
                         <div class="profile-dropdown">
-                            <a href="@Url.Action("Index", "Dashboard")">
+                            <a asp-controller="Dashboard" asp-action="Index">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-settings">
                                     </use>
@@ -436,12 +439,15 @@
                                     </use>
                                 </svg>Users &amp; roles
                             </a>
-                            <a href="@Url.Action("Login", "Account")">
-                                <svg class="icon" aria-hidden="true">
-                                    <use href="#i-logout">
-                                    </use>
-                                </svg>Leave preview
-                            </a>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="profile-link" style="border:0;background:transparent;width:100%;text-align:left">
+                                    <svg class="icon" aria-hidden="true">
+                                        <use href="#i-logout">
+                                        </use>
+                                    </svg>Leave preview
+                                </button>
+                            </form>
                         </div>
                     </details>
                 </div>
@@ -452,7 +458,7 @@
         <strong data-business-name>Evergreen Trading</strong> &middot; Single-store workspace
     </span>
     <span>
-        Browser-local preview &middot; <a href="@Url.Action("Index", "Dashboard")">No backend connected</a>
+        Browser-local preview &middot; <a asp-controller="Dashboard" asp-action="Index">No backend connected</a>
     </span>
 </footer>
 </div>
