@@ -70,8 +70,10 @@ public class SalesController : Controller
             .GroupBy(x => x.DocumentId).ToDictionary(x => x.Key, x => x.Count());
         ViewBag.Search = search ?? "";
         ViewBag.SelectedStatus = status ?? "All";
+        ViewBag.Statuses = documents.Values.Select(x => x.Status).Distinct().OrderBy(x => x).ToList();
         ViewBag.TotalSales = sales.Count;
-        ViewBag.TotalRevenue = sales.Where(x => !documents[x.DocumentId].Status.Equals("Draft", StringComparison.OrdinalIgnoreCase))
+        ViewBag.TotalRevenue = sales
+            .Where(x => !new[] { "Draft", "Cancelled", "Void" }.Contains(documents[x.DocumentId].Status, StringComparer.OrdinalIgnoreCase))
             .Sum(x => x.TotalAmount);
         return View(sales.OrderByDescending(x => documents[x.DocumentId].CreatedUtc).ToList());
     }
