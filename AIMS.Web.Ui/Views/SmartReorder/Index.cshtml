@@ -1,0 +1,19 @@
+@using AIMS.Entities
+@model List<ReorderSuggestion>
+@{
+    ViewData["Title"] = "Smart Reorder";
+    Layout = "_PrivateLayout";
+    var products = (Dictionary<long, Product>)ViewBag.Products;
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">INVENTORY INTELLIGENCE</span><h1>Smart Reorder</h1><p class="page-description">Review generated replenishment suggestions. Suggestions are read-only on this page.</p></div></section>
+    <section class="stats-grid"><article class="stat-card"><div class="stat-label">Suggestions</div><div class="stat-value">@ViewBag.TotalSuggestions</div></article><article class="stat-card"><div class="stat-label">Suggested units</div><div class="stat-value">@(((decimal)ViewBag.ProposedUnits).ToString("N2"))</div></article></section>
+    <section class="card"><div class="card-header"><h2 class="card-title">Reorder suggestions</h2>
+        <form method="get" asp-controller="SmartReorder" asp-action="Index" class="page-actions"><select name="status"><option value="All">All statuses</option><option>Pending</option><option>Accepted</option><option>Dismissed</option><option>Converted</option></select><button class="button button-secondary">Filter</button></form>
+    </div><div class="table-wrap"><table class="data-table"><thead><tr><th>Product</th><th>Generated</th><th>Status</th><th>Available</th><th>Reorder point</th><th>Suggested qty</th><th>Estimated cost</th></tr></thead><tbody>
+    @if (!Model.Any()) { <tr><td colspan="7">No reorder suggestions have been generated yet.</td></tr> }
+    @foreach (var suggestion in Model) {
+        <tr><td>@(products.TryGetValue(suggestion.ProductId, out var product) ? product.Name : $"Product #{suggestion.ProductId}")</td><td>@suggestion.GeneratedUtc.ToLocalTime().ToString("dd MMM yyyy")</td><td>@suggestion.Status</td><td>@suggestion.SaleableQuantity.ToString("N2")</td><td>@(suggestion.EffectiveRop?.ToString("N2") ?? "—")</td><td>@(suggestion.SuggestedQuantity?.ToString("N2") ?? "—")</td><td>@(suggestion.EstimatedCost.HasValue ? $"BDT {suggestion.EstimatedCost.Value:N2}" : "—")</td></tr>
+    }
+    </tbody></table></div></section>
+</main>
