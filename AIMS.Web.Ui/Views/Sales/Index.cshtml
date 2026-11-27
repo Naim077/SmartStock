@@ -8,8 +8,11 @@
 }
 <main class="main-content" id="main-content">
     <section class="page-heading">
-        <div><span class="eyebrow">SALES MANAGEMENT</span><h1>Sales</h1><p class="page-description">Review recorded sales and invoice totals.</p></div>
+        <div><span class="eyebrow">SALES MANAGEMENT</span><h1>Sales</h1><p class="page-description">Review sales, maintain unposted drafts and inspect invoice totals.</p></div>
+        <div class="page-actions"><a asp-controller="Sales" asp-action="Create" class="button button-primary">Create sale</a></div>
     </section>
+    @if (TempData["SuccessMessage"] != null) { <div class="notice notice-success">@TempData["SuccessMessage"]</div> }
+    @if (TempData["ErrorMessage"] != null) { <div class="notice notice-warning">@TempData["ErrorMessage"]</div> }
     <section class="stats-grid">
         <article class="stat-card"><div class="stat-label">Sales invoices</div><div class="stat-value">@ViewBag.TotalSales</div></article>
         <article class="stat-card"><div class="stat-label">Sales total</div><div class="stat-value">BDT @(((decimal)ViewBag.TotalRevenue).ToString("N2"))</div></article>
