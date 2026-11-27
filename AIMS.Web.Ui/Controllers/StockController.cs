@@ -4,6 +4,7 @@ using AIMS.Facade.Interface;
 using AIMS.Web.Ui.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace AIMS.Web.Ui.Controllers;
