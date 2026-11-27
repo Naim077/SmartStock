@@ -30,15 +30,18 @@ public class ReportsController : Controller
         var sales = await _saleFacade.GetSalesAsync();
         var purchases = await _purchaseFacade.GetPurchaseOrdersAsync();
         var documents = await _documentFacade.GetDocumentsAsync();
-        var saleIds = documents.Where(d => d.DocumentKind.Equals("Sale", StringComparison.OrdinalIgnoreCase) ||
-                                           d.DocumentKind.Equals("SalesInvoice", StringComparison.OrdinalIgnoreCase))
-            .Select(d => d.DocumentId).ToHashSet();
+        var saleDocuments = documents.Where(d => d.DocumentKind.Equals("Sale", StringComparison.OrdinalIgnoreCase) ||
+                                                  d.DocumentKind.Equals("SalesInvoice", StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(d => d.DocumentId);
+        var postedSales = sales.Where(s => saleDocuments.ContainsKey(s.DocumentId) &&
+            !new[] { "Draft", "Cancelled", "Void" }.Contains(saleDocuments[s.DocumentId].Status, StringComparer.OrdinalIgnoreCase))
+            .ToList();
 
         ViewBag.ProductCount = products.Count(p => p.IsActive);
         ViewBag.StockUnits = balances.Sum(x => x.Quantity);
         ViewBag.InventoryValue = balances.Sum(x => x.InventoryValue);
-        ViewBag.SalesCount = sales.Count(s => saleIds.Contains(s.DocumentId));
-        ViewBag.SalesRevenue = sales.Where(s => saleIds.Contains(s.DocumentId)).Sum(s => s.TotalAmount);
+        ViewBag.SalesCount = postedSales.Count;
+        ViewBag.SalesRevenue = postedSales.Sum(s => s.TotalAmount);
         ViewBag.PurchaseOrders = purchases.Count;
         ViewBag.GeneratedUtc = DateTime.UtcNow;
         ViewBag.LowStockCount = products.Count(p =>
