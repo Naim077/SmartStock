@@ -19,7 +19,7 @@
                     </use>
                 </svg>Export overview
             </button>
-            <a class="button button-primary" href="purchases.html">
+            <a class="button button-primary" asp-controller="Purchase" asp-action="Index">
                 <svg class="icon" aria-hidden="true">
                     <use href="#i-plus">
                     </use>
@@ -126,7 +126,7 @@
                 <h2 class="card-title" id="health-title">Stock health</h2>
                 <p class="card-subtitle">Keep the right balance on your shelves.</p>
             </div>
-            <a class="icon-button" href="stock.html" aria-label="Open stock overview">
+            <a class="icon-button" asp-controller="Stock" asp-action="Index" aria-label="Open stock overview">
                 <svg class="icon" aria-hidden="true">
                     <use href="#i-arrow-up-right">
                     </use>
@@ -157,7 +157,7 @@
         </div>
         <div class="health-note">
             <span id="health-unit-count">449 units on hand</span>
-            <a href="reports.html">
+            <a asp-controller="Reports" asp-action="Index">
                 Inventory report
                 <svg class="icon" aria-hidden="true" style="width:11px;height:11px">
                     <use href="#i-arrow-right">
@@ -178,7 +178,7 @@
         <h2>A little planning. A lot fewer stock-outs.</h2>
         <p id="reorder-banner-copy">Review 5 products that could use a restock. You stay in control of every order.</p>
     </div>
-    <a href="smart-reorder.html" class="button button-secondary">
+    <a asp-controller="SmartReorder" asp-action="Index" class="button button-secondary">
         Review suggestions
         <svg class="icon" aria-hidden="true">
             <use href="#i-arrow-right">
@@ -193,7 +193,7 @@
                 <h2 class="card-title" id="attention-title">Stock that needs attention</h2>
                 <p class="card-subtitle">Small actions now, smoother operations later.</p>
             </div>
-            <a href="stock.html" class="button button-ghost button-sm">
+            <a asp-controller="Stock" asp-action="Index" class="button button-ghost button-sm">
                 View all
                 <svg class="icon" aria-hidden="true">
                     <use href="#i-arrow-right">
@@ -234,7 +234,7 @@
                             <span class="status status-warning">Low stock</span>
                         </td>
                         <td>
-                            <a href="smart-reorder.html" class="icon-button" aria-label="Review charger restock">
+                            <a asp-controller="SmartReorder" asp-action="Index" class="icon-button" aria-label="Review charger restock">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-arrow-up-right">
                                     </use>
@@ -252,7 +252,7 @@
                             <span class="status status-danger">Out of stock</span>
                         </td>
                         <td>
-                            <a href="smart-reorder.html" class="icon-button" aria-label="Review mouse restock">
+                            <a asp-controller="SmartReorder" asp-action="Index" class="icon-button" aria-label="Review mouse restock">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-arrow-up-right">
                                     </use>
@@ -274,7 +274,7 @@
                 <h2 class="card-title" id="activity-title">Recent activity</h2>
                 <p class="card-subtitle">The latest in your workspace.</p>
             </div>
-            <a href="audit-log.html" class="icon-button" aria-label="View activity log">
+            <a asp-controller="AuditLog" asp-action="Index" class="icon-button" aria-label="View activity log">
                 <svg class="icon" aria-hidden="true">
                     <use href="#i-arrow-up-right">
                     </use>
@@ -308,7 +308,7 @@
             </div>
         </div>
         <div class="card-body" style="padding-top:10px">
-            <a class="button button-secondary button-sm" href="audit-log.html" style="width:100%">
+            <a class="button button-secondary button-sm" asp-controller="AuditLog" asp-action="Index" style="width:100%">
                 View activity log
                 <svg class="icon" aria-hidden="true">
                     <use href="#i-arrow-right">
@@ -319,7 +319,7 @@
     </section>
 </div>
 <nav class="quick-links" aria-label="Quick actions">
-    <a class="quick-link" href="products.html">
+    <a class="quick-link" asp-controller="Product" asp-action="Index">
         <svg class="icon" aria-hidden="true">
             <use href="#i-box">
             </use>
@@ -329,7 +329,7 @@
             </use>
         </svg>
     </a>
-    <a class="quick-link" href="sales.html">
+    <a class="quick-link" asp-controller="Sales" asp-action="Index">
         <svg class="icon" aria-hidden="true">
             <use href="#i-cart">
             </use>
@@ -339,7 +339,7 @@
             </use>
         </svg>
     </a>
-    <a class="quick-link" href="purchases.html">
+    <a class="quick-link" asp-controller="Purchase" asp-action="Index">
         <svg class="icon" aria-hidden="true">
             <use href="#i-truck">
             </use>
@@ -349,7 +349,7 @@
             </use>
         </svg>
     </a>
-    <a class="quick-link" href="reports.html">
+    <a class="quick-link" asp-controller="Reports" asp-action="Index">
         <svg class="icon" aria-hidden="true">
             <use href="#i-chart">
             </use>
