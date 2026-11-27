@@ -1,0 +1,14 @@
+@using AIMS.Entities
+@model List<AuditLog>
+@{
+    ViewData["Title"] = "Audit log";
+    Layout = "_PrivateLayout";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">ADMINISTRATION</span><h1>Audit log</h1><p class="page-description">Review recorded system actions and their outcomes.</p></div></section>
+    <section class="card"><div class="card-header"><h2 class="card-title">Activity records (@ViewBag.TotalLogs)</h2><form method="get" asp-controller="AuditLog" asp-action="Index" class="page-actions"><input name="search" value="@ViewBag.Search" placeholder="Search action, entity or outcome" /><button class="button button-secondary">Search</button></form></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Entity</th><th>Reference</th><th>Outcome</th></tr></thead><tbody>
+    @if (!Model.Any()) { <tr><td colspan="6">No audit records found.</td></tr> }
+    @foreach (var log in Model) { <tr><td>@log.OccurredUtc.ToLocalTime().ToString("dd MMM yyyy, hh:mm:ss tt")</td><td>@log.ActorType</td><td>@log.Action</td><td>@log.EntityType</td><td>@(log.EntityReference ?? "—")</td><td>@log.Outcome</td></tr> }
+    </tbody></table></div></section>
+</main>
