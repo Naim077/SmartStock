@@ -228,7 +228,7 @@
             <details>
                 <summary>Browse all pages</summary>
                 <div class="nojs-links">
-                    <a href="index.html">Overview</a>
+                    <a asp-controller="Dashboard" asp-action="Index">Overview</a>
                     <a asp-controller="Product" asp-action="Index">Products</a>
                     <a asp-controller="Product" asp-action="Index">Stock overview</a>
                     <a asp-controller="Purchase" asp-action="Index">Purchases</a>
@@ -292,7 +292,7 @@
                         </svg>
                         <span>Purchases</span>
                     </a>
-                    <a class="nav-link" href="sales.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-cart">
                             </use>
@@ -316,21 +316,21 @@
                 </div>
                 <div class="nav-group">
                     <h2 class="sidebar-caption">Intelligence</h2>
-                    <a class="nav-link" href="reports.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-chart">
                             </use>
                         </svg>
                         <span>Reports</span>
                     </a>
-                    <a class="nav-link" href="smart-reorder.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-sparkles">
                             </use>
                         </svg>
                         <span>Smart Reorder</span>
                     </a>
-                    <a class="nav-link" href="ai-assistant.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-message">
                             </use>
@@ -341,14 +341,14 @@
                 </div>
                 <div class="nav-group">
                     <h2 class="sidebar-caption">Administration</h2>
-                    <a class="nav-link" href="users.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-shield">
                             </use>
                         </svg>
                         <span>Users &amp; roles</span>
                     </a>
-                    <a class="nav-link" href="audit-log.html">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-history">
                             </use>
@@ -433,7 +433,7 @@
                                     </use>
                                 </svg>Workspace settings
                             </a>
-                            <a href="users.html">
+                            <a asp-controller="Dashboard" asp-action="Index">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-users">
                                     </use>
