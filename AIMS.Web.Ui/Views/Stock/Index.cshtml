@@ -1,0 +1,32 @@
+@using AIMS.Entities
+@model List<Product>
+@{
+    ViewData["Title"] = "Stock overview";
+    Layout = "_PrivateLayout";
+    var balances = (Dictionary<long, ProductStockBalance>)ViewBag.Balances;
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">INVENTORY</span><h1>Stock overview</h1><p class="page-description">Current product quantities and inventory value.</p></div></section>
+    <section class="stats-grid">
+        <article class="stat-card"><div class="stat-label">Products shown</div><div class="stat-value">@ViewBag.TotalProducts</div></article>
+        <article class="stat-card"><div class="stat-label">Inventory value</div><div class="stat-value">BDT @(((decimal)ViewBag.InventoryValue).ToString("N2"))</div></article>
+        <article class="stat-card"><div class="stat-label">Out of stock</div><div class="stat-value">@ViewBag.OutOfStock</div></article>
+    </section>
+    <section class="card">
+        <div class="card-header"><h2 class="card-title">Product stock</h2>
+            <form method="get" asp-controller="Stock" asp-action="Index" class="page-actions">
+                <input name="search" value="@ViewBag.Search" placeholder="Search product or SKU" />
+                <select name="stockStatus"><option value="All">All stock</option><option value="Available">Available</option><option value="Out">Out of stock</option></select>
+                <button class="button button-secondary" type="submit">Filter</button>
+            </form>
+        </div>
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>SKU</th><th>Product</th><th>Unit</th><th>Available quantity</th><th>Reorder point</th><th>Inventory value</th><th>Status</th></tr></thead><tbody>
+        @if (!Model.Any()) { <tr><td colspan="7">No products found.</td></tr> }
+        @foreach (var product in Model) {
+            var hasBalance = balances.TryGetValue(product.ProductId, out var balance);
+            var qty = hasBalance ? balance!.Quantity : 0m;
+            <tr><td>@product.Sku</td><td>@product.Name</td><td>@product.BaseUnit</td><td>@qty.ToString("N2")</td><td>@product.ManualReorderPoint.ToString("N2")</td><td>BDT @(hasBalance ? balance!.InventoryValue.ToString("N2") : "0.00")</td><td>@(qty <= 0 ? "Out of stock" : qty <= product.ManualReorderPoint ? "Low stock" : "In stock")</td></tr>
+        }
+        </tbody></table></div>
+    </section>
+</main>
