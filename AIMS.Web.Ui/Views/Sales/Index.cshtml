@@ -23,14 +23,25 @@
             </form>
         </div>
         <div class="table-wrap"><table class="data-table">
-            <thead><tr><th>Invoice</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th><th>Created</th></tr></thead>
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead>
             <tbody>
-            @if (!Model.Any()) { <tr><td colspan="6">No sales records found.</td></tr> }
+            @if (!Model.Any()) { <tr><td colspan="7">No sales records found.</td></tr> }
             @foreach (var sale in Model) {
                 var doc = docs[sale.DocumentId];
                 <tr><td>@(doc.DocumentNo ?? $"SALE-{sale.DocumentId}")</td><td>@sale.CustomerNameSnapshot</td>
                     <td>@(lineCounts.TryGetValue(sale.DocumentId, out var count) ? count : 0)</td>
-                    <td>@doc.Status</td><td>BDT @sale.TotalAmount.ToString("N2")</td><td>@doc.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td></tr>
+                    <td>@doc.Status</td><td>BDT @sale.TotalAmount.ToString("N2")</td><td>@doc.CreatedUtc.ToLocalTime().ToString("dd MMM yyyy")</td>
+                    <td>
+                        @if (doc.Status.Equals("Draft", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <a asp-controller="Sales" asp-action="Edit" asp-route-id="@sale.DocumentId" class="button button-secondary">Edit</a>
+                            <form asp-controller="Sales" asp-action="Delete" asp-route-id="@sale.DocumentId" method="post" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="button button-secondary" onclick="return confirm('Delete this draft sale?')">Delete</button>
+                            </form>
+                        }
+                        else { <span>Posted record</span> }
+                    </td></tr>
             }
             </tbody>
         </table></div>
