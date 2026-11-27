@@ -17,6 +17,11 @@
             <label>Initial password<input asp-for="Password" type="password" class="form-control" minlength="8" autocomplete="new-password" required /></label>
             <span asp-validation-for="Password" class="text-danger"></span>
         }
+        else
+        {
+            <label>New password (optional)<input asp-for="Password" type="password" class="form-control" minlength="8" autocomplete="new-password" placeholder="Leave blank to keep current password" /></label>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        }
         <label>Role
             <select asp-for="Role" class="form-control">
                 <option value="">No role</option>
