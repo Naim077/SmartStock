@@ -50,6 +50,8 @@ public class AccountController : Controller
             return View(model);
         }
 
+        var isFirstRegisteredUser = !_userManager.Users.Any();
+
         var user = new IdentityUser<Guid>
         {
             Id = Guid.NewGuid(),
@@ -74,9 +76,10 @@ public class AccountController : Controller
             return View(model);
         }
 
+        UserProfile? profile = null;
         try
         {
-            var profile = new UserProfile
+            profile = new UserProfile
             {
                 UserId = user.Id,
                 DisplayName = model.DisplayName,
@@ -88,6 +91,14 @@ public class AccountController : Controller
             await _context.UserProfiles.AddAsync(profile);
             await _context.SaveChangesAsync();
 
+            // The first registered account becomes the initial Owner.
+            if (isFirstRegisteredUser)
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, "Owner");
+                if (!roleResult.Succeeded)
+                    throw new InvalidOperationException(string.Join("; ", roleResult.Errors.Select(x => x.Description)));
+            }
+
             await _signInManager.SignInAsync(
                 user,
                 isPersistent: false);
@@ -98,7 +109,13 @@ public class AccountController : Controller
         }
         catch
         {
-            // Remove Identity account if profile creation fails.
+            // Remove the profile and Identity account if initial registration setup fails.
+            if (profile != null)
+            {
+                _context.UserProfiles.Remove(profile);
+                await _context.SaveChangesAsync();
+            }
+
             await _userManager.DeleteAsync(user);
 
             ModelState.AddModelError(
