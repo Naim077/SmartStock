@@ -1,0 +1,10 @@
+@model AIMS.Web.Ui.Models.SaleEntryViewModel
+@{
+    ViewData["Title"] = "Edit sale";
+    Layout = "_PrivateLayout";
+    ViewBag.FormAction = "Edit";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">SALES MANAGEMENT</span><h1>Edit draft sale</h1><p class="page-description">Only unposted draft sales can be edited.</p></div></section>
+    <partial name="_SaleForm" model="Model" />
+</main>
