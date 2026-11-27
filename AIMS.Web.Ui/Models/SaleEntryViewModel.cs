@@ -7,6 +7,7 @@ public class SaleEntryViewModel
     public long DocumentId { get; set; }
 
     [Required]
+    [Range(1, long.MaxValue)]
     public long CustomerId { get; set; }
 
     public List<SaleEntryLineViewModel> Lines { get; set; } = new();
@@ -15,6 +16,7 @@ public class SaleEntryViewModel
 public class SaleEntryLineViewModel
 {
     [Required]
+    [Range(1, long.MaxValue)]
     public long ProductId { get; set; }
 
     [Range(typeof(decimal), "0.01", "999999999")]
