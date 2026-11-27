@@ -4,7 +4,7 @@
     var customers = (IEnumerable<Customer>)ViewBag.Customers;
     var products = (IEnumerable<Product>)ViewBag.Products;
 }
-<form asp-controller="Sales" asp-action="@ViewBag.FormAction" asp-route-id="@Model.DocumentId" method="post" class="card" style="padding:24px">
+<form asp-controller="Sales" asp-action="@ViewBag.FormAction" asp-route-id="@(Model.DocumentId > 0 ? Model.DocumentId : (long?)null)" method="post" class="card" style="padding:24px">
     @Html.AntiForgeryToken()
     <input asp-for="DocumentId" type="hidden" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
