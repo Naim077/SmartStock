@@ -229,19 +229,19 @@
                 <summary>Browse all pages</summary>
                 <div class="nojs-links">
                     <a href="index.html">Overview</a>
-                    <a href="products.html">Products</a>
-                    <a href="stock.html">Stock overview</a>
-                    <a href="purchases.html">Purchases</a>
-                    <a href="sales.html">Sales</a>
-                    <a href="suppliers.html">Suppliers</a>
-                    <a href="customers.html">Customers</a>
-                    <a href="reports.html">Reports</a>
-                    <a href="smart-reorder.html">Smart Reorder</a>
-                    <a href="ai-assistant.html">AI Assistant</a>
-                    <a href="users.html">Users &amp; roles</a>
-                    <a href="audit-log.html">Audit log</a>
-                    <a href="settings.html">Settings</a>
-                    <a href="login.html">Welcome</a>
+                    <a href="@Url.Action("Index", "Product")">Products</a>
+                    <a href="@Url.Action("Index", "Product")">Stock overview</a>
+                    <a href="@Url.Action("Index", "Purchase")">Purchases</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Sales</a>
+                    <a href="@Url.Action("Index", "Supplier")">Suppliers</a>
+                    <a href="@Url.Action("Index", "Customer")">Customers</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Reports</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Smart Reorder</a>
+                    <a href="@Url.Action("Index", "Dashboard")">AI Assistant</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Users &amp; roles</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Audit log</a>
+                    <a href="@Url.Action("Index", "Dashboard")">Settings</a>
+                    <a href="@Url.Action("Login", "Account")">Welcome</a>
                 </div>
             </details>
             <small>Enable JavaScript for filters, dialogs and browser-local changes.</small>
@@ -249,7 +249,7 @@
     </noscript>
     <div class="app-shell">
         <aside class="sidebar" id="sidebar" aria-label="Main navigation">
-            <a href="index.html" class="brand" aria-label="SmartStock overview">
+            <a href="@Url.Action("Index", "Dashboard")" class="brand" aria-label="SmartStock overview">
                 <span class="brand-mark">
                     <svg viewBox="0 0 34 36" aria-hidden="true">
                         <path d="M17 2 31 10 17 18 3 10Z" fill="#c5dba9" />
@@ -263,21 +263,21 @@
             <nav class="sidebar-nav" aria-label="SmartStock modules">
                 <div class="nav-group">
                     <h2 class="sidebar-caption">Workspace</h2>
-                    <a class="nav-link is-active" href="index.html" aria-current="page">
+                    <a class="nav-link is-active" href="@Url.Action("Index", "Dashboard")" aria-current="page">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-grid">
                             </use>
                         </svg>
                         <span>Overview</span>
                     </a>
-                    <a class="nav-link" href="products.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Product")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-box">
                             </use>
                         </svg>
                         <span>Products</span>
                     </a>
-                    <a class="nav-link" href="stock.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Product")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-stock">
                             </use>
@@ -285,7 +285,7 @@
                         <span>Stock overview</span>
                         <span class="nav-badge" data-low-count aria-label="Products needing attention">5</span>
                     </a>
-                    <a class="nav-link" href="purchases.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Purchase")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-truck">
                             </use>
@@ -299,14 +299,14 @@
                         </svg>
                         <span>Sales</span>
                     </a>
-                    <a class="nav-link" href="suppliers.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Supplier")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-layers">
                             </use>
                         </svg>
                         <span>Suppliers</span>
                     </a>
-                    <a class="nav-link" href="customers.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Customer")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-users">
                             </use>
@@ -355,7 +355,7 @@
                         </svg>
                         <span>Audit log</span>
                     </a>
-                    <a class="nav-link" href="settings.html">
+                    <a class="nav-link" href="@Url.Action("Index", "Dashboard")">
                         <svg class="icon" aria-hidden="true">
                             <use href="#i-settings">
                             </use>
@@ -373,7 +373,7 @@
                     </svg>
                     <span>Workspace guide</span>
                 </button>
-                <a class="nav-link" href="login.html">
+                <a class="nav-link" href="@Url.Action("Login", "Account")">
                     <svg class="icon" aria-hidden="true">
                         <use href="#i-logout">
                         </use>
@@ -424,7 +424,7 @@
                             </svg>
                         </summary>
                         <div class="profile-dropdown">
-                            <a href="settings.html">
+                            <a href="@Url.Action("Index", "Dashboard")">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-settings">
                                     </use>
@@ -436,7 +436,7 @@
                                     </use>
                                 </svg>Users &amp; roles
                             </a>
-                            <a href="login.html">
+                            <a href="@Url.Action("Login", "Account")">
                                 <svg class="icon" aria-hidden="true">
                                     <use href="#i-logout">
                                     </use>
@@ -452,7 +452,7 @@
         <strong data-business-name>Evergreen Trading</strong> &middot; Single-store workspace
     </span>
     <span>
-        Browser-local preview &middot; <a href="settings.html">No backend connected</a>
+        Browser-local preview &middot; <a href="@Url.Action("Index", "Dashboard")">No backend connected</a>
     </span>
 </footer>
 </div>
