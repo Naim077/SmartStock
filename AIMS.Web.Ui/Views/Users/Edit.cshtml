@@ -1,0 +1,10 @@
+@model AIMS.Web.Ui.Models.UserFormViewModel
+@{
+    ViewData["Title"] = "Edit user";
+    Layout = "_PrivateLayout";
+    ViewBag.FormAction = "Edit";
+}
+<main class="main-content" id="main-content">
+    <section class="page-heading"><div><span class="eyebrow">ADMINISTRATION</span><h1>Edit user</h1><p class="page-description">Update profile details, active state and Identity role.</p></div></section>
+    <partial name="_UserForm" model="Model" />
+</main>
