@@ -6,7 +6,7 @@
     var balances = (Dictionary<long, ProductStockBalance>)ViewBag.Balances;
 }
 <main class="main-content" id="main-content">
-    <section class="page-heading"><div><span class="eyebrow">INVENTORY</span><h1>Stock overview</h1><p class="page-description">Current product quantities and inventory value.</p></div></section>
+    <section class="page-heading"><div><span class="eyebrow">INVENTORY</span><h1>Stock overview</h1><p class="page-description">Current product quantities and inventory value.</p></div><div class="page-actions"><a asp-controller="Stock" asp-action="Adjustments" class="button button-secondary">Adjustment drafts</a><a asp-controller="Stock" asp-action="CreateAdjustment" class="button button-primary">New adjustment</a></div></section>
     <section class="stats-grid">
         <article class="stat-card"><div class="stat-label">Products shown</div><div class="stat-value">@ViewBag.TotalProducts</div></article>
         <article class="stat-card"><div class="stat-label">Inventory value</div><div class="stat-value">BDT @(((decimal)ViewBag.InventoryValue).ToString("N2"))</div></article>
